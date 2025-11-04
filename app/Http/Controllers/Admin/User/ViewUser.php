@@ -7,14 +7,14 @@ use App\Models\User;
 
 class ViewUser extends Controller
 {
-    public function __invoke(int $id)
+    public function __invoke(int $id, User $user_model)
     {
         $breadcrumbs = [
             route('admin.index') => 'Dashboard',
             route('admin.users.index') => 'Akun pengguna',
-            route('admin.users.view', ['id' => $id]) => 'Detail akun pengguna'
+            null => 'Detail akun pengguna'
         ];
-        $user = User::findOrFail($id);
+        $user = $user_model::findOrFail($id);
         $payload = compact('breadcrumbs', 'user');
         return view('admin.pages.users.view', $payload);
     }

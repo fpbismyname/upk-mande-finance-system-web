@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\Admin\User\EnumRole;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,7 +22,7 @@ class UserSeeder extends Seeder
                 'password' => 'admin123',
                 'alamat' => '204 Davsu Junction',
                 'nomor_telepon' => "089542352354",
-                'role_id' => 3
+                'role' => EnumRole::ADMIN
             ],
             [
                 'nik' => '1761933777123141',
@@ -30,7 +31,7 @@ class UserSeeder extends Seeder
                 'password' => 'executive123',
                 'alamat' => '292 Atonut Extension',
                 'nomor_telepon' => "089253233354",
-                'role_id' => 4
+                'role' => EnumRole::KEPALA_INSTITUSI
             ],
             [
                 'nik' => '1237496597123131',
@@ -39,7 +40,7 @@ class UserSeeder extends Seeder
                 'password' => 'akuntan123',
                 'alamat' => '1816 Puvjaj Glen',
                 'nomor_telepon' => "0895235235354",
-                'role_id' => 5
+                'role' => EnumRole::AKUNTAN
             ],
             [
                 'nik' => '1241421241414141',
@@ -48,7 +49,7 @@ class UserSeeder extends Seeder
                 'password' => 'pendanaan123',
                 'alamat' => '598 Taab Street',
                 'nomor_telepon' => "0892352525334",
-                'role_id' => 6
+                'role' => EnumRole::PENGELOLA_DANA
             ],
         ];
         foreach ($datas as $data) {

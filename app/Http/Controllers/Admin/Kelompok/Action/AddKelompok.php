@@ -19,8 +19,8 @@ class AddKelompok extends Controller
         $request->validate([
             'name' => 'required',
             'limit_pinjaman' => 'required|numeric|min:1000000',
-            'ketua_id' => 'required',
-            'status_id' => 'required'
+            'users_id' => 'required',
+            'status' => 'required'
         ]);
         // Data kelompok
         $data_kelompok = $request->only($kelompok_model->getFillable());

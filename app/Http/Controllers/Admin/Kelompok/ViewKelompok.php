@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin\Kelompok;
 
 use App\Enum\Admin\Roles\RolesName;
+use App\Enum\Admin\Status\EnumStatusKelompok;
+use App\Enum\Admin\User\EnumRole;
 use App\Http\Controllers\Admin\AnggotaKelompok\ListAnggotaKelompok;
 use App\Http\Controllers\Controller;
 use App\Models\Kelompok;
@@ -18,9 +20,9 @@ class ViewKelompok extends Controller
     {
         // Data kelompok
         $kelompok = Kelompok::findOrFail($id_kelompok);
-        $role_ketua = RolesName::ANGGOTA;
-        $list_ketua_kelompok = User::get_users_for_kelompok($role_ketua, user: $kelompok->ketua_kelompok)->get();
-        $list_status = StatusKelompok::latest()->get();
+        $role_ketua = EnumRole::ANGGOTA;
+        $list_ketua_kelompok = User::doesntHaveKelompok()->get();
+        $list_status = EnumStatusKelompok::options();
 
         // Data anggota kelompok
         $data_anggota = $list_anggota_kelompok->list($kelompok, $id_kelompok);

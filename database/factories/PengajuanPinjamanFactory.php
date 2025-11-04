@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,10 +21,10 @@ class PengajuanPinjamanFactory extends Factory
             'file_proposal' => "https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf",
             'nominal_pinjaman' => floor($this->faker->numberBetween(1000000, 10000000) / 500000) * 500000,
             'tenor' => $this->faker->randomElement([3, 6, 12]),
-            'pengajuan_pada' => now(),
-            'disetujui_pada' => null,
-            'ditolak_pada' => null,
-            'status_id' => 2,
+            'tanggal_pengajuan' => now(),
+            'tanggal_disetujui' => null,
+            'tanggal_ditolak' => null,
+            'status' => EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN,
         ];
     }
 }

@@ -60,7 +60,7 @@
                 <div class="flex flex-col gap-4 py-12 px-4 items-center">
                     <x-ui.image src="{{ asset('nav_icon.ico') }}" class="w-1/2" />
                     <span class="badge badge-secondary">
-                        {{ auth()->user()->role_name->ucfirst() }}
+                        {{ auth()->user()->formatted_role }}
                     </span>
                 </div>
 
@@ -86,7 +86,7 @@
                 {{-- Accounts --}}
                 <div class="sticky bottom-4 w-full z-10 mt-auto">
                     <div class="dropdown dropdown-top w-full">
-                        <div tabindex="0" class="btn btn-primary     w-full justify-between">
+                        <div tabindex="0" class="btn btn-primary w-full justify-between">
                             <div class="flex flex-row items-center gap-2">
                                 <x-lucide-user class="w-4" />
                                 <span>{{ auth()->user()->name }}</span>

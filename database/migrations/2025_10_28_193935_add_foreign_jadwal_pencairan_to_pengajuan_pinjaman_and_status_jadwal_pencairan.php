@@ -11,12 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('jadwal_pencairan', function (Blueprint $table) {
-            $table->foreignId('status_id')
-                ->nullable()
-                ->constrained('status_jadwal_pencairan')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
-            $table->foreignId('pengajuan_id')
+            $table->foreignId('pengajuan_pinjaman_id')
                 ->constrained('pengajuan_pinjaman')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
@@ -33,10 +28,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('jadwal_pencairan', function (Blueprint $table) {
-            $table->dropForeign(['status_id']);
-            $table->dropForeign(['pengajuan_id']);
+            $table->dropForeign(['pengajuan_pinjaman_id']);
             $table->dropForeign(['kelompok_id']);
-            $table->dropColumn(['status_id', 'pengajuan_id', 'kelompok_id']);
+            $table->dropColumn(['pengajuan_pinjaman_id', 'kelompok_id']);
         });
     }
 };

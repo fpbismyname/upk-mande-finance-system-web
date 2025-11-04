@@ -36,7 +36,7 @@ class ListAnggotaKelompok extends Controller
         }
 
         // Datas
-        $datas = $query->paginate($this->paginate)->withQueryString();
+        $datas = $query->latest()->paginate($this->paginate)->withQueryString();
 
         // Debug dump
         Debug::dump($datas, $search);

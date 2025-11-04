@@ -11,11 +11,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('pengajuan_pinjaman', function (Blueprint $table) {
-            $table->foreignId('status_id')
-                ->nullable()
-                ->constrained('status_pengajuan_pinjaman')
-                ->cascadeOnUpdate()
-                ->onDelete('set null');
             $table->foreignId('kelompok_id')
                 ->nullable()
                 ->constrained('kelompok')
@@ -30,9 +25,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('pengajuan_pinjaman', function (Blueprint $table) {
-            $table->dropForeign(['status_id']);
             $table->dropForeign(['kelompok_id']);
-            $table->dropColumn(['status_id', 'kelompok_id']);
+            $table->dropColumn(['kelompok_id']);
         });
     }
 };

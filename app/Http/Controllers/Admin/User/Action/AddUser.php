@@ -22,7 +22,7 @@ class AddUser extends Controller
             'password' => 'required',
             'nomor_telepon' => 'required',
             'alamat' => 'required',
-            'role_id' => 'required'
+            'role' => 'required'
         ]);
 
         $username = $new_entries['name'];

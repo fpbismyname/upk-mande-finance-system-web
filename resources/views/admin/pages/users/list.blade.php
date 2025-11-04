@@ -2,34 +2,27 @@
     {{-- Data table --}}
     <div class="flex flex-col gap-6">
         <div class="flex flex-row justify-between flex-wrap gap-4">
-            <div class="flex flex-row gap-4">
-                <div class="dropdown dropdown-bottom dropdown-start">
-                    <div tabindex="0" role="button" class="btn btn-accent">
-                        <x-lucide-filter class="w-3" />
-                    </div>
-                    <div class="dropdown-content menu bg-base-100 w-xs shadow-xl rounded-box">
-                        <ul>
-                            <li class="menu-title">Filter berdasarkan role</li>
-                            @foreach ($list_role as $status)
-                                <li><a
-                                        href="{{ route('admin.users.index', ['search' => $status->name]) }}">{{ $status->formatted_name }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+            {{-- Seach bar & filter --}}
+            <form method="get" class="flex flex-row gap-4 flex-wrap">
+                <label class="select w-fit">
+                    <span class="label">Role</span>
+                    <select name="role">
+                        <option value="" selected>Pilih role</option>
+                        @foreach ($list_role as $value => $key)
+                            <option value="{{ $value }}" @if ($value === request()->get('role')) selected @endif>
+                                {{ $key }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+                <div class="flex flex-row gap-2">
+                    <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
+                        placeholder="Cari kelompok..." />
+                    <button type="submit" class="btn btn-primary join-item">
+                        <x-lucide-search class="w-4" />
+                    </button>
                 </div>
-                {{-- Seach bar --}}
-                <form method="get">
-                    <div class="join">
-                        <div class="input join-item">
-                            <x-lucide-search class="w-4" />
-                            <input type="text" name="search" value="{{ request()->get('search') }}"
-                                placeholder="Cari data akun" />
-                        </div>
-                        <button type="submit" class="btn btn-primary join-item">Cari</button>
-                    </div>
-                </form>
-            </div>
+            </form>
             {{-- Add data button --}}
             <div class="flex flex-row">
                 <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
@@ -63,13 +56,13 @@
                                 <td>{{ $item->nomor_telepon }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
-                                <td>{{ $item->role_name }}</td>
+                                <td>{{ $item->formatted_role }}</td>
                                 <td>{{ $item->alamat }}</td>
                                 <td>
                                     @if ($current_account)
                                         <div class="flex w-full justify-end">
                                             <div class="badge badge-primary">
-                                                <a href="" class="link-hover">Akun anda</a>
+                                                <a href="" class="link-hover whitespace-nowrap">Akun anda</a>
                                             </div>
                                         </div>
                                     @else

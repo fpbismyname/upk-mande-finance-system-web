@@ -21,8 +21,8 @@ class UpdateKelompok extends Controller
         // Validasi pembaruan data kelompok
         $request->validate([
             'limit_pinjaman' => 'required|numeric|min:1000000',
-            'ketua_id' => 'required',
-            'status_id' => 'required'
+            'users_id' => 'required',
+            'status' => 'required'
         ]);
 
         // Data kelompok yang baru untuk diupdate
@@ -39,6 +39,6 @@ class UpdateKelompok extends Controller
         }
 
         // Kembali kehalaman awal
-        return redirect()->route('admin.kelompok.index');
+        return redirect()->back();
     }
 }

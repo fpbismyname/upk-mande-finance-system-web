@@ -19,7 +19,7 @@ class SubmitReviewPengajuanPinjaman extends Controller
         $data_pengajuan_pinjaman = $pengajuan_pinjaman_model->findOrFail($id);
         // Validate entries
         $request->validate([
-            'status_id' => 'required',
+            'status' => 'required',
             'catatan' => ''
         ]);
         // Data review pengajuan

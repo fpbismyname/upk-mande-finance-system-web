@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 
 class SubmitLogin extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, LoginService $login_service)
     {
-        $attempt_login = LoginService::attempt($request);
+        $attempt_login = $login_service->attempt($request);
         if ($attempt_login) {
             return redirect()->route('admin.index');
         } else {

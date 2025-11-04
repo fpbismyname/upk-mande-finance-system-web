@@ -2,17 +2,22 @@
 
 namespace App\Services\Admin\JadwalPencairan;
 
+use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
 use App\Models\JadwalPencairan;
+use Illuminate\Support\Facades\DB;
 
 class JadwalPencairanService
 {
-    protected JadwalPencairan $model;
-    public function __construct()
+    public function make_schedule($id, $datas)
     {
-        $this->model = new JadwalPencairan();
-    }
-    public function make_schedule()
-    {
+        $current_jadwal = JadwalPencairan::findOrFail($id);
+        return DB::transaction(function () use ($current_jadwal, $datas) {
+            $data_jadwal = [
+                'tanggal_pencairan' => $datas['tanggal_pencairan'],
+                'status' => EnumStatusJadwalPencairan::TERJADWAL->value
+            ];
+            return $current_jadwal->update($data_jadwal);
 
+        });
     }
 }

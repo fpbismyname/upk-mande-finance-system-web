@@ -63,11 +63,11 @@
             <div class="grid md:col-span-2">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Role</legend>
-                    <select name="role_id" class="select w-full validator" required>
+                    <select name="role" class="select w-full validator" required>
                         @if (!empty($list_role))
-                            @foreach ($list_role as $role)
-                                <option value="{{ $role->id }}">
-                                    {{ Str::of($role->name)->replace('_', ' ')->ucfirst() }}
+                            @foreach ($list_role as $value => $key)
+                                <option value="{{ $value }}">
+                                    {{ $key }}
                                 </option>
                             @endforeach
                         @else
@@ -87,7 +87,7 @@
             <div class="grid md:col-span-2">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Alamat pengguna</legend>
-                    <textarea name="alamat" class="textarea validator w-full" placeholder="Alamat pengguna" required></textarea>
+                    <textarea name="alamat" class="textarea validator w-full" placeholder="Alamat pengguna" required>{{ old('alamat') }}</textarea>
                     <p class="validator-hint hidden">
                         {{ __('validation.required', ['attribute' => 'Alamat']) }}
                     </p>
@@ -102,7 +102,7 @@
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Password baru</legend>
                     <x-ui.input-password name="password" placeholder="Password baru" class="validator" required
-                        pattern="[\w\s]{6,250}" />
+                        value="{{ old('password') }}" pattern="[\w\s]{6,250}" />
                     @error('password')
                         <p class="fieldset-label">{{ $message }}</p>
                     @enderror

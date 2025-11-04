@@ -1,34 +1,50 @@
-<x-layouts.admin-app title="Jadwal pencairan pinjaman" :breadcrumbs="$breadcrumbs">
+<x-layouts.admin-app title="Daftar jadwal pencairan pinjaman" :breadcrumbs="$breadcrumbs">
     {{-- Data table --}}
     <div class="flex flex-col gap-6">
         <div class="flex flex-row justify-between flex-wrap gap-4">
             {{-- Header --}}
             <div class="flex flex-row gap-4">
-                {{-- Filter --}}
-                <div class="dropdown dropdown-bottom">
-                    <div tabindex="0" role="button" class="btn btn-accent">
-                        <x-lucide-filter class="w-3" />
-                    </div>
-                    <div class="dropdown-content menu bg-base-100 w-xs shadow-xl rounded-box">
-                        <ul>
-                            <li class="menu-title">Filter berdasarkan status</li>
-                            @foreach ($list_status_jadwal_pencairan as $status)
-                                <li><a
-                                        href="{{ route('admin.jadwal-pencairan.index', ['search' => $status->name]) }}">{{ $status->formatted_name }}</a>
-                                </li>
+                {{-- Seach bar --}}
+                <form method="get" class="flex flex-row gap-4 flex-wrap">
+                    <label class="select w-fit">
+                        <span class="label">Status jadwal</span>
+                        <select name="status_jadwal">
+                            <option value="" selected>Pilih status jadwal</option>
+                            @foreach ($list_status_jadwal as $value => $key)
+                                <option value="{{ $value }}" @if ($value === request()->get('status_jadwal')) selected @endif>
+                                    {{ $key }}
+                                </option>
                             @endforeach
-                        </ul>
-                    </div>
-                </div>
-                {{-- Search bar --}}
-                <form method="get">
-                    <div class="join">
-                        <div class="input join-item">
+                        </select>
+                    </label>
+                    <label class="select w-fit">
+                        <span class="label">Status pengajuan</span>
+                        <select name="status_pengajuan">
+                            <option value="" selected>Pilih status</option>
+                            @foreach ($list_status_pengajuan as $value => $key)
+                                <option value="{{ $value }}" @if ($value === request()->get('status_pengajuan')) selected @endif>
+                                    {{ $key }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <label class="select w-fit">
+                        <span class="label">Tenor pengajuan</span>
+                        <select name="tenor_pengajuan">
+                            <option value="" selected>Pilih tenor pengajuan</option>
+                            @foreach ($list_tenor_pengajuan as $value => $key)
+                                <option value="{{ $value }}" @if ($value == request()->get('tenor_pengajuan')) selected @endif>
+                                    {{ $key }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <div class="flex flex-row gap-2">
+                        <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
+                            placeholder="Cari jadwal pengajuan..." />
+                        <button type="submit" class="btn btn-primary join-item">
                             <x-lucide-search class="w-4" />
-                            <input type="text" name="search" value="{{ request()->get('search') }}"
-                                placeholder="Cari data jadwal pencairan" />
-                        </div>
-                        <button type="submit" class="btn btn-primary join-item">Cari</button>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -39,7 +55,7 @@
                     <th>#</th>
                     <th>Nama kelompok</th>
                     <th>Ketua kelompok</th>
-                    <th>Jumlah pinjaman</th>
+                    <th>Nominal pinjaman</th>
                     <th>Tenor pinjaman (bulan)</th>
                     <th>Tanggal pencairan</th>
                     <th>Status pencairan</th>
@@ -53,18 +69,16 @@
                                 </td>
                                 <td>{{ $item->kelompok_name }}</td>
                                 <td>{{ $item->ketua_name }}</td>
-                                <td>{{ $item->formatted_jumlah_pinjaman }}</td>
-                                <td>{{ $item->formatted_tenor }}</td>
-                                <td>{{ $item->status_name }}</td>
-                                <td>{{ $item->formatted_pengajuan }}</td>
-                                <td>{{ $item->formatted_disetujui }}</td>
-                                <td>{{ $item->formatted_ditolak }}</td>
+                                <td>{{ $item->pengajuan_nominal }}</td>
+                                <td>{{ $item->pengajuan_tenor }}</td>
+                                <td>{{ $item->formatted_tanggal_pencairan }}</td>
+                                <td>{{ $item->formatted_status }}</td>
                                 <td>
                                     <div class="flex flex-row gap-2">
                                         <a class="btn btn-sm btn-link link-hover"
-                                            href="{{ route('admin.pengajuan-pinjaman.review', [$item->id]) }}">
-                                            <x-lucide-file-search class="w-4" />
-                                            {{ __('crud.action.review') }}
+                                            href="{{ route('admin.jadwal-pencairan.view', [$item->id]) }}">
+                                            <x-lucide-file-clock class="w-4" />
+                                            Jadwalkan
                                         </a>
                                     </div>
                                 </td>

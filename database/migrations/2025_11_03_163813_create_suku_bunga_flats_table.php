@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('status_pinjaman', function (Blueprint $table) {
+        Schema::create('suku_bunga_flat', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
+            $table->decimal('jumlah', 5, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -23,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('status_pinjaman');
+        Schema::dropIfExists('suku_bunga_flat');
     }
 };

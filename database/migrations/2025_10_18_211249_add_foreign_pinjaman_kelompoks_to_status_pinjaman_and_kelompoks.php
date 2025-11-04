@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('role_id')
-                ->default(1)
-                ->constrained('roles')
+        Schema::table('pinjaman_kelompok', function (Blueprint $table) {
+            $table->foreignId('kelompok_id')
+                ->constrained('kelompok')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
         });
@@ -24,9 +23,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['role_id']);
-            $table->dropColumn(['role_id']);
+        Schema::table('pinjaman_kelompok', function (Blueprint $table) {
+            $table->dropForeign(['kelompok_id']);
+            $table->dropColumn(['kelompok_id']);
         });
     }
 };

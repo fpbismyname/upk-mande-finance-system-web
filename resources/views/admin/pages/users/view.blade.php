@@ -25,7 +25,7 @@
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Role</legend>
                 <input type="email" name="role" placeholder="Role" class="input w-full"
-                    value="{{ $user->role_name->ucfirst() ?? '-' }}" readonly />
+                    value="{{ $user->formatted_role ?? '-' }}" readonly />
             </fieldset>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nomor Whatsapp</legend>

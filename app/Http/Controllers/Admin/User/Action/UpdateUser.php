@@ -23,7 +23,7 @@ class UpdateUser extends Controller
             'email' => 'required|email',
             'alamat' => 'required',
             'nomor_telepon' => 'required',
-            'role_id' => 'required',
+            'role' => 'required',
             'reset_password' => '',
             'new_password' => '',
         ]);

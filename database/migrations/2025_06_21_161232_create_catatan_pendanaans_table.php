@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->text('catatan');
             $table->decimal('jumlah_saldo', 15, 2);
-            $table->enum('tipe_catatan', ['pemasukan', 'pengeluaran']);
+            $table->string('tipe_catatan');
             $table->timestamps();
         });
     }

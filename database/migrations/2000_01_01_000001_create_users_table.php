@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->text('nomor_telepon')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role')->default('anggota');
             $table->rememberToken();
             $table->timestamps();
         });

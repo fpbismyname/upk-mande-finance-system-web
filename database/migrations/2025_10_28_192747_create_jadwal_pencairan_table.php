@@ -1,8 +1,8 @@
 <?php
 
+use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -13,7 +13,9 @@ return new class extends Migration {
     {
         Schema::create('jadwal_pencairan', function (Blueprint $table) {
             $table->id();
+            $table->string('status')->default(EnumStatusJadwalPencairan::BELUM_TERJADWAL->value);
             $table->dateTime('tanggal_pencairan')->nullable();
+            $table->timestamps();
         });
     }
 

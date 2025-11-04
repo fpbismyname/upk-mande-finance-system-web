@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\PengajuanPinjaman;
 
+use App\Enum\Admin\PengajuanPinjaman\EnumTenor;
+use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
 use App\Http\Controllers\Controller;
 use App\Models\PengajuanPinjaman;
 use App\Models\Status\StatusPengajuanPinjaman;
@@ -14,12 +16,14 @@ class ListPengajuanPinjaman extends Controller
     /**
      * Handle the incoming request.
      */
-    public $relations = ['kelompok', 'status_pengajuan_pinjaman'];
+    public $relations = ['kelompok'];
     public $paginate = 10;
     public function __invoke(Request $request, PengajuanPinjaman $pengajuan_pinjaman_model, StatusPengajuanPinjaman $status_pengajuan_pinjaman_model)
     {
         // Get search query
         $search = request()->get('search');
+        $status = request()->get('status');
+        $tenor = request()->get('tenor');
 
         // Data breadcrumbs untuk menu 
         $breadcrumbs = [
@@ -32,33 +36,27 @@ class ListPengajuanPinjaman extends Controller
 
         // Search data if any search input
         if (!empty($search)) {
-            $query->where(function ($query) use ($search) {
-                $query->where('nominal_pinjaman', 'like', "%{$search}%")
-                    ->orWhere('tenor', 'like', "%{$search}%")
-                    ->orWhere('pengajuan_pada', 'like', "%{$search}%")
-                    ->orWhere('disetujui_pada', 'like', "%{$search}%")
-                    ->orWhere('ditolak_pada', 'like', "%{$search}%")
-                    ->orWhereHas('kelompok', function ($query_relation) use ($search) {
-                        $query_relation->whereHas('users', function ($nqr) use ($search) {
-                            $nqr->where('name', 'like', "%{$search}%");
-                        });
-                    })
-                    ->orWhereHas('status_pengajuan_pinjaman', function ($query_relation) use ($search) {
-                        $searched_status = Str::of($search)->lower()->replace(" ", "_");
-                        $query_relation->where('name', 'like', "{$searched_status}");
-                    });
-            });
+            $query->filter($search);
+        }
+        // Seachh data by status
+        if (!empty($status)) {
+            $query->filterStatus($status);
+        }
+        // Seachh data by tenor
+        if (!empty($tenor)) {
+            $query->filterTenor($tenor);
         }
 
         // Datas
-        $datas = $query->orderBy('pengajuan_pada')->paginate($this->paginate)->withQueryString();
-        $list_status_pengajuan = $status_pengajuan_pinjaman_model->withoutRelations()->get();
+        $datas = $query->latest()->paginate($this->paginate)->withQueryString();
+        $list_status = EnumStatusPengajuanPinjaman::options();
+        $list_tenor = EnumTenor::options();
 
         // Debug dump
         Debug::dump($datas, $search);
 
         // Payload untuk dipassing ke view
-        $payload = compact('breadcrumbs', 'datas', 'list_status_pengajuan');
+        $payload = compact('breadcrumbs', 'datas', 'list_status', 'list_tenor');
 
         // kembalikan view list user
         return view('admin.pages.pengajuan-pinjaman.list', $payload);

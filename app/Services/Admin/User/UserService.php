@@ -37,7 +37,7 @@ class UserService
             'alamat' => $datas['alamat'],
             'name' => $datas['name'],
             'email' => $datas['email'],
-            'role_id' => $datas['role_id'],
+            'role' => $datas['role'],
             'nomor_telepon' => $datas['nomor_telepon'],
         ];
         if ($is_reset_pass) {

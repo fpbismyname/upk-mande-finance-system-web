@@ -2,13 +2,12 @@
 
 namespace App\Services\Admin\CatatanPendanaan;
 
+use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use App\Models\CatatanPendanaan;
 use Illuminate\Support\Facades\DB;
 
 class CatatanPendanaanService
 {
-    const INFLOW = 'pemasukan';
-    const OUTFLOW = 'pengeluaran';
     protected CatatanPendanaan $model;
     public function __construct()
     {
@@ -20,7 +19,7 @@ class CatatanPendanaanService
         $notes_inflow = [
             'jumlah_saldo' => $amount,
             'catatan' => $notes ?? "-",
-            'tipe_catatan' => self::INFLOW
+            'tipe_catatan' => EnumCatatanPendanaan::INFLOW
         ];
         // Mulai eksekusi db
         return DB::transaction(function () use ($notes_inflow) {
@@ -34,12 +33,9 @@ class CatatanPendanaanService
         $notes_outflow = [
             'jumlah_saldo' => $amount,
             'catatan' => $notes ?? "-",
-            'tipe_catatan' => self::OUTFLOW
+            'tipe_catatan' => EnumCatatanPendanaan::OUTFLOW
         ];
         // Mulai eksekusi db
-        return DB::transaction(function () use ($notes_outflow) {
-            // Buat catatan pengeluaran
-            return $this->model->create($notes_outflow) ? true : false;
-        });
+        return DB::transaction(fn() => $this->model->create($notes_outflow) ? true : false);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\Admin\Status\EnumStatusKelompok;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +21,8 @@ class KelompokFactory extends Factory
         return [
             'name' => "Kelompok {$this->faker->words(2, true)}",
             'limit_pinjaman' => 10000000.0,
-            'status_id' => round(rand(1, 2)),
-            'ketua_id' => User::factory(),
+            'status' => EnumStatusKelompok::AKTIF,
+            'users_id' => User::factory(),
         ];
     }
 }

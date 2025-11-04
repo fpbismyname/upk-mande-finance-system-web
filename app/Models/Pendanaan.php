@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use App\Services\Admin\CatatanPendanaan\CatatanPendanaanService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -49,14 +50,14 @@ class Pendanaan extends Model
     }
     protected function inflowData(): Attribute
     {
-        $inflow = CatatanPendanaan::query()->where('tipe_catatan', CatatanPendanaanService::INFLOW)->sum('jumlah_saldo');
+        $inflow = CatatanPendanaan::query()->where('tipe_catatan', EnumCatatanPendanaan::INFLOW)->sum('jumlah_saldo');
         return Attribute::make(
             get: fn() => number_format($inflow, 0, ',', '.') ?? 0
         );
     }
     protected function outflowData(): Attribute
     {
-        $outflow = CatatanPendanaan::query()->where('tipe_catatan', CatatanPendanaanService::OUTFLOW)->sum('jumlah_saldo');
+        $outflow = CatatanPendanaan::query()->where('tipe_catatan', EnumCatatanPendanaan::OUTFLOW)->sum('jumlah_saldo');
         return Attribute::make(
             get: fn() => number_format($outflow, 0, ',', '.') ?? 0
         );

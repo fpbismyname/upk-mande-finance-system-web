@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\PengajuanPinjaman;
 
+use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
 use App\Http\Controllers\Controller;
 use App\Models\PengajuanPinjaman;
 use App\Models\Status\StatusPengajuanPinjaman;
@@ -21,8 +22,8 @@ class ReviewPengajuanPinjaman extends Controller
             route('admin.pengajuan-pinjaman.index') => 'Daftar pengajuan pinjaman',
             null => "Review Pengajuan pinjaman"
         ];
-        $list_status_pengajuan = $status_pengajuan_pinjaman_model->withoutRelations()->whereNot('name', PengajuanPinjamanService::PROSES_PENGAJUAN)->get();
-        $payload = compact('breadcrumbs', 'pengajuan_pinjaman', 'list_status_pengajuan');
+        $list_status = collect(EnumStatusPengajuanPinjaman::options())->except(['proses_pengajuan']);
+        $payload = compact('breadcrumbs', 'pengajuan_pinjaman', 'list_status');
         return view('admin.pages.pengajuan-pinjaman.review', $payload);
     }
 }

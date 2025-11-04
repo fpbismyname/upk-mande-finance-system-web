@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Pendanaan;
 
+use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use App\Http\Controllers\Controller;
 use App\Models\CatatanPendanaan;
 use App\Models\Pendanaan;
@@ -29,26 +30,13 @@ class ListPendanaan extends Controller
 
         // Search data if any search input
         if (!empty($search)) {
-            $query_catatan->where(function ($query) use ($search) {
-                $query->where('catatan', 'like', "%{$search}%")
-                    ->orWhere('jumlah_saldo', 'like', "%{$search}%")
-                    ->orWhere('tipe_catatan', 'like', "%{$search}%");
-            });
+            $query_catatan->filter($search);
         }
 
         // Datas
         $datas_pendanaan = $query_pendanaan->first();
         $datas_catatan_pendanaan = $query_catatan->latest()->paginate($this->paginate)->withQueryString();
-        $list_tipe_catatan = collect([
-            [
-                'name' => $catatan_pendanaan_service::INFLOW,
-                'formatted_name' => Str::of($catatan_pendanaan_service::INFLOW)->ucfirst(),
-            ],
-            [
-                'name' => $catatan_pendanaan_service::OUTFLOW,
-                'formatted_name' => Str::of($catatan_pendanaan_service::OUTFLOW)->ucfirst(),
-            ],
-        ]);
+        $list_tipe_catatan = EnumCatatanPendanaan::options();
 
         // Debug dump
         Debug::dump($datas_catatan_pendanaan, $datas_pendanaan, $search);

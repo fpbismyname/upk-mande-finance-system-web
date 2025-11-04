@@ -73,31 +73,16 @@
         <div class="flex flex-col gap-6">
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row gap-4">
-                    {{-- filter --}}
-                    <div class="dropdown dropdown-bottom dropdown-start">
-                        <div tabindex="0" role="button" class="btn btn-accent">
-                            <x-lucide-filter class="w-3" />
-                        </div>
-                        <div class="dropdown-content menu bg-base-100 w-xs shadow-xl rounded-box">
-                            <ul>
-                                <li class="menu-title">Filter berdasarkan tipe catatan</li>
-                                @foreach ($list_tipe_catatan as $status)
-                                    <li><a
-                                            href="{{ route('admin.pendanaan.index', ['search' => $status['name']]) }}">{{ $status['formatted_name'] }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
                     {{-- Seach bar --}}
                     <form method="get">
                         <div class="join">
                             <div class="input join-item">
-                                <x-lucide-search class="w-4" />
                                 <input type="text" name="search" value="{{ request()->get('search') }}"
-                                    placeholder="Cari data catatan" />
+                                    placeholder="Cari catatan pendanaan..." />
                             </div>
-                            <button type="submit" class="btn btn-primary join-item">Cari</button>
+                            <button type="submit" class="btn btn-primary join-item">
+                                <x-lucide-search class="w-4" />
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -122,7 +107,7 @@
                                     <td>{{ $item->catatan }}</td>
                                     <td>{{ $item->formatted_jumlah_saldo }}</td>
                                     <td
-                                        class="{{ $item->tipe_catatan->contains(App\Services\Admin\CatatanPendanaan\CatatanPendanaanService::INFLOW) ? 'text-success' : 'text-error' }}">
+                                        class="{{ $item->tipe_catatan === App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan::INFLOW ? 'text-success' : 'text-error' }}">
                                         {{ $item->formatted_tipe_catatan }}</td>
                                 </tr>
                             @endforeach
@@ -209,8 +194,7 @@
                     </span>
                 </div>
             </div>
-            <form action="{{ route('admin.pendanaan.tarik-saldo') }}" method="POST"
-                class="flex flex-col p-4 gap-4">
+            <form action="{{ route('admin.pendanaan.tarik-saldo') }}" method="POST" class="flex flex-col p-4 gap-4">
                 @method('post')
                 @csrf
                 <!-- Jumlah tarik dana -->

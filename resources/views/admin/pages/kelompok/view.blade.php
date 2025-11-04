@@ -1,17 +1,10 @@
-@php
-    $is_empty_ketua_kelompok = $list_ketua_kelompok->isEmpty();
-    $is_empty_status = $list_status->isEmpty();
-    $is_empty_anggota = count($data_anggota) < 1;
-@endphp
 <x-layouts.admin-app :title="'Detail ' . $kelompok->name" :breadcrumbs="$breadcrumbs">
     <x-slot:right_item>
         <a href="{{ route('admin.kelompok.edit', [$kelompok->id]) }}" class="btn btn-primary">Edit</a>
         <x-partials.delete-item item="kelompok" :route="route('admin.kelompok.destroy', [$kelompok->id])" />
     </x-slot:right_item>
-    {{-- 
-        Kelompok 
-     --}}
 
+    {{-- Kelompok --}}
     <div class="flex flex-col gap-4">
         {{-- View form --}}
         <div class="grid grid-cols-1 gap-2 md:grid-cols-2" method="POST">
@@ -47,7 +40,7 @@
                     Status kelompok
                 </legend>
                 <input type="text" name="ketua_id" placeholder="Ketua kelompok"
-                    value="{{ $kelompok->status_name->ucfirst()->replace('_', ' ') }}" class="input w-full" readonly />
+                    value="{{ $kelompok->formatted_status }}" class="input w-full" readonly />
             </fieldset>
 
             {{-- Created at --}}

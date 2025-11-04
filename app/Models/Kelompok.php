@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Status\StatusKelompok;
+use App\Enum\Admin\Status\EnumStatusKelompok;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ class Kelompok extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'limit_pinjaman', 'ketua_id', 'status_id'];
+    protected $fillable = ['name', 'limit_pinjaman', 'users_id', 'status'];
     /**
      * The table associated with the model.
      *
@@ -29,18 +30,38 @@ class Kelompok extends Model
      *
      * @var array
      */
-    protected $appends = ['ketua_name', 'status_name'];
+    protected $appends = ['ketua_name', 'formatted_status', 'formatted_name'];
 
     /**
-     * Relationships : users, status_kelompoks, anggota_kelompoks, pengajuan pinjaman
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'status' => EnumStatusKelompok::class,
+    ];
+
+    /**
+     * Scope a query kelompok
+     */
+    public function scopeFilter($query, $keyword)
+    {
+        return $query->where('name', 'like', "%{$keyword}%")
+            ->orWhere('limit_pinjaman', 'like', "%{$keyword}%")
+            ->orWhereHas('users', fn($qr) => $qr->where('name', 'like', "%{$keyword}%"))
+        ;
+    }
+    public function scopeFilterStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Relationships
      */
     public function users()
     {
-        return $this->belongsTo(User::class, 'ketua_id', 'id');
-    }
-    public function status_kelompok()
-    {
-        return $this->belongsTo(StatusKelompok::class, 'status_id', 'id');
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
     public function anggota_kelompok()
     {
@@ -66,6 +87,13 @@ class Kelompok extends Model
             get: fn() => "Rp " . number_format($limit_pinjaman, 0, ',', '.'),
         );
     }
+    protected function formattedName(): Attribute
+    {
+        $kelompok_name = $this->attributes['name'];
+        return Attribute::make(
+            get: fn() => Str::of($kelompok_name)->ucfirst(),
+        );
+    }
     protected function limitPinjaman(): Attribute
     {
         return Attribute::make(
@@ -79,17 +107,17 @@ class Kelompok extends Model
     public function ketuaName(): Attribute
     {
         return Attribute::make(
-            get: fn() => Str::of($this->users?->name ?? "Tidak ada")
+            get: fn() => Str::of($this->users?->name ?? "Tidak ada")->replace("_", " ")->ucfirst()
         );
     }
     /**
      * Get Status kelompok
      */
-    public function statusName(): Attribute
+    public function formattedStatus(): Attribute
     {
-        $status_name = $this->status_kelompok->name;
+        $status_name = $this->status->value ?? "-";
         return Attribute::make(
-            get: fn() => Str::of($status_name)
+            get: fn() => Str::of($status_name)->replace("_", " ")->ucfirst()
         );
     }
 }

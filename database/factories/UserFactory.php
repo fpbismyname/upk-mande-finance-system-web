@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\Admin\User\EnumRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -26,9 +27,9 @@ class UserFactory extends Factory
         return [
             'nik' => fake()->numerify(str_repeat('#', 16)),
             'name' => fake()->name(),
-            'nomor_telepon' => fake()->unique()->numerify('08#########'),
+            'nomor_telepon' => fake()->unique()->numerify('08##########'),
             'alamat' => fake()->unique()->address(),
-            'role_id' => 2,
+            'role' => EnumRole::ANGGOTA,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

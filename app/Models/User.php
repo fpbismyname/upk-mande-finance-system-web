@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enum\Admin\User\EnumRole;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,7 +21,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['role_name'];
+    protected $appends = ['formatted_role'];
 
     /**
      * The attributes that are mass assignable.
@@ -31,8 +32,7 @@ class User extends Authenticatable
         'nik',
         'name',
         'email',
-        'role_id',
-        'password',
+        'role',
         'alamat',
         'nomor_telepon',
     ];
@@ -50,27 +50,52 @@ class User extends Authenticatable
     /**
      * Get the attributes that should be cast.
      *
-     * @return array<string, string>
+     * @return array<string>
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => EnumRole::class
         ];
     }
 
     /**
+     * Scope a query to filter users
+     *
+     */
+    public function scopeFilter($query, $keyword)
+    {
+        return $query->where('name', 'like', "%{$keyword}%")
+            ->orWhere('nik', 'like', "%{$keyword}%")
+            ->orWhere('email', 'like', "%{$keyword}%")
+            ->orWhere('alamat', 'like', "%{$keyword}%")
+            ->orWhere('nomor_telepon', 'like', "%{$keyword}%");
+    }
+    public function scopeFilterRole($query, $keyword)
+    {
+        return $query->where('role', 'like', $keyword);
+    }
+    public function scopeDoesntHaveKelompok($query, $except = null)
+    {
+        return $query
+            ->where(function ($q) use ($except) {
+                $q->whereDoesntHave('kelompok');
+
+                if ($except) {
+                    $q->orWhereIn('id', (array) $except);
+                }
+            })
+            ->where('role', EnumRole::ANGGOTA);
+    }
+    /**
      *  Relationships
      * 
      */
-    public function roles()
-    {
-        return $this->belongsTo(Roles::class, 'role_id');
-    }
     public function kelompok()
     {
-        return $this->hasMany(Kelompok::class, 'ketua_id', 'id');
+        return $this->hasMany(Kelompok::class, 'users_id', 'id');
     }
 
     /**
@@ -81,21 +106,11 @@ class User extends Authenticatable
     /**
      * Get user Role
      */
-    protected function roleName(): Attribute
+    protected function formattedRole(): Attribute
     {
-        $current_role = Str::of($this->roles?->name)->replace("_", " ");
         return Attribute::make(
-            get: fn() => $current_role,
+            get: fn() => Str::of($this->role->value)->ucfirst()->replace("_", " "),
         );
-    }
-
-    /**
-     * Get All Roles
-     */
-    public static function get_all_roles()
-    {
-        $roles = Roles::all();
-        return $roles;
     }
 
     /**
@@ -109,15 +124,5 @@ class User extends Authenticatable
     {
         $this->password = $new_password;
         $this->save();
-    }
-
-    /**
-     * Get user by roles
-     */
-    public static function get_users_for_kelompok($role_name, $without_user_has_kelompoks = true, $user = null)
-    {
-        $model = User::with(['roles']);
-        $users = $model->whereRelation('roles', 'name', $role_name);
-        return $without_user_has_kelompoks ? $users->whereDoesntHave('kelompok')->orWhere('name', $user) : $users;
     }
 }

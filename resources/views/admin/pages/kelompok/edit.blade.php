@@ -1,10 +1,6 @@
-@php
-    $is_empty_ketua_kelompok = $list_ketua_kelompok->isEmpty();
-    $is_empty_status = $list_status->isEmpty();
-@endphp
-<x-layouts.admin-app :title="'Edit ' . $kelompok->nama_kelompok" :breadcrumbs="$breadcrumbs">
+<x-layouts.admin-app :title="'Edit ' . $kelompok->formatted_name" :breadcrumbs="$breadcrumbs">
     <div class="flex flex-col gap-4">
-        {{-- Add form --}}
+        {{-- Edit form --}}
         <form action="{{ route('admin.kelompok.update', [$kelompok->id]) }}" class="grid grid-cols-1 gap-2 md:grid-cols-2"
             method="POST">
             @csrf
@@ -49,19 +45,13 @@
             {{-- Ketua kelompok --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Ketua kelompok</legend>
-                <select name="ketua_id" class="select w-full validator" required>
-                    @if (!$is_empty_ketua_kelompok)
-                        <option value="" selected disabled>Pilih ketua kelompok</option>
-                        @foreach ($list_ketua_kelompok as $user)
-                            <option value="{{ $user->id }}" @if ($user->name == $kelompok->ketua_name) selected @endif>
-                                {{ Str::of($user->name)->replace('_', ' ')->ucfirst() }}
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="" selected disabled>
-                            {{ __('crud.no_data', ['item' => 'data ketua kelompok']) }}
+                <select name="users_id" class="select w-full validator" required>
+                    <option value="" selected disabled>Pilih ketua kelompok</option>
+                    @foreach ($list_ketua_kelompok as $user)
+                        <option value="{{ $user->id }}" @if ($user->name == $kelompok->ketua_name) selected @endif>
+                            {{ Str::of($user->name)->replace('_', ' ')->ucfirst() }}
                         </option>
-                    @endif
+                    @endforeach
                 </select>
                 <p class="validator-hint hidden">
                     {{ __('validation.required', ['attribute' => 'Ketua kelompok']) }}
@@ -74,19 +64,13 @@
             {{-- Status --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Status kelompok</legend>
-                <select name="status_id" class="select validator w-full" required>
-                    @if (!$is_empty_status)
-                        <option value="" selected disabled>Pilih status kelompok</option>
-                        @foreach ($list_status as $status)
-                            <option value="{{ $status->id }}" @if ($status->name == $kelompok->status_name) selected @endif>
-                                {{ Str::of($status->name)->replace('_', ' ')->ucfirst() }}
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="" selected disabled>
-                            {{ __('crud.no_data', ['item' => 'data status']) }}
+                <select name="status" class="select validator w-full" required>
+                    <option value="" selected disabled>Pilih status kelompok</option>
+                    @foreach ($list_status as $value => $key)
+                        <option value="{{ $value }}" @if ($value == $kelompok->status->value) selected @endif>
+                            {{ $key }}
                         </option>
-                    @endif
+                    @endforeach
                 </select>
                 <p class="validator-hint hidden">
                     {{ __('validation.required', ['attribute' => 'Status kelompok']) }}
@@ -99,23 +83,16 @@
             {{-- Action button form --}}
             <div class="grid place-items-center md:col-span-2 pt-6">
                 <div class="flex flex-row gap-4">
-                    @if ($is_empty_ketua_kelompok)
-                        <div class="tooltip tooltip-error"
-                            data-tip="{{ __('crud.no_data', ['item' => 'ketua kelompok']) }}">
-                    @endif
-                    <button type="submit" class="btn btn-primary" @if ($is_empty_ketua_kelompok) disabled @endif>
+                    <button type="submit" class="btn btn-primary">
                         {{ __('crud.action.save') }}
                     </button>
-                    @if ($is_empty_ketua_kelompok)
+                    <a href="{{ route('admin.kelompok.index') }}" class="btn btn-neutral">
+                        <span>
+                            {{ __('Back') }}
+                        </span>
+                    </a>
                 </div>
-                @endif
-                <a href="{{ route('admin.kelompok.index') }}" class="btn btn-neutral">
-                    <span>
-                        {{ __('Back') }}
-                    </span>
-                </a>
             </div>
-    </div>
-    </form>
+        </form>
     </div>
 </x-layouts.admin-app>

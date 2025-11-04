@@ -63,7 +63,7 @@ class AdminSidebar
                 'roles' => ['admin']
             ],
             [
-                'title' => 'Jadwal Pencarian',
+                'title' => 'Jadwal Pencairan',
                 'icon' => 'calendar-clock',
                 'type' => 'menu',
                 'route_name' => 'admin.jadwal-pencairan.index',

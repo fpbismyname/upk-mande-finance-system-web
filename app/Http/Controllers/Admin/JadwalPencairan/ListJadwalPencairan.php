@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin\JadwalPencairan;
 
+use App\Enum\Admin\PengajuanPinjaman\EnumTenor;
+use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
+use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
 use App\Http\Controllers\Controller;
 use App\Models\JadwalPencairan;
 use App\Models\Status\StatusJadwalPencairan;
@@ -14,12 +17,15 @@ class ListJadwalPencairan extends Controller
      * Handle the incoming request.
      * 
      */
-    protected $relations = ['kelompok', 'pengajuan_pinjaman', 'status_jadwal_pencarian'];
+    protected $relations = ['kelompok', 'pengajuan_pinjaman'];
     protected $paginate = 10;
-    public function __invoke(JadwalPencairan $jadwal_pencairan_model, StatusJadwalPencairan $status_jadwal_pencairan_model)
+    public function __invoke(JadwalPencairan $jadwal_pencairan_model)
     {
         // Get search query
         $search = request()->get('search');
+        $status_jadwal = request()->get('status_jadwal');
+        $tenor_pengajuan = request()->get('tenor_pengajuan');
+        $status_pengajuan = request()->get('status_pengajuan');
 
         // Data breadcrumbs untuk menu 
         $breadcrumbs = [
@@ -32,25 +38,32 @@ class ListJadwalPencairan extends Controller
 
         // Search data if any search input
         if (!empty($search)) {
-            $query->where(function ($query) use ($search) {
-                $query->WhereHas('pengajuan_pinjaman', function ($query_relation) use ($search) {
-                    $query_relation->where('nominal_pinjaman', 'like', "%{$search}%");
-                })->orWhereHas('status_jadwal_pencairan', function ($query_relation) use ($search) {
-                    $searced_status = Str::of($search)->lower()->replace(" ", "_");
-                    $query_relation->where('name', 'like', "%{$searced_status}%");
-                });
-            });
+            $query->filter($search);
+        }
+        // Search data by status jadwal
+        if (!empty($status_jadwal)) {
+            $query->filterStatusJadwal($status_jadwal);
+        }
+        // Search data by status pengajuan
+        if (!empty($status_pengajuan)) {
+            $query->filterStatusPengajuan($status_pengajuan);
+        }
+        // Search data by tenor pengajuan
+        if (!empty($tenor_pengajuan)) {
+            $query->filterTenorPengajuan($tenor_pengajuan);
         }
 
         // Datas
-        $datas = $query->orderBy('pengajuan_pada')->paginate($this->paginate)->withQueryString();
-        $list_status_jadwal_pencairan = $status_jadwal_pencairan_model->withoutRelations()->get();
+        $datas = $query->latest()->paginate($this->paginate)->withQueryString();
+        $list_status_jadwal = EnumStatusJadwalPencairan::options();
+        $list_status_pengajuan = EnumStatusPengajuanPinjaman::options();
+        $list_tenor_pengajuan = EnumTenor::options();
 
         // Debug dump
         Debug::dump($datas, $search);
 
         // Payload untuk dipassing ke view
-        $payload = compact('breadcrumbs', 'datas', 'list_status_jadwal_pencairan');
+        $payload = compact('breadcrumbs', 'datas', 'list_status_jadwal', 'list_status_pengajuan', 'list_tenor_pengajuan');
 
         // kembalikan view list user
         return view('admin.pages.jadwal-pencairan.list', $payload);

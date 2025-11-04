@@ -11,14 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('kelompok', function (Blueprint $table) {
-            $table->foreignId('ketua_id')
+            $table->foreignId('users_id')
                 ->constrained('users')
                 ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->foreignId('status_id')
-                ->nullable()
-                ->constrained('status_kelompok')
-                ->onDelete('set null')
                 ->cascadeOnUpdate();
         });
     }
@@ -29,9 +24,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('kelompok', function (Blueprint $table) {
-            $table->dropForeign(['ketua_id']);
-            $table->dropForeign(['status_id']);
-            $table->dropColumn(['ketua_id', 'status_id']);
+            $table->dropForeign(['users_id']);
+            $table->dropColumn(['users_id']);
         });
     }
 };

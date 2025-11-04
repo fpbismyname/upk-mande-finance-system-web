@@ -2,35 +2,27 @@
     {{-- Data table --}}
     <div class="flex flex-col gap-6">
         <div class="flex flex-row justify-between flex-wrap gap-4">
-            <div class="flex flex-row gap-4">
-                {{-- Filter --}}
-                <div class="dropdown dropdown-bottom dropdown-start">
-                    <div tabindex="0" role="button" class="btn btn-accent">
-                        <x-lucide-filter class="w-3" />
-                    </div>
-                    <div class="dropdown-content menu bg-base-100 w-xs shadow-xl rounded-box">
-                        <ul>
-                            <li class="menu-title">Filter berdasarkan status</li>
-                            @foreach ($list_status_kelompok as $status)
-                                <li><a
-                                        href="{{ route('admin.kelompok.index', ['search' => $status->name]) }}">{{ $status->formatted_name }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+            {{-- Seach bar & filter --}}
+            <form method="get" class="flex flex-row gap-4 flex-wrap">
+                <label class="select w-fit">
+                    <span class="label">Status</span>
+                    <select name="status">
+                        <option value="" selected>Pilih status</option>
+                        @foreach ($list_status as $value => $key)
+                            <option value="{{ $value }}" @if ($value === request()->get('status')) selected @endif>
+                                {{ $key }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+                <div class="flex flex-row gap-2">
+                    <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
+                        placeholder="Cari kelompok..." />
+                    <button type="submit" class="btn btn-primary join-item">
+                        <x-lucide-search class="w-4" />
+                    </button>
                 </div>
-                {{-- Seach bar --}}
-                <form method="get">
-                    <div class="join">
-                        <div class="input join-item">
-                            <x-lucide-search class="w-4" />
-                            <input type="text" name="search" placeholder="Cari data kelompok"
-                                value="{{ request()->get('search') }}" />
-                        </div>
-                        <button type="submit" class="btn btn-primary join-item">Cari</button>
-                    </div>
-                </form>
-            </div>
+            </form>
             {{-- Add data button --}}
             <div class="flex flex-row">
                 <a href="{{ route('admin.kelompok.create') }}" class="btn btn-primary">
@@ -43,8 +35,8 @@
             <x-ui.table>
                 <thead>
                     <th>#</th>
-                    <th>Ketua kelompok</th>
                     <th>Nama kelompok</th>
+                    <th>Ketua kelompok</th>
                     <th>Limit pinjaman</th>
                     <th>Status kelompok</th>
                     <th class="text-end">Aksi</th>
@@ -58,10 +50,10 @@
                             <tr @if ($current_account) class="bg-primary/50" @endif>
                                 <td>{{ $loop->iteration + ($datas->currentPage() - 1) * $datas->perPage() }}
                                 </td>
+                                <td>{{ $item->formatted_name }}</td>
                                 <td>{{ $item->ketua_name }}</td>
-                                <td>{{ $item->name }}</td>
                                 <td>{{ $item->formatted_limit_pinjaman }}</td>
-                                <td>{{ $item->status_name->replace('_', ' ')->ucfirst() }}</td>
+                                <td>{{ $item->formatted_status }}</td>
                                 <td>
                                     @if ($current_account)
                                         <div class="flex w-full justify-end">

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Status\StatusJadwalPencairan;
+use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -21,7 +21,7 @@ class JadwalPencairan extends Model
      *
      * @var array
      */
-    protected $fillable = ['tanggal_pencairan', 'status_id', 'pengajuan_id', 'kelompok_id'];
+    protected $fillable = ['tanggal_pencairan', 'status', 'pengajuan_pinjaman_id', 'kelompok_id'];
     /**
      * The accessors to append to the model's array form.
      *
@@ -30,32 +30,68 @@ class JadwalPencairan extends Model
     protected $appends = [
         'kelompok_name',
         'ketua_name',
-        'status_name',
-        'formatted_nominal_pinjaman',
-        'formatted_tenor',
-        'formatted_pengajuan',
-        'formatted_disetujui',
-        'formatted_ditolak',
+        'formatted_status',
+        'formatted_tanggal_pencairan',
+        'datetimalocalTanggalPencairan',
+        'pengajuan_status',
+        'pengajuan_nominal',
+        'pengajuan_tenor',
+        'pengajuan_disetujui',
+        'telah_dicairkan',
+        'terjadwal',
+        'belum_terjadwal'
     ];
 
     /**
      * Relationships
      * 
      */
-    public function status_jadwal_pencairan()
-    {
-        return $this->belongsTo(StatusJadwalPencairan::class, 'status_id', 'id');
-    }
     public function kelompok()
     {
         return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id');
     }
     public function pengajuan_pinjaman()
     {
-        return $this->belongsTo(PengajuanPinjaman::class, 'pengajuan_id', 'id');
+        return $this->belongsTo(PengajuanPinjaman::class, 'pengajuan_pinjaman_id', 'id');
     }
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'status' => EnumStatusJadwalPencairan::class,
+        'tanggal_pencairan' => 'datetime'
+    ];
 
-
+    /**
+     * Scope a query jadwal pencairan
+     */
+    public function scopeFilter($query, $keyword)
+    {
+        return $query->whereHas('kelompok', function ($qr) use ($keyword) {
+            $qr->where('name', 'like', "%{$keyword}%")
+                ->orWhereHas('users', function ($nqr) use ($keyword) {
+                    $nqr->where('name', 'like', "%{$keyword}%");
+                });
+        })->orWhereHas('pengajuan_pinjaman', function ($qr) use ($keyword) {
+            $qr->where('nominal_pinjaman', 'like', "%{$keyword}%");
+        });
+    }
+    public function scopeFilterStatusJadwal($query, $keyword)
+    {
+        return $query->where('status', $keyword);
+    }
+    public function scopeFilterTenorPengajuan($query, $keyword)
+    {
+        return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
+            $qr->where('tenor', $keyword));
+    }
+    public function scopeFilterStatusPengajuan($query, $keyword)
+    {
+        return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
+            $qr->where('status', $keyword));
+    }
     /**
      * Accessor
      */
@@ -76,35 +112,83 @@ class JadwalPencairan extends Model
         );
     }
     // get status_name
-    public function statusName(): Attribute
+    public function formattedStatus(): Attribute
     {
-        $status_name = $this->status_jadwal_pencairan?->name;
+        $status_name = $this->status->value ?? '-';
+        return Attribute::make(
+            get: fn() => Str::of($status_name)->replace("_", " ")->ucfirst()
+        );
+    }
+    // get status pengajuan
+    public function pengajuanStatus(): Attribute
+    {
+        $status_name = $this->pengajuan_pinjaman->status->value ?? '-';
         return Attribute::make(
             get: fn() => Str::of($status_name)->replace("_", " ")->ucfirst()
         );
     }
     // get formatted_nominal_pinjaman
-    public function formattedNominalPinjaman(): Attribute
+    public function pengajuanNominal(): Attribute
     {
-        $nominal = $this->attributes['nominal_pinjaman'];
+        $nominal = $this->pengajuan_pinjaman->nominal_pinjaman ?? 0;
         return Attribute::make(
             get: fn() => "Rp " . number_format($nominal, 0, ",", ".")
         );
     }
     // get formatted_tenor
-    public function formattedTenor(): Attribute
+    public function pengajuanTenor(): Attribute
     {
-        $tenor = $this->attributes['tenor'];
+        $tenor = $this->pengajuan_pinjaman->tenor->value ?? '-';
         return Attribute::make(
             get: fn() => Str::of("{$tenor} bulan")
+        );
+    }
+    // get pengajuan_disetujui
+    public function pengajuanTanggalDisetujui(): Attribute
+    {
+        $tanggal_disetujui = $this->pengajuan_pinjaman->formatted_disetujui ?? '-';
+        return Attribute::make(
+            get: fn() => $tanggal_disetujui
         );
     }
     // get formatted_pengajuan_pada
     public function formattedTanggalPencairan(): Attribute
     {
-        $value = $this->attributes['tanggal_pencairan'];
+        $value = $this->tanggal_pencairan;
         return Attribute::make(
             get: fn() => $value ? Carbon::parse($value)->format(' d M Y | H:i') : "-"
+        );
+    }
+    // Get telah_dicairkan
+    public function telahDicairkan(): Attribute
+    {
+        $status = $this->status === EnumStatusJadwalPencairan::TELAH_DICAIRKAN;
+        return Attribute::make(
+            get: fn() => $status
+        );
+    }
+    // Get terjadwal
+    public function terjadwal(): Attribute
+    {
+        $status = $this->status === EnumStatusJadwalPencairan::TERJADWAL;
+        return Attribute::make(
+            get: fn() => $status
+        );
+    }
+    // Get belum_terjadwal
+    public function belumTerjadwal(): Attribute
+    {
+        $status = $this->status === EnumStatusJadwalPencairan::BELUM_TERJADWAL;
+        return Attribute::make(
+            get: fn() => $status
+        );
+    }
+    // Get tanggal pencairan datetimelocal
+    public function datetimelocalTanggalPencairan(): Attribute
+    {
+        $tanggal = $this->tanggal_pencairan->format('Y-m-d\TH:i') ?? "";
+        return Attribute::make(
+            get: fn() => $tanggal
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\User;
 
+use App\Enum\Admin\User\EnumRole;
 use App\Http\Controllers\Controller;
 use App\Models\Roles;
 use App\Models\User;
@@ -20,7 +21,7 @@ class EditUser extends Controller
             route('admin.users.edit', ['id' => $id]) => 'Edit akun pengguna'
         ];
         $user = User::findOrFail($id);
-        $list_role = $roles_model->get_roles_without_admin_role();
+        $list_role = EnumRole::options();
         $payload = compact('breadcrumbs', 'user', 'list_role');
         return view('admin.pages.users.edit', $payload);
     }

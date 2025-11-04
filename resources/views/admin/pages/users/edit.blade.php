@@ -88,10 +88,11 @@
             <div class="grid md:col-span-2">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Role</legend>
-                    <select name="role_id" class="select w-full">
-                        @foreach ($list_role as $role)
-                            <option value="{{ $role->id }}" @if ($role->id === $user->role_id) selected @endif>
-                                {{ Str::of($role->name)->replace('_', ' ')->ucfirst() }}</option>
+                    <select name="role" class="select w-full">
+                        @foreach ($list_role as $value => $key)
+                            <option value="{{ $value }}" @if ($value === $user->role->value) selected @endif>
+                                {{ $key }}
+                            </option>
                         @endforeach
                     </select>
                 </fieldset>
