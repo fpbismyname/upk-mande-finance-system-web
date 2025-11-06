@@ -2,29 +2,28 @@
 
 namespace App\Services\Admin\User;
 use App\Models\User;
+use App\Services\Utils\Result;
 use Illuminate\Support\Facades\DB;
 
 class UserService
 {
-    protected $model;
-
-    public function __construct()
-    {
-        $this->model = new User();
-    }
     public function addUser($datas)
     {
         if (empty($datas)) {
             return false;
         }
-        return DB::transaction(function () use ($datas) {
-            $createUser = $this->model->create($datas);
-            return $createUser->wasRecentlyCreated;
+        $added_user = DB::transaction(function () use ($datas) {
+            return User::create($datas);
         });
+
+        if ($added_user->wasRecentlyCreated) {
+            return Result::success(__('crud.create_success', ['item' => $added_user->name]));
+        }
+        return Result::error(__('crud.create_failed', ['item' => $added_user->name]));
     }
-    public function updateUser($id_user, $datas)
+    public function updateUser($id, $datas)
     {
-        if (empty($datas) || empty($id_user)) {
+        if (empty($datas) || empty($id)) {
             return false;
         }
         // is request reset password
@@ -40,29 +39,40 @@ class UserService
             'role' => $datas['role'],
             'nomor_telepon' => $datas['nomor_telepon'],
         ];
-        if ($is_reset_pass) {
-            return DB::transaction(function () use ($id_user, $data_user, $new_user_pass) {
-                $currentUser = $this->model->findOrFail($id_user);
-                $updateUser = $currentUser->update($data_user);
-                $currentUser->resetPassword($new_user_pass);
-                return $updateUser;
-            });
-        } else {
-            return DB::transaction(function () use ($id_user, $datas) {
-                $currentUser = $this->model->findOrFail($id_user);
-                $updateUser = $currentUser->update($datas);
-                return $updateUser;
-            });
+        // Update User
+        $updated_user = DB::transaction(function () use ($is_reset_pass, $data_user, $new_user_pass, $id) {
+            $current_user = User::findOrFail($id);
+            // reset jika input mengizinkan reset password
+            if ($is_reset_pass) {
+                $current_user->resetPassword($new_user_pass);
+            }
+            $current_user->fill($data_user);
+            $current_user->save();
+            return $current_user;
+        });
+
+        if ($updated_user) {
+            return Result::success(__('crud.update_success', ['item' => $updated_user->name]));
         }
+
+        return Result::error(__('crud.update_failed', ['item' => $updated_user->name]));
     }
     public function deleteUser($id)
     {
         if (empty($id)) {
             return false;
         }
-        return DB::transaction(function () use ($id) {
-            $deleteUser = $this->model->findOrFail($id)->delete();
-            return $deleteUser;
+        // Delete user
+        $deleted_user = DB::transaction(function () use ($id) {
+            $current_user = User::findOrFail($id);
+            $current_user->delete();
+            return $current_user;
         });
+
+        if ($deleted_user) {
+            return Result::success(__('crud.delete_success', ['item' => $deleted_user->name]));
+        } else {
+            return Result::error(__('crud.delete_success', ['item' => $deleted_user->name]));
+        }
     }
 }

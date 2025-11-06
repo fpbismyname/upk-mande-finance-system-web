@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class CatatanPendanaan extends Model
@@ -34,7 +35,7 @@ class CatatanPendanaan extends Model
      *
      * @var array
      */
-    protected $appends = ['formatted_jumlah_saldo', 'formatted_tipe_catatan'];
+    protected $appends = ['formatted_jumlah_saldo', 'formatted_tipe_catatan', 'formatted_tanggal_catatan'];
 
     /**
      * Scope a query catatan pendanaan
@@ -45,6 +46,10 @@ class CatatanPendanaan extends Model
         return $query->where('catatan', 'like', "%{$keyword}%")
             ->orWhere('jumlah_saldo', 'like', "%{$keyword}%")
             ->orWhere('tipe_catatan', 'like', "{$keyword}");
+    }
+    public function scopeFilterTipeCatatan($query, $keyword)
+    {
+        return $query->where('tipe_catatan', $keyword);
     }
     /**
      * Accessor
@@ -66,6 +71,13 @@ class CatatanPendanaan extends Model
     {
         return Attribute::make(
             set: fn($value) => floatval($value)
+        );
+    }
+    public function formattedTanggalCatatan(): Attribute
+    {
+        $tanggal = $this->created_at ? Carbon::parse($this->created_at)->format("d M Y | H:i") : "-";
+        return Attribute::make(
+            get: fn() => $tanggal
         );
     }
 }

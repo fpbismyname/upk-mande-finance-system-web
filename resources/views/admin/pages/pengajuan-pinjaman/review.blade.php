@@ -1,17 +1,3 @@
-@push('scripts')
-    <script>
-        function open_modal_review(id) {
-            const modal = document.getElementById(id)
-            modal.showModal()
-        }
-
-        function close_modal_review(id) {
-            const modal = document.getElementById(id)
-            modal.close()
-        }
-    </script>
-@endpush
-
 <x-layouts.admin-app title="Review pengajuan pinjaman" :breadcrumbs="$breadcrumbs">
     <div class="flex flex-col gap-4">
         {{-- Data pengajuan --}}
@@ -61,25 +47,25 @@
             {{-- Tanggal pengajuan --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Pengajuan Pada</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_pengajuan }}"
-                    readonly />
+                <input type="text" class="input w-full"
+                    value="{{ $pengajuan_pinjaman->formatted_tanggal_pengajuan }}" readonly />
             </fieldset>
 
             {{-- Tanggal disetujui --}}
-            @if ($pengajuan_pinjaman->disetujui_pada)
+            @if ($pengajuan_pinjaman->status_disetujui)
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Disetujui Pada</legend>
-                    <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_disetujui }}"
-                        readonly />
+                    <input type="text" class="input w-full"
+                        value="{{ $pengajuan_pinjaman->formatted_tanggal_disetujui }}" readonly />
                 </fieldset>
             @endif
 
             {{-- Tanggal di tolak --}}
-            @if ($pengajuan_pinjaman->ditolak_pada)
+            @if ($pengajuan_pinjaman->status_ditolak)
                 <fieldset class="fieldset">
-                    <legend class="fieldset-legend">Ditolak Pada</legend>
-                    <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_ditolak }}"
-                        readonly />
+                    <legend class="fieldset-legend">Tanggal ditolak</legend>
+                    <input type="text" class="input w-full"
+                        value="{{ $pengajuan_pinjaman->formatted_tanggal_ditolak }}" readonly />
                 </fieldset>
             @endif
 
@@ -96,10 +82,10 @@
 
         {{-- Approval action --}}
         <div
-            class="grid {{ $pengajuan_pinjaman->dalam_proses_pengajuan ? 'md:grid-cols-2' : 'md:grid-cols-1 place-items-center' }} gap-4 my-8">
-            @if ($pengajuan_pinjaman->dalam_proses_pengajuan)
+            class="grid {{ $pengajuan_pinjaman->status_dalam_proses_pengajuan ? 'md:grid-cols-2' : 'md:grid-cols-1 place-items-center' }} gap-4 my-8">
+            @if ($pengajuan_pinjaman->status_dalam_proses_pengajuan)
                 <button href="{{ route('admin.users.index') }}" class="btn btn-primary"
-                    onclick="open_modal_review('modal-review')">
+                    onclick="window.open_modal('modal-review')">
                     {{ __('crud.action.review') }}
                 </button>
             @endif
@@ -128,7 +114,7 @@
                             @endforeach
                         </select>
                         <p class="validator-hint hidden">
-                            {{ __('validation.required', ['Status pengajuan pinjaman']) }}
+                            {{ __('validation.required', ['Attribute' => 'Status pengajuan pinjaman']) }}
                         </p>
                         @error('status')
                             <small class="text-error">{{ $message }}</small>
@@ -150,7 +136,7 @@
                             onclick="return confirm('Apakah anda yakin dengan review anda ?')">
                             {{ __('crud.action.send') }}
                         </button>
-                        <button type="reset" class="btn btn-neutral" onclick="close_modal_review('modal-review')">
+                        <button type="reset" class="btn btn-neutral" onclick="window.close_modal('modal-review')">
                             {{ __('crud.action.cancel') }}
                         </button>
                     </div>

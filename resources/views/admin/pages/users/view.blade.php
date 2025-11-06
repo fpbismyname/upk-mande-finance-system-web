@@ -2,7 +2,7 @@
     <x-slot:right_item>
         @if (auth()->user()->id !== $user->id)
             <a href="{{ route('admin.users.edit', ['id' => $user->id]) }}" class="btn btn-primary">Edit</a>
-            <x-partials.delete-item item="user" :route="route('admin.users.delete', ['id' => $user->id])" />
+            <x-partials.delete-item item="user" :route="route('admin.users.destroy', ['id' => $user->id])" />
         @endif
     </x-slot:right_item>
     <div class="flex flex-col gap-4">

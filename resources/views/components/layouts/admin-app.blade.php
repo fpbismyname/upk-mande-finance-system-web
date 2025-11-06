@@ -95,7 +95,7 @@
                         </div>
                         <ul class="dropdown-content menu w-full bg-base-100 rounded-box">
                             <li>
-                                <a href="">
+                                <a href="{{ route('admin.settings.view') }}">
                                     <x-lucide-settings class="w-4" />
                                     <span>Pengaturan</span>
                                 </a>

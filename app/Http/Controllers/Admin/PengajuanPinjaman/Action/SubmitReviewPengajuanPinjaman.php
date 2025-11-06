@@ -25,13 +25,9 @@ class SubmitReviewPengajuanPinjaman extends Controller
         // Data review pengajuan
         $data_review = $request->only($pengajuan_pinjaman_model->getFillable());
         // Submit review
-        $submit_review = $pengajuan_pinjaman_service->submit_review($id, $data_review);
+        $result = $pengajuan_pinjaman_service->submit_review($id, $data_review);
         // Validasi review
-        if ($submit_review) {
-            Toast::show(__('crud.update_success', ["item" => $data_pengajuan_pinjaman->kelompok_name]));
-        } else {
-            Toast::show(__('crud.update_failed', ["item" => $data_pengajuan_pinjaman->kelompok_name]));
-        }
+        Toast::show($result->message, $result->type_message);
         return redirect()->route('admin.pengajuan-pinjaman.review', [$data_pengajuan_pinjaman->id]);
     }
 }

@@ -18,14 +18,10 @@ class DeleteKelompok extends Controller
         $kelompok = Kelompok::findOrFail($id_kelompok);
 
         // Delete kelompok
-        $delete_kelompok = $kelompok_service->delete_kelompok($id_kelompok);
+        $result = $kelompok_service->delete_kelompok($id_kelompok);
 
         // Validasi delete kelompok
-        if ($delete_kelompok) {
-            Toast::show(__('crud.delete_success', ['item' => $kelompok->name]));
-        } else {
-            Toast::show(__('crud.delete_failed', ['item' => $kelompok->name]));
-        }
+        Toast::show($result->message, $result->type_message);
 
         // Kembali ke halaman awal
         return redirect()->route('admin.kelompok.index');

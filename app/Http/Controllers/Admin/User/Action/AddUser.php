@@ -25,14 +25,9 @@ class AddUser extends Controller
             'role' => 'required'
         ]);
 
-        $username = $new_entries['name'];
-        $add_new_user = $user_service->addUser($new_entries);
+        $result = $user_service->addUser($new_entries);
 
-        if (!$add_new_user) {
-            Toast::show(__('crud.create_failed', ['item' => $username]));
-            return redirect()->route('admin.users.index');
-        }
-        Toast::show(__('crud.create_success', ['item' => $username]));
+        Toast::show($result->message, $result->type_message);
         return redirect()->route('admin.users.index');
     }
 }

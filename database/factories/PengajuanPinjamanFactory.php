@@ -20,7 +20,7 @@ class PengajuanPinjamanFactory extends Factory
         return [
             'file_proposal' => "https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf",
             'nominal_pinjaman' => floor($this->faker->numberBetween(1000000, 10000000) / 500000) * 500000,
-            'tenor' => $this->faker->randomElement([3, 6, 12]),
+            'tenor' => $this->faker->randomElement([3, 6, 9, 12]),
             'tanggal_pengajuan' => now(),
             'tanggal_disetujui' => null,
             'tanggal_ditolak' => null,

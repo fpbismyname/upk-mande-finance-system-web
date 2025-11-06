@@ -7,7 +7,7 @@ enum EnumStatusPinjaman: string
     case MENUNGGAK = 'menunggak';
     case BERLANGSUNG = 'berlangsung';
     case SELESAI = 'selesai';
-
+    case DIBATALKAN = 'dibatalkan';
     public static function options(): array
     {
         return array_reduce(self::cases(), function ($carry, $case) {

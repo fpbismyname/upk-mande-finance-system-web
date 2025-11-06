@@ -9,7 +9,6 @@ use App\Models\Pendanaan;
 use App\Services\Admin\CatatanPendanaan\CatatanPendanaanService;
 use App\Services\Utils\Debug;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ListPendanaan extends Controller
 {
@@ -23,6 +22,7 @@ class ListPendanaan extends Controller
     {
         // Get search query
         $search = request()->get('search');
+        $tipe_catatan = request()->get('tipe_catatan');
 
         // Query model
         $query_catatan = $catatan_pendanaan_model->with($this->catatan_relations);
@@ -31,6 +31,11 @@ class ListPendanaan extends Controller
         // Search data if any search input
         if (!empty($search)) {
             $query_catatan->filter($search);
+        }
+
+        // Search data if any tipe catatan query
+        if (!empty($tipe_catatan)) {
+            $query_catatan->filterTipeCatatan($tipe_catatan);
         }
 
         // Datas

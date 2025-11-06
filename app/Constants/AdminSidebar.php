@@ -73,40 +73,7 @@ class AdminSidebar
                 'title' => 'Pinjaman Kelompok',
                 'icon' => 'circle-dollar-sign',
                 'type' => 'menu',
-                'route_name' => 'admin.index',
-                'roles' => ['admin']
-            ],
-            [
-                'title' => 'Cicilan Kelompok',
-                'icon' => 'coins',
-                'type' => 'menu',
-                'route_name' => 'admin.index',
-                'roles' => ['admin']
-            ],
-            [
-                'title' => 'Manajemen Laporan',
-                'type' => 'menu-title',
-                'roles' => ['admin']
-            ],
-            [
-                'title' => 'Laporan Pinjaman',
-                'icon' => 'circle-dollar-sign',
-                'type' => 'menu',
-                'route_name' => 'admin.index',
-                'roles' => ['admin']
-            ],
-            [
-                'title' => 'Laporan Cicilan',
-                'icon' => 'coins',
-                'type' => 'menu',
-                'route_name' => 'admin.index',
-                'roles' => ['admin']
-            ],
-            [
-                'title' => 'Laporan Pendanaan',
-                'icon' => 'coins',
-                'type' => 'menu',
-                'route_name' => 'admin.index',
+                'route_name' => 'admin.pinjaman-kelompok.index',
                 'roles' => ['admin']
             ]
         ];

@@ -35,12 +35,9 @@
             <x-ui.table>
                 <thead>
                     <th>#</th>
-                    <th>NIK</th>
-                    <th>Nomor telepon</th>
                     <th>Nama lengkap</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th>Alamat rumah</th>
                     <th class="text-end">Aksi</th>
                 </thead>
                 <tbody>
@@ -52,12 +49,9 @@
                             <tr @if ($current_account) class="bg-primary/50" @endif>
                                 <td>{{ $loop->iteration + ($datas->currentPage() - 1) * $datas->perPage() }}
                                 </td>
-                                <td>{{ $item->nik }}</td>
-                                <td>{{ $item->nomor_telepon }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
                                 <td>{{ $item->formatted_role }}</td>
-                                <td>{{ $item->alamat }}</td>
                                 <td>
                                     @if ($current_account)
                                         <div class="flex w-full justify-end">
@@ -78,7 +72,7 @@
                                                 {{ __('crud.action.edit') }}
                                             </a>
                                             <form method="post"
-                                                action="{{ route('admin.users.delete', ['id' => $item->id]) }}">
+                                                action="{{ route('admin.users.destroy', ['id' => $item->id]) }}">
                                                 @method('delete')
                                                 @csrf
                                                 <button class="btn btn-sm btn-link link-hover" type="submit"

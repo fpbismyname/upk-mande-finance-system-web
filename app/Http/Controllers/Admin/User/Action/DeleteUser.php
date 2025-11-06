@@ -14,13 +14,8 @@ class DeleteUser extends Controller
      */
     public function __invoke($id, UserService $user_service)
     {
-        $current_user = User::findOrFail($id);
-        $delete_user = $user_service->deleteUser($id);
-        if ($delete_user) {
-            Toast::show(__('crud.delete_success', ['item' => $current_user->name]), 'success');
-            return redirect()->route('admin.users.index');
-        }
-        Toast::show(__('crud.delete_failed', ['item' => $current_user->name]), 'error');
-        return redirect()->back();
+        $result = $user_service->deleteUser($id);
+        Toast::show($result->message, $result->type_message);
+        return redirect()->route('admin.users.index');
     }
 }

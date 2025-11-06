@@ -34,6 +34,7 @@ class User extends Authenticatable
         'email',
         'role',
         'alamat',
+        'password',
         'nomor_telepon',
     ];
 
@@ -75,7 +76,7 @@ class User extends Authenticatable
     }
     public function scopeFilterRole($query, $keyword)
     {
-        return $query->where('role', 'like', $keyword);
+        return $query->where('role', $keyword);
     }
     public function scopeDoesntHaveKelompok($query, $except = null)
     {

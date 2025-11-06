@@ -32,14 +32,14 @@ class JadwalPencairan extends Model
         'ketua_name',
         'formatted_status',
         'formatted_tanggal_pencairan',
-        'datetimalocalTanggalPencairan',
-        'pengajuan_status',
-        'pengajuan_nominal',
-        'pengajuan_tenor',
-        'pengajuan_disetujui',
-        'telah_dicairkan',
-        'terjadwal',
-        'belum_terjadwal'
+        'formatted_datetimelocalTanggalPencairan',
+        'formatted_pengajuan_status',
+        'formatted_pengajuan_nominal',
+        'formatted_pengajuan_tenor',
+        'formatted_pengajuan_disetujui',
+        'status_telah_dicairkan',
+        'status_terjadwal',
+        'status_belum_terjadwal'
     ];
 
     /**
@@ -87,11 +87,6 @@ class JadwalPencairan extends Model
         return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
             $qr->where('tenor', $keyword));
     }
-    public function scopeFilterStatusPengajuan($query, $keyword)
-    {
-        return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
-            $qr->where('status', $keyword));
-    }
     /**
      * Accessor
      */
@@ -111,6 +106,22 @@ class JadwalPencairan extends Model
             get: fn() => Str::of($ketua)
         );
     }
+    // get pengajuan_nominal
+    public function pengajuanNominal(): Attribute
+    {
+        $nominal = $this->pengajuan_pinjaman->nominal_pinjaman;
+        return Attribute::make(
+            get: fn() => $nominal
+        );
+    }
+    // get pengajuan_tenor
+    public function pengajuanTenor(): Attribute
+    {
+        $nominal = $this->pengajuan_pinjaman->tenor;
+        return Attribute::make(
+            get: fn() => $nominal
+        );
+    }
     // get status_name
     public function formattedStatus(): Attribute
     {
@@ -120,7 +131,7 @@ class JadwalPencairan extends Model
         );
     }
     // get status pengajuan
-    public function pengajuanStatus(): Attribute
+    public function formattedPengajuanStatus(): Attribute
     {
         $status_name = $this->pengajuan_pinjaman->status->value ?? '-';
         return Attribute::make(
@@ -128,7 +139,7 @@ class JadwalPencairan extends Model
         );
     }
     // get formatted_nominal_pinjaman
-    public function pengajuanNominal(): Attribute
+    public function formattedPengajuanNominal(): Attribute
     {
         $nominal = $this->pengajuan_pinjaman->nominal_pinjaman ?? 0;
         return Attribute::make(
@@ -136,7 +147,7 @@ class JadwalPencairan extends Model
         );
     }
     // get formatted_tenor
-    public function pengajuanTenor(): Attribute
+    public function formattedPengajuanTenor(): Attribute
     {
         $tenor = $this->pengajuan_pinjaman->tenor->value ?? '-';
         return Attribute::make(
@@ -144,9 +155,9 @@ class JadwalPencairan extends Model
         );
     }
     // get pengajuan_disetujui
-    public function pengajuanTanggalDisetujui(): Attribute
+    public function formattedPengajuanTanggalDisetujui(): Attribute
     {
-        $tanggal_disetujui = $this->pengajuan_pinjaman->formatted_disetujui ?? '-';
+        $tanggal_disetujui = $this->pengajuan_pinjaman->formatted_tanggal_disetujui;
         return Attribute::make(
             get: fn() => $tanggal_disetujui
         );
@@ -160,7 +171,7 @@ class JadwalPencairan extends Model
         );
     }
     // Get telah_dicairkan
-    public function telahDicairkan(): Attribute
+    public function statusTelahDicairkan(): Attribute
     {
         $status = $this->status === EnumStatusJadwalPencairan::TELAH_DICAIRKAN;
         return Attribute::make(
@@ -168,7 +179,7 @@ class JadwalPencairan extends Model
         );
     }
     // Get terjadwal
-    public function terjadwal(): Attribute
+    public function statusTerjadwal(): Attribute
     {
         $status = $this->status === EnumStatusJadwalPencairan::TERJADWAL;
         return Attribute::make(
@@ -176,7 +187,7 @@ class JadwalPencairan extends Model
         );
     }
     // Get belum_terjadwal
-    public function belumTerjadwal(): Attribute
+    public function statusBelumTerjadwal(): Attribute
     {
         $status = $this->status === EnumStatusJadwalPencairan::BELUM_TERJADWAL;
         return Attribute::make(
@@ -184,11 +195,12 @@ class JadwalPencairan extends Model
         );
     }
     // Get tanggal pencairan datetimelocal
-    public function datetimelocalTanggalPencairan(): Attribute
+    public function formattedDatetimelocalTanggalPencairan(): Attribute
     {
-        $tanggal = $this->tanggal_pencairan->format('Y-m-d\TH:i') ?? "";
+        $tanggal = $this->tanggal_pencairan ? $this->tanggal_pencairan->format('Y-m-d\TH:i') : "";
         return Attribute::make(
             get: fn() => $tanggal
         );
     }
+
 }

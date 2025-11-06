@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->decimal('bunga', 5, 2)->default(0);
             $table->string('status')->default(EnumStatusPinjaman::BERLANGSUNG->value);
             $table->decimal('nominal_pinjaman', 15, 2);
-            $table->decimal('nominal_final_pinjaman', 15, 2);
+            $table->decimal('nominal_pinjaman_final', 15, 2);
             $table->dateTime('tanggal_mulai');
             $table->dateTime('tanggal_jatuh_tempo');
             $table->timestamps();

@@ -29,7 +29,7 @@
                     <input type="number" name="limit_pinjaman" placeholder="Limit pinjaman" pattern="\s[0-9]"
                         value="{{ old('limit_pinjaman') ?? 0 }}" min="1000000" max="9999999999999"
                         class="input w-full validator"
-                        oninput="window.currency_format_element(this, 'preview-limit-pinjaman')" required />
+                        oninput="window.preview_currency_element(this, 'preview-limit-pinjaman')" required />
                     <p class="validator-hint hidden">
                         {{ __('validation.required', ['attribute' => 'Limit pinjaman']) }}
                         <br>

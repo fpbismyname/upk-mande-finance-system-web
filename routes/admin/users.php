@@ -18,5 +18,5 @@ Route::prefix('/users')->name('users.')->group(function () {
     // Action routes
     Route::post('/add', AddUser::class)->name('add');
     Route::put('/{id}/update', UpdateUser::class)->name('update');
-    Route::delete('/{id}/delete', DeleteUser::class)->name('delete');
+    Route::delete('/{id}/delete', DeleteUser::class)->name('destroy');
 });

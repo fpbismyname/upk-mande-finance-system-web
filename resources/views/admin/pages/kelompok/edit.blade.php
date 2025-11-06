@@ -32,7 +32,7 @@
                 <input type="number" name="limit_pinjaman" placeholder="Limit pinjaman" pattern="\s[0-9]"
                     value="{{ old('limit_pinjaman') ?? $kelompok->limit_pinjaman }}" min="1000000" max="9999999999999"
                     class="input w-full validator"
-                    oninput="window.currency_format_element(this, 'preview-limit-pinjaman')" required />
+                    oninput="window.preview_currency_element(this, 'preview-limit-pinjaman')" required />
                 <p class="validator-hint hidden">
                     {{ __('validation.required', ['attribute' => 'Limit pinjaman']) }}
                     <br> {{ __('validation.min.numeric', ['Attribute' => 'Limit pinjaman', 'min' => 'Rp 1.000.000']) }}

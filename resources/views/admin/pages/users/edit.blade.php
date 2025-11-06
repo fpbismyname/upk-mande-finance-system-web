@@ -22,11 +22,6 @@
 @endpush
 
 <x-layouts.admin-app :title="'Edit Akun ' . $user->name" :breadcrumbs="$breadcrumbs">
-    <x-slot:right_item>
-        @if (auth()->user()->id !== $user->id)
-            <x-partials.delete-item item="user" :route="route('admin.users.delete', ['id' => $user->id])" />
-        @endif
-    </x-slot:right_item>
     <div class="flex flex-col gap-4">
         {{-- Edit form --}}
         <form action="{{ route('admin.users.update', ['id' => $user->id]) }}"

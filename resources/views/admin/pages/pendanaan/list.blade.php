@@ -1,24 +1,3 @@
-@push('scripts')
-    <script>
-        // Open modal pendanaan
-        function open_modal_pendanan(id) {
-            const modal = document.getElementById(id)
-            modal.showModal()
-        }
-
-        // Close modal pendanaan
-        function close_modal_pendanaan(id) {
-            const modal = document.getElementById(id)
-            modal.close()
-        }
-
-        // Format saldo jadi currency
-        function preview_amount(e, element) {
-            const previewElement = document.getElementById(element)
-            previewElement.innerText = window.format_currency(e.value)
-        }
-    </script>
-@endpush
 <x-layouts.admin-app title="Kelola Saldo Pendanaan" :breadcrumbs="$breadcrumbs">
 
     <!-- Pendanaan preview -->
@@ -52,11 +31,11 @@
     </div>
     <!-- Action pendanaan -->
     <div class="grid grid-cols-2 gap-2">
-        <button class="btn btn-success w-full" onclick="open_modal_pendanan('modal-topup-saldo')">
+        <button class="btn btn-success w-full" onclick="window.open_modal('modal-topup-saldo')">
             <x-lucide-banknote class="w-4" />
             Topup saldo
         </button>
-        <button class="btn btn-error w-full" onclick="open_modal_pendanan('modal-tarik-saldo')">
+        <button class="btn btn-error w-full" onclick="window.open_modal('modal-tarik-saldo')">
             <x-lucide-hand-coins class="w-4" />
             Tarik saldo
         </button>
@@ -74,12 +53,22 @@
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row gap-4">
                     {{-- Seach bar --}}
-                    <form method="get">
-                        <div class="join">
-                            <div class="input join-item">
-                                <input type="text" name="search" value="{{ request()->get('search') }}"
-                                    placeholder="Cari catatan pendanaan..." />
-                            </div>
+                    <form method="get" class="flex flex-row gap-4 flex-wrap">
+                        <label class="select w-fit">
+                            <span class="label">Tipe catatan</span>
+                            <select name="tipe_catatan">
+                                <option value="" selected>Pilih tipe catatan</option>
+                                @foreach ($list_tipe_catatan as $value => $key)
+                                    <option value="{{ $value }}"
+                                        @if ($value === request()->get('tipe_catatan')) selected @endif>
+                                        {{ $key }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <div class="flex flex-row gap-2">
+                            <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
+                                placeholder="Cari catatan..." />
                             <button type="submit" class="btn btn-primary join-item">
                                 <x-lucide-search class="w-4" />
                             </button>
@@ -94,6 +83,7 @@
                         <th>Catatan</th>
                         <th>Jumlah saldo</th>
                         <th>Tipe catatan</th>
+                        <th>Tanggal catatan</th>
                     </thead>
                     <tbody>
                         @if (count($datas_catatan_pendanaan) > 0)
@@ -109,6 +99,7 @@
                                     <td
                                         class="{{ $item->tipe_catatan === App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan::INFLOW ? 'text-success' : 'text-error' }}">
                                         {{ $item->formatted_tipe_catatan }}</td>
+                                    <td>{{ $item->formatted_tanggal_catatan }}</td>
                                 </tr>
                             @endforeach
                         @else
@@ -151,8 +142,8 @@
                     <label class="input validator w-full">
                         <span>Rp</span>
                         <input type="number" name="amount_topup_saldo" pattern="\d{6,15}" min="100000"
-                            oninput="preview_amount(this, 'preview-topup')" max="999999999999999" inputmode="numeric"
-                            value="0" required />
+                            oninput="window.preview_currency_element(this, 'preview-topup')" max="999999999999999"
+                            inputmode="numeric" value="0" required />
                     </label>
                     <p class="validator-hint hidden">
                         {{ __('validation.min.numeric', ['Attribute' => 'Jumlah saldo topup', 'min' => 'Rp 100.000']) }}
@@ -171,7 +162,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <button type="submit" class="btn btn-success">Topup</button>
                     <button type="reset" class="btn btn-neutral"
-                        onclick="close_modal_pendanaan('modal-topup-saldo')">{{ __('crud.action.cancel') }}</button>
+                        onclick="window.close_modal('modal-topup-saldo')">{{ __('crud.action.cancel') }}</button>
                 </div>
             </form>
         </div>
@@ -203,8 +194,8 @@
                     <label class="input validator w-full">
                         <span>Rp</span>
                         <input type="number" name="amount_tarik_saldo" pattern="\d{6,15}" min="100000"
-                            oninput="preview_amount(this, 'preview-tarik-saldo')" max="{{ $datas_pendanaan->saldo }}"
-                            value="0" inputmode="numeric" required />
+                            oninput="window.preview_currency_element(this, 'preview-tarik-saldo')"
+                            max="{{ $datas_pendanaan->saldo }}" value="0" inputmode="numeric" required />
                     </label>
                     <p class="validator-hint hidden">
                         {{ __('validation.min.numeric', ['Attribute' => 'Jumlah saldo ditarik', 'min' => 'Rp 100.000']) }}
@@ -225,7 +216,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <button type="submit" class="btn btn-error">Tarik dana</button>
                     <button type="reset" class="btn btn-neutral"
-                        onclick="close_modal_pendanaan('modal-tarik-saldo')">{{ __('crud.action.cancel') }}</button>
+                        onclick="window.close_modal('modal-tarik-saldo')">{{ __('crud.action.cancel') }}</button>
                 </div>
             </form>
         </div>

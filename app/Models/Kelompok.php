@@ -71,6 +71,10 @@ class Kelompok extends Model
     {
         return $this->hasMany(PengajuanPinjaman::class, 'kelompok_id', 'id');
     }
+    public function pinjaman_kelompok()
+    {
+        return $this->hasMany(PinjamanKelompok::class, 'kelompok_id', 'id');
+    }
 
     /**
      * Accessor

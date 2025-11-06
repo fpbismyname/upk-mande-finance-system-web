@@ -13,7 +13,7 @@ class EditUser extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, $id, Roles $roles_model)
+    public function __invoke(Request $request, $id)
     {
         $breadcrumbs = [
             route('admin.index') => 'Dashboard',

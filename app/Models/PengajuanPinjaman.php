@@ -58,7 +58,9 @@ class PengajuanPinjaman extends Model
         'formatted_tanggal_pengajuan',
         'formatted_tanggal_disetujui',
         'formatted_tanggal_ditolak',
-        'dalam_proses_pengajuan'
+        'status_dalam_proses_pengajuan',
+        'status_ditolak',
+        'status_disetujui'
     ];
 
     /**
@@ -161,12 +163,28 @@ class PengajuanPinjaman extends Model
             get: fn() => $value ? Carbon::parse($value)->format(' d M Y | H:i') : "-"
         );
     }
-    // get is_approved pinjaman
-    public function dalamProsesPengajuan(): Attribute
+    // get dalam_proses_pengajuan
+    public function statusDalamProsesPengajuan(): Attribute
     {
         $status = $this->status;
         return Attribute::make(
             get: fn() => $status === EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN
+        );
+    }
+    // get ditolak
+    public function statusDitolak(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DITOLAK
+        );
+    }
+    // get disetujui
+    public function statusDisetujui(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DISETUJUI
         );
     }
 }

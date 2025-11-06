@@ -7,6 +7,7 @@ enum EnumStatusJadwalPencairan: string
     case BELUM_TERJADWAL = 'belum_terjadwal';
     case TERJADWAL = 'terjadwal';
     case TELAH_DICAIRKAN = 'telah_dicairkan';
+    case DIBATALKAN = 'dibatalkan';
 
     public static function options(): array
     {

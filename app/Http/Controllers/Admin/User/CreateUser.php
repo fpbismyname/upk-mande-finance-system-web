@@ -12,7 +12,7 @@ class CreateUser extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Roles $roles_model)
+    public function __invoke()
     {
         $breadcrumbs = [
             route('admin.index') => 'Dashboard',

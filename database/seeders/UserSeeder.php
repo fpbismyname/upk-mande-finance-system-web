@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         $datas = [
             [
-                'nik' => '4259322081123131',
+                'nik' => '',
                 'name' => 'Administrasi',
                 'email' => 'admin@gmail.com',
                 'password' => 'admin123',
@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
                 'role' => EnumRole::ADMIN
             ],
             [
-                'nik' => '1761933777123141',
+                'nik' => '',
                 'name' => 'Kepala UPK',
                 'email' => 'kepalaupkmande@gmail.com',
                 'password' => 'executive123',
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
                 'role' => EnumRole::KEPALA_INSTITUSI
             ],
             [
-                'nik' => '1237496597123131',
+                'nik' => '',
                 'name' => 'Keuangan UPK',
                 'email' => 'akuntanupkmande@gmail.com',
                 'password' => 'akuntan123',
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
                 'role' => EnumRole::AKUNTAN
             ],
             [
-                'nik' => '1241421241414141',
+                'nik' => '',
                 'name' => 'Pengelola Pendanaan UPK',
                 'email' => 'pendanaanupkmande@gmail.com',
                 'password' => 'pendanaan123',

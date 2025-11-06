@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\Admin\User\UserService;
 use App\Services\UI\Toast;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UpdateUser extends Controller
 {
@@ -28,16 +27,9 @@ class UpdateUser extends Controller
             'new_password' => '',
         ]);
         // Update user data
-        $username = $new_entries['name'];
-        $update_user = $user_service->updateUser($id, $new_entries);
-        // cek validasi pembaruan data
-        if ($update_user) {
-            // data berhasil di perbarui
-            Toast::show(__('crud.update_success', ['item' => $username]), 'success');
-            return redirect()->route('admin.users.index');
-        }
-        // data gagal di perbarui
-        Toast::show(__('crud.update_failed'), 'error');
+        $result = $user_service->updateUser($id, $new_entries);
+        // validasi hasil update
+        Toast::show($result->message, $result->type_message);
         return redirect()->back();
     }
 }

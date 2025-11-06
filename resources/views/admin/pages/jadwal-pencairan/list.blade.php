@@ -18,17 +18,6 @@
                         </select>
                     </label>
                     <label class="select w-fit">
-                        <span class="label">Status pengajuan</span>
-                        <select name="status_pengajuan">
-                            <option value="" selected>Pilih status</option>
-                            @foreach ($list_status_pengajuan as $value => $key)
-                                <option value="{{ $value }}" @if ($value === request()->get('status_pengajuan')) selected @endif>
-                                    {{ $key }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </label>
-                    <label class="select w-fit">
                         <span class="label">Tenor pengajuan</span>
                         <select name="tenor_pengajuan">
                             <option value="" selected>Pilih tenor pengajuan</option>
@@ -54,7 +43,6 @@
                 <thead>
                     <th>#</th>
                     <th>Nama kelompok</th>
-                    <th>Ketua kelompok</th>
                     <th>Nominal pinjaman</th>
                     <th>Tenor pinjaman (bulan)</th>
                     <th>Tanggal pencairan</th>
@@ -68,17 +56,21 @@
                                 <td>{{ $loop->iteration + ($datas->currentPage() - 1) * $datas->perPage() }}
                                 </td>
                                 <td>{{ $item->kelompok_name }}</td>
-                                <td>{{ $item->ketua_name }}</td>
-                                <td>{{ $item->pengajuan_nominal }}</td>
-                                <td>{{ $item->pengajuan_tenor }}</td>
+                                <td>{{ $item->formatted_pengajuan_nominal }}</td>
+                                <td>{{ $item->formatted_pengajuan_tenor }}</td>
                                 <td>{{ $item->formatted_tanggal_pencairan }}</td>
                                 <td>{{ $item->formatted_status }}</td>
                                 <td>
                                     <div class="flex flex-row gap-2">
                                         <a class="btn btn-sm btn-link link-hover"
                                             href="{{ route('admin.jadwal-pencairan.view', [$item->id]) }}">
-                                            <x-lucide-file-clock class="w-4" />
-                                            Jadwalkan
+                                            @if ($item->status_telah_dicairkan)
+                                                <x-lucide-eye class="w-4" />
+                                                {{ __('crud.action.detail') }}
+                                            @else
+                                                <x-lucide-file-clock class="w-4" />
+                                                Jadwalkan
+                                            @endif
                                         </a>
                                     </div>
                                 </td>

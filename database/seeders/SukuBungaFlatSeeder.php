@@ -12,7 +12,7 @@ class SukuBungaFlatSeeder extends Seeder
      */
     public function run(): void
     {
-        $datas = ['jumlah' => 11.2];
+        $datas = ['jumlah' => 18.00];
         SukuBungaFlat::createOrFirst($datas);
     }
 }

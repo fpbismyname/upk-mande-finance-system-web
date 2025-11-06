@@ -22,7 +22,7 @@ class ReviewPengajuanPinjaman extends Controller
             route('admin.pengajuan-pinjaman.index') => 'Daftar pengajuan pinjaman',
             null => "Review Pengajuan pinjaman"
         ];
-        $list_status = collect(EnumStatusPengajuanPinjaman::options())->except(['proses_pengajuan']);
+        $list_status = collect(EnumStatusPengajuanPinjaman::options())->except(['proses_pengajuan', 'dibatalkan']);
         $payload = compact('breadcrumbs', 'pengajuan_pinjaman', 'list_status');
         return view('admin.pages.pengajuan-pinjaman.review', $payload);
     }

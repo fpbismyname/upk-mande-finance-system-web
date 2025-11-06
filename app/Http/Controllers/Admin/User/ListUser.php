@@ -16,7 +16,7 @@ class ListUser extends Controller
      */
     public $relations = [];
     public $paginate = 10;
-    public function __invoke(User $user_model, Roles $roles_model)
+    public function __invoke(User $user_model)
     {
         // Get search and column query
         $search = request()->get('search');

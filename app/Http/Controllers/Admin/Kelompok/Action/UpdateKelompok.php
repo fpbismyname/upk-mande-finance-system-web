@@ -29,14 +29,10 @@ class UpdateKelompok extends Controller
         $data_kelompok = $request->only($kelompok_model->getFillable());
 
         // Update kelompok
-        $update_kelompok = $kelompok_service->update_kelompok($data_kelompok, $id_kelompok);
+        $result = $kelompok_service->update_kelompok($data_kelompok, $id_kelompok);
 
         // Validasi update kelompok
-        if ($update_kelompok) {
-            Toast::show(__('crud.update_success', ['item' => $kelompok->name]));
-        } else {
-            Toast::show(__('crud.update_failed', ['item' => $kelompok->name]));
-        }
+        Toast::show($result->message, $result->type_message);
 
         // Kembali kehalaman awal
         return redirect()->back();

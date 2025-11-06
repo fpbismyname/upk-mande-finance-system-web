@@ -26,14 +26,10 @@ class AddKelompok extends Controller
         $data_kelompok = $request->only($kelompok_model->getFillable());
 
         // Add new kelompok
-        $add_kelompok = $kelompok_service->add_kelompok($data_kelompok);
+        $result = $kelompok_service->add_kelompok($data_kelompok);
 
         // Validate add new kelompok
-        if ($add_kelompok) {
-            Toast::show(__('crud.create_success', ['item' => 'Kelompok']));
-        } else {
-            Toast::show(__('crud.create_failed', ['item' => 'kelompok']));
-        }
+        Toast::show($result->message, $result->type_message);
 
         return redirect()->route('admin.kelompok.index');
     }

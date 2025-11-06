@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Auth\Action\SubmitLogin;
 use App\Http\Controllers\Admin\Auth\Action\SubmitLogout;
 use App\Http\Controllers\Admin\Auth\LoginView;
 use App\Http\Controllers\Admin\Dashboard\DashboardView;
+use App\Http\Controllers\Admin\Settings\ViewSettings;
 use App\Http\Middleware\Auth\Allowance;
 use Illuminate\Support\Facades\Route;
 
@@ -40,5 +41,9 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         include __DIR__ . "/pengajuan_pinjaman.php";
         // Jadwal pencairan Routes
         include __DIR__ . "/jadwal_pencairan.php";
+        // Pinjaman kelompok Routes
+        include __DIR__ . "/pinjaman_kelompok.php";
+        // Settings Routes
+        include __DIR__ . "/settings.php";
     });
 });

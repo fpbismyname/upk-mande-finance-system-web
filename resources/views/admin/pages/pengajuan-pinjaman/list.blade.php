@@ -63,8 +63,13 @@
                                     <div class="flex flex-row gap-2">
                                         <a class="btn btn-sm btn-link link-hover"
                                             href="{{ route('admin.pengajuan-pinjaman.review', [$item->id]) }}">
-                                            <x-lucide-file-search class="w-4" />
-                                            {{ __('crud.action.review') }}
+                                            @if ($item->status_dalam_proses_pengajuan)
+                                                <x-lucide-file-search class="w-4" />
+                                                {{ __('crud.action.review') }}
+                                            @else
+                                                <x-lucide-eye class="w-4" />
+                                                {{ __('crud.action.detail') }}
+                                            @endif
                                         </a>
                                     </div>
                                 </td>

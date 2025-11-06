@@ -7,6 +7,7 @@ enum EnumStatusPengajuanPinjaman: string
     case DITOLAK = 'ditolak';
     case PROSES_PENGAJUAN = 'proses_pengajuan';
     case DISETUJUI = 'disetujui';
+    case DIBATALKAN = 'dibatalkan';
 
     public static function options(): array
     {

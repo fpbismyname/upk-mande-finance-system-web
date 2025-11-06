@@ -90,7 +90,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="8">
+                            <td colspan="6">
                                 <div class="p-4 text-center">
                                     {{ __('crud.no_data', ['item' => 'kelompok']) }}
                                 </div>
