@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
+use App\Enums\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -41,15 +41,24 @@ class CatatanPendanaan extends Model
      * Scope a query catatan pendanaan
      *
      */
-    public function scopeFilter($query, $keyword)
+    public function scopeSearch($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->where('catatan', 'like', "%{$keyword}%")
             ->orWhere('jumlah_saldo', 'like', "%{$keyword}%")
             ->orWhere('tipe_catatan', 'like', "{$keyword}");
     }
-    public function scopeFilterTipeCatatan($query, $keyword)
+    public function scopeSearch_by_column($query, $column, $keyword)
     {
-        return $query->where('tipe_catatan', $keyword);
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        if (is_array($keyword)) {
+            return $query->whereIn($column, $keyword);
+        }
+        return $query->where($column, $keyword);
     }
     /**
      * Accessor

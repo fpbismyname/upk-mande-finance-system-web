@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Pendanaan;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PendanaanSeeder extends Seeder
@@ -14,9 +13,9 @@ class PendanaanSeeder extends Seeder
     public function run(): void
     {
         $AddedPendanaan = Pendanaan::get()->first();
-            if(!$AddedPendanaan){
-                Pendanaan::create([
-                'saldo' => 0,
+        if (!$AddedPendanaan) {
+            Pendanaan::create([
+                'saldo' => 50000000.00,
             ]);
         }
     }

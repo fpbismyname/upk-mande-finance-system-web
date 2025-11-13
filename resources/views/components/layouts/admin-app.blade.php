@@ -1,8 +1,13 @@
-@props(['title', 'gap' => 4, 'breadcrumbs' => []])
+@props(['title', 'gap' => 4])
 @php
+    // Ambil nama route saat ini.
     $current_route = collect(explode('.', request()->route()->getName()))
         ->shift(2)
         ->implode('.');
+    // Filter menu berdasarkan permission role.
+    $sidebar_menu = config('admin_sidebar')->filter(
+        fn($item) => in_array(auth()->user()?->role->value, $item['roles']),
+    );
 @endphp
 <x-layouts.app :title="$title">
     <div class="drawer md:drawer-open">
@@ -22,26 +27,13 @@
                 {{-- Header content --}}
                 <div class="flex flex-row w-full items-center flex-wrap gap-4 justify-between">
                     <div class="flex flex-col w-full md:w-fit">
-                        @if (!empty($breadcrumbs))
-                            <div class="breadcrumbs text-sm">
-                                <ul>
-                                    @foreach ($breadcrumbs as $href => $label)
-                                        <li>
-                                            @if ($loop->last)
-                                                {{ Str::ucfirst($label) }}
-                                            @else
-                                                <a href="{{ $href }}">
-                                                    {{ Str::ucfirst($label) }}
-                                                </a>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+
                         <div class="flex flex-row">
                             <h2>{{ $title ?? '' }}</h2>
                         </div>
+                        @if (!empty($below_title))
+                            {{ $below_title }}
+                        @endif
                     </div>
                     @isset($right_item)
                         <div class="flex gap-4">
@@ -60,12 +52,12 @@
                 <div class="flex flex-col gap-4 py-12 px-4 items-center">
                     <x-ui.image src="{{ asset('nav_icon.ico') }}" class="w-1/2" />
                     <span class="badge badge-secondary">
-                        {{ auth()->user()->formatted_role }}
+                        {{ auth()->user()?->formatted_role }}
                     </span>
                 </div>
 
                 <!-- Menu sidebar -->
-                @foreach (App\Constants\AdminSidebar::list_menu() as $item)
+                @foreach ($sidebar_menu as $item)
                     @switch($item['type'])
                         @case('menu')
                             <li>
@@ -89,7 +81,7 @@
                         <div tabindex="0" class="btn btn-primary w-full justify-between">
                             <div class="flex flex-row items-center gap-2">
                                 <x-lucide-user class="w-4" />
-                                <span>{{ auth()->user()->name }}</span>
+                                <span>{{ auth()->user()?->name }}</span>
                             </div>
                             <x-lucide-ellipsis-vertical class="w-4" />
                         </div>
@@ -106,7 +98,7 @@
                                     <x-lucide-log-out class="w-4" />
                                     <span>Logout</span>
                                 </button>
-                                <form id="logout-form" method="POST" action="{{ route('admin.logout.submit') }}"
+                                <form id="logout-form" method="POST" action="{{ route('admin.logout') }}"
                                     class="w-full hidden">
                                     @method('POST')
                                     @csrf

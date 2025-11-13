@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enum\Admin\Status\EnumStatusKelompok;
+use App\Enums\Admin\Status\EnumStatusKelompok;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

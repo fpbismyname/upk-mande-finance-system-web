@@ -1,6 +1,6 @@
 <?php
 
-use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
+use App\Enums\Admin\Status\EnumStatusJadwalPencairan;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

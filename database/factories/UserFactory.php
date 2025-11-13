@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enum\Admin\User\EnumRole;
+use App\Enums\Admin\User\EnumRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

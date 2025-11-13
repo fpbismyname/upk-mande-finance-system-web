@@ -4,16 +4,27 @@ namespace App\Services\UI;
 
 class Toast
 {
-    /**
-     * Summary of show
-     * @param string $message
-     * @param "error" | "info" | "success" $type
-     */
-    public static function show($message = "toast message.", $type = "info")
+    public static function success($message = "toast message.")
     {
         $messages = [
             'message' => $message,
-            'type' => $type
+            'type' => 'success'
+        ];
+        return session()->flash('toast', $messages);
+    }
+    public static function info($message = "toast message.")
+    {
+        $messages = [
+            'message' => $message,
+            'type' => 'info'
+        ];
+        return session()->flash('toast', $messages);
+    }
+    public static function error($message = "toast message.")
+    {
+        $messages = [
+            'message' => $message,
+            'type' => 'error'
         ];
         return session()->flash('toast', $messages);
     }

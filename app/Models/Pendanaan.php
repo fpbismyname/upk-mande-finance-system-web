@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\Admin\CatatanPendanaan\EnumCatatanPendanaan;
+use App\Enums\Admin\CatatanPendanaan\EnumCatatanPendanaan;
 use App\Services\Admin\CatatanPendanaan\CatatanPendanaanService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +12,7 @@ class Pendanaan extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = ["saldo"];
 

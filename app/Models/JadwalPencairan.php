@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\Admin\Status\EnumStatusJadwalPencairan;
+use App\Enums\Admin\Status\EnumStatusJadwalPencairan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -21,7 +21,7 @@ class JadwalPencairan extends Model
      *
      * @var array
      */
-    protected $fillable = ['tanggal_pencairan', 'status', 'pengajuan_pinjaman_id', 'kelompok_id'];
+    protected $fillable = ['tanggal_pencairan', 'status', 'pengajuan_pinjaman_id'];
     /**
      * The accessors to append to the model's array form.
      *
@@ -46,14 +46,11 @@ class JadwalPencairan extends Model
      * Relationships
      * 
      */
-    public function kelompok()
-    {
-        return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id');
-    }
     public function pengajuan_pinjaman()
     {
         return $this->belongsTo(PengajuanPinjaman::class, 'pengajuan_pinjaman_id', 'id');
     }
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -67,8 +64,11 @@ class JadwalPencairan extends Model
     /**
      * Scope a query jadwal pencairan
      */
-    public function scopeFilter($query, $keyword)
+    public function scopeSearch($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->whereHas('kelompok', function ($qr) use ($keyword) {
             $qr->where('name', 'like', "%{$keyword}%")
                 ->orWhereHas('users', function ($nqr) use ($keyword) {
@@ -78,12 +78,28 @@ class JadwalPencairan extends Model
             $qr->where('nominal_pinjaman', 'like', "%{$keyword}%");
         });
     }
+    public function scopeSearch_by_column($query, $column, $keyword)
+    {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        if (is_array($keyword)) {
+            return $query->whereIn($column, $keyword);
+        }
+        return $query->where($column, $keyword);
+    }
     public function scopeFilterStatusJadwal($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->where('status', $keyword);
     }
     public function scopeFilterTenorPengajuan($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
             $qr->where('tenor', $keyword));
     }
@@ -93,7 +109,7 @@ class JadwalPencairan extends Model
     // get kelompok_name
     public function kelompokName(): Attribute
     {
-        $kelompok_name = $this->kelompok->name ?? "-";
+        $kelompok_name = $this->pengajuan_pinjaman->kelompok->formatted_name ?? "-";
         return Attribute::make(
             get: fn() => Str::of($kelompok_name)
         );
@@ -101,7 +117,7 @@ class JadwalPencairan extends Model
     // get ketua_name
     public function ketuaName(): Attribute
     {
-        $ketua = $this->kelompok->ketua_name ?? "-";
+        $ketua = $this->pengajuan_pinjaman->kelompok->ketua_name ?? "-";
         return Attribute::make(
             get: fn() => Str::of($ketua)
         );

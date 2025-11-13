@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
+use App\Enums\Admin\Status\EnumStatusPengajuanPinjaman;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

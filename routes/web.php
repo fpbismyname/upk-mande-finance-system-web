@@ -5,7 +5,10 @@
  */
 
 // Admin routes
-include __DIR__."/admin/index.php"; 
+include __DIR__ . "/admin.php";
 
 // Client routes
-include __DIR__."/client/index.php";
+include __DIR__ . "/client.php";
+
+// Storage routes
+include __DIR__ . "/storage.php";

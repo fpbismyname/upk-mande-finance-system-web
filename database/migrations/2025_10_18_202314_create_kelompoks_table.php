@@ -1,6 +1,6 @@
 <?php
 
-use App\Enum\Admin\Status\EnumStatusKelompok;
+use App\Enums\Admin\Status\EnumStatusKelompok;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('kelompok', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->decimal('limit_pinjaman', 15, 2);
+            $table->decimal('limit_pinjaman', 15, 2)->default(10000000.00);
             $table->string('status')->default(EnumStatusKelompok::AKTIF->value);
             $table->timestamps();
         });

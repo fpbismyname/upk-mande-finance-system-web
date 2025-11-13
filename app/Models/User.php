@@ -3,7 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Enum\Admin\User\EnumRole;
+use App\Enums\Admin\User\EnumRole;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -66,17 +66,26 @@ class User extends Authenticatable
      * Scope a query to filter users
      *
      */
-    public function scopeFilter($query, $keyword)
+    public function scopeSearch($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->where('name', 'like', "%{$keyword}%")
             ->orWhere('nik', 'like', "%{$keyword}%")
             ->orWhere('email', 'like', "%{$keyword}%")
             ->orWhere('alamat', 'like', "%{$keyword}%")
             ->orWhere('nomor_telepon', 'like', "%{$keyword}%");
     }
-    public function scopeFilterRole($query, $keyword)
+    public function scopeSearch_by_column($query, $column, $keyword)
     {
-        return $query->where('role', $keyword);
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        if (is_array($keyword)) {
+            return $query->whereIn($column, $keyword);
+        }
+        return $query->where($column, $keyword);
     }
     public function scopeDoesntHaveKelompok($query, $except = null)
     {
@@ -96,7 +105,7 @@ class User extends Authenticatable
      */
     public function kelompok()
     {
-        return $this->hasMany(Kelompok::class, 'users_id', 'id');
+        return $this->hasOne(Kelompok::class, 'users_id', 'id');
     }
 
     /**

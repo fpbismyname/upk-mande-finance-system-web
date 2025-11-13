@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enum\Admin\User\EnumRole;
+use App\Enums\Admin\User\EnumRole;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -28,7 +27,7 @@ class UserSeeder extends Seeder
                 'nik' => '',
                 'name' => 'Kepala UPK',
                 'email' => 'kepalaupkmande@gmail.com',
-                'password' => 'executive123',
+                'password' => 'kepalaupk123',
                 'alamat' => '292 Atonut Extension',
                 'nomor_telepon' => "089253233354",
                 'role' => EnumRole::KEPALA_INSTITUSI
@@ -50,6 +49,15 @@ class UserSeeder extends Seeder
                 'alamat' => '598 Taab Street',
                 'nomor_telepon' => "0892352525334",
                 'role' => EnumRole::PENGELOLA_DANA
+            ],
+            [
+                'nik' => '',
+                'name' => 'Niki fernando',
+                'email' => 'niki@gmail.com',
+                'password' => 'niki123',
+                'alamat' => 'Jl. pasar senin, kp rambutan',
+                'nomor_telepon' => "0817623512313",
+                'role' => EnumRole::ANGGOTA
             ],
         ];
         foreach ($datas as $data) {

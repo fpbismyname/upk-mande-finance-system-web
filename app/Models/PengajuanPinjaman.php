@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Models;
 
-use App\Enum\Admin\PengajuanPinjaman\EnumTenor;
-use App\Enum\Admin\Status\EnumStatusPengajuanPinjaman;
+use App\Enums\Admin\PengajuanPinjaman\EnumTenor;
+use App\Enums\Admin\Status\EnumStatusPengajuanPinjaman;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +26,7 @@ class PengajuanPinjaman extends Model
         'tanggal_ditolak',
         'catatan',
         'status',
-        'kelompok_id'
+        'kelompok_id',
     ];
     /**
      * The attributes that should be cast to native types.
@@ -36,7 +35,10 @@ class PengajuanPinjaman extends Model
      */
     protected $casts = [
         'tenor' => EnumTenor::class,
-        'status' => EnumStatusPengajuanPinjaman::class
+        'status' => EnumStatusPengajuanPinjaman::class,
+        'tanggal_pengajuan' => 'datetime',
+        'tanggal_disetujui' => 'datetime',
+        'tanggal_ditolak' => 'datetime'
     ];
     /**
      * The table associated with the model.
@@ -60,12 +62,14 @@ class PengajuanPinjaman extends Model
         'formatted_tanggal_ditolak',
         'status_dalam_proses_pengajuan',
         'status_ditolak',
-        'status_disetujui'
+        'status_disetujui',
+        'status_dibatalkan',
+        'has_pengajuan_dalam_proses'
     ];
 
     /**
      *  Relationships
-     * 
+     *
      */
     public function kelompok()
     {
@@ -73,32 +77,52 @@ class PengajuanPinjaman extends Model
     }
     public function jadwal_pencairan()
     {
-        return $this->hasMany(JadwalPencairan::class, 'pengajuan_pinjaman_id', 'id');
+        return $this->hasOne(JadwalPencairan::class, 'pengajuan_pinjaman_id', 'id');
     }
 
     /**
      * Scope a query pengajuan pinjaman
      */
-    public function scopeFilter($query, $keyword)
+    public function scopeSearch($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->where('nominal_pinjaman', 'like', "%{$keyword}%")
             ->orWhere('nominal_pinjaman', 'like', "%{$keyword}%")
             ->orWhereHas('kelompok', fn($qr) => $qr->whereHas('users', fn($nqr) => $nqr->where('name', 'like', "%{$keyword}%")))
             ->orWhereHas('kelompok', fn($qr) => $qr->where('name', 'like', "%{$keyword}%"));
     }
-    public function scopeFilterTenor($query, $keyword)
+    public function scopeSearch_by_column($query, $column, $keyword)
     {
-        return $query->where('tenor', $keyword);
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        if (is_array($keyword)) {
+            return $query->whereIn($column, $keyword);
+        }
+        return $query->where($column, $keyword);
     }
-    public function scopeFilterStatus($query, $keyword)
+    public function scopeFilterJumlahSemuaPengajuan($query)
     {
-        return $query->where('status', $keyword);
+        return $query->count();
+    }
+    public function scopeFilterJumlahPengajuanByStatus($query, EnumStatusPengajuanPinjaman $status)
+    {
+        return $query->where('status', $status)->count();
     }
 
     /**
      *  Accessor
-     * 
+     *
      */
+    protected function nominalPinjaman(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => intval($value),
+            set: fn($value) => floatval($value)
+        );
+    }
     // get kelompok_name
     public function kelompokName(): Attribute
     {
@@ -186,5 +210,21 @@ class PengajuanPinjaman extends Model
         return Attribute::make(
             get: fn() => $status === EnumStatusPengajuanPinjaman::DISETUJUI
         );
+    }
+    // get dibatalkan
+    public function statusDibatalkan(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DIBATALKAN
+        );
+    }
+
+    // Event eloquent hook
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->tanggal_pengajuan = now();
+        });
     }
 }

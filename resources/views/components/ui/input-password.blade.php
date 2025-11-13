@@ -31,5 +31,8 @@
     </span>
 </label>
 <p class="validator-hint hidden">
-    {{ __('validation.min.string', ['attribute' => 'Password baru', 'min' => 6]) }}
+    Password minimal terdiri dari 6 karakter
 </p>
+@error($attributes->has('name'))
+    <small class="text-error">{{ $message }}</small>
+@enderror

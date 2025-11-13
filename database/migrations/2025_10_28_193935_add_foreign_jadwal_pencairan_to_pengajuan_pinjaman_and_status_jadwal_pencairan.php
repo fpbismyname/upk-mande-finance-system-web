@@ -15,10 +15,6 @@ return new class extends Migration {
                 ->constrained('pengajuan_pinjaman')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->foreignId('kelompok_id')
-                ->constrained('kelompok')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
         });
     }
 
@@ -29,8 +25,7 @@ return new class extends Migration {
     {
         Schema::table('jadwal_pencairan', function (Blueprint $table) {
             $table->dropForeign(['pengajuan_pinjaman_id']);
-            $table->dropForeign(['kelompok_id']);
-            $table->dropColumn(['pengajuan_pinjaman_id', 'kelompok_id']);
+            $table->dropColumn(['pengajuan_pinjaman_id']);
         });
     }
 };

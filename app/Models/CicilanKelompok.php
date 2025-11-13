@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Admin\Settings\EnumSettingKeys;
+use App\Enums\Admin\Status\EnumStatusCicilanKelompok;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -23,6 +25,7 @@ class CicilanKelompok extends Model
     protected $fillable = [
         'status',
         'nominal_cicilan',
+        'denda_dibayar',
         'bukti_pembayaran',
         'tanggal_dibayar',
         'tanggal_jatuh_tempo',
@@ -37,7 +40,16 @@ class CicilanKelompok extends Model
         'formatted_status',
         'formatted_tanggal_dibayar',
         'formatted_tanggal_jatuh_tempo',
-        'formatted_nominal_cicilan'
+        'formatted_nominal_cicilan',
+        'formatted_denda_telat_bayar',
+        'formatted_denda_dibayar',
+        'cicilan_jatuh_tempo',
+        'cicilan_belum_bayar',
+        'status_belum_bayar',
+        'status_sudah_bayar',
+        'status_telat_bayar',
+        'status_dibatalkan',
+        'denda_telat_bayar',
     ];
     /**
      * The attributes that should be cast to native types.
@@ -47,18 +59,34 @@ class CicilanKelompok extends Model
     protected $casts = [
         'tanggal_dibayar' => 'datetime',
         'tanggal_jatuh_tempo' => 'datetime',
+        'status' => EnumStatusCicilanKelompok::class
     ];
     /**
      * Scope a query cicilan
      */
-    public function scopeFilter($query, $keyword)
+    public function scopeSearch($query, $keyword)
     {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
         return $query->where('nominal_cicilan', 'like', "%{$keyword}%");
     }
-    public function scopeFilterStatus($query, $keyword)
+    public function scopeSearch_by_column($query, $column, $keyword)
     {
-        return $query->where('status', $keyword);
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        if (is_array($keyword)) {
+            return $query->whereIn($column, $keyword);
+        }
+        return $query->where($column, $keyword);
     }
+    public function scopeFilterCicilanJatuhTempo($query)
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        return $query->whereIn('status', [EnumStatusCicilanKelompok::BELUM_BAYAR, EnumStatusCicilanKelompok::TELAT_BAYAR])->where('tanggal_jatuh_tempo', '<=', now()->subDays($toleransi_telat_bayar));
+    }
+
     /**
      * Relationships
      */
@@ -66,19 +94,21 @@ class CicilanKelompok extends Model
     {
         return $this->belongsTo(PinjamanKelompok::class, 'pinjaman_kelompok_id', 'id');
     }
-    /**
-     * Accessor
-     */
     public function buktiPembayaran(): Attribute
     {
         return Attribute::make(
             get: fn($value) => $value ?? "-"
         );
     }
+
+    /**
+     * Accessor
+     * 
+     */
     public function formattedStatus(): Attribute
     {
         return Attribute::make(
-            get: fn() => Str::of($this->status)->ucfirst()->replace("_", " ")
+            get: fn() => Str::of($this->status->value)->ucfirst()->replace("_", " ")
         );
     }
     public function formattedTanggalDibayar(): Attribute
@@ -98,6 +128,82 @@ class CicilanKelompok extends Model
         $nominal = $this->nominal_cicilan ?? 0;
         return Attribute::make(
             get: fn() => "Rp. " . number_format($nominal, 0, ",", ".")
+        );
+    }
+    public function dendaTelatBayar(): Attribute
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        $denda_cicilan = Settings::getKeySetting(EnumSettingKeys::DENDA_TELAT_BAYAR)->value('value') / 100;
+        $nominal_cicilan = $this->nominal_cicilan;
+        $jatuh_tempo_cicilan = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar);
+        $hari_telat = 0;
+        if (now()->gt($jatuh_tempo_cicilan)) {
+            $hari_telat = round(max(0, $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays(now())));
+        }
+        $denda_telat_perhari = $denda_cicilan * $nominal_cicilan;
+        $nominal_final = $hari_telat * $denda_telat_perhari;
+        return Attribute::make(
+            get: fn() => $nominal_final
+        );
+    }
+    public function formattedDendaTelatBayar(): Attribute
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        $denda_cicilan = Settings::getKeySetting(EnumSettingKeys::DENDA_TELAT_BAYAR)->value('value') / 100;
+        $nominal_cicilan = $this->nominal_cicilan;
+        $jatuh_tempo_cicilan = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar);
+        $hari_telat = 0;
+        if (now()->gt($jatuh_tempo_cicilan)) {
+            $hari_telat = round(max(0, $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays(now())));
+        }
+        $denda_telat_perhari = $denda_cicilan * $nominal_cicilan;
+        $nominal_final = $hari_telat * $denda_telat_perhari;
+        return Attribute::make(
+            get: fn() => "Rp " . number_format($nominal_final, 0, ",", ".")
+        );
+    }
+    public function cicilanJatuhTempo(): Attribute
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        return Attribute::make(
+            get: fn() => $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar) <= now()
+        );
+    }
+    public function cicilanBelumBayar(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->status !== EnumStatusCicilanKelompok::DIBATALKAN && $this->status !== EnumStatusCicilanKelompok::SUDAH_BAYAR
+        );
+    }
+    public function statusBelumBayar(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->status === EnumStatusCicilanKelompok::BELUM_BAYAR
+        );
+    }
+    public function statusSudahBayar(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->status === EnumStatusCicilanKelompok::SUDAH_BAYAR
+        );
+    }
+    public function statusTelatBayar(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->status === EnumStatusCicilanKelompok::TELAT_BAYAR
+        );
+    }
+    public function statusDibatalkan(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->status === EnumStatusCicilanKelompok::DIBATALKAN
+        );
+    }
+    public function formattedDendaDibayar(): Attribute
+    {
+        $nominal = $this->denda_dibayar ?? 0;
+        return Attribute::make(
+            get: fn() => $nominal != 0 ? "Rp " . number_format($nominal, 0, ",", ".") : false
         );
     }
 }
