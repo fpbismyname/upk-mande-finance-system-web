@@ -37,6 +37,21 @@
                     </div>
                 </form>
             </div>
+            {{-- Print button --}}
+            @can('print-data')
+                <div class="flex flex-row">
+                    <a class="btn btn-outline btn-primary"
+                        href="{{ route('admin.jadwal-pencairan.export', [
+                            'search' => request()->get('search'),
+                            'status_jadwal' => request()->get('status_jadwal'),
+                            'tenor_pengajuan' => request()->get('tenor_pengajuan'),
+                            'status_pengajuan' => request()->get('status_pengajuan'),
+                        ]) }}">
+                        <x-lucide-printer class="w-4" />
+                        Export Data
+                    </a>
+                </div>
+            @endcan
         </div>
         <div class="flex flex-col">
             <x-ui.table>
@@ -47,7 +62,9 @@
                     <th>Tenor pinjaman (bulan)</th>
                     <th>Tanggal pencairan</th>
                     <th>Status pencairan</th>
-                    <th class="text-end">Aksi</th>
+                    @can('manage-jadwal-pencairan')
+                        <th class="text-end">Aksi</th>
+                    @endcan
                 </thead>
                 <tbody>
                     @if (count($datas) > 0)
@@ -64,7 +81,7 @@
                                     <div class="flex flex-row gap-2">
                                         @if ($item->status_telah_dicairkan)
                                             <a class="btn btn-sm btn-link link-hover"
-                                                href="{{ route('admin.jadwal-pencairan.edit', [$item->id]) }}">
+                                                href="{{ route('admin.jadwal-pencairan.show', [$item->id]) }}">
                                                 <x-lucide-eye class="w-4" />
                                                 Detail
                                             </a>

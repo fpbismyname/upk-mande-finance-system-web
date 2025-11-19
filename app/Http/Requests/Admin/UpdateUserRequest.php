@@ -11,7 +11,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -23,13 +23,13 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'nik' => 'required',
-            'name' => 'required',
-            'email' => 'required|email',
             'alamat' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'nomor_rekening' => 'required',
             'nomor_telepon' => 'required',
-            'role' => 'required',
-            'new_password' => '',
             'reset_password' => '',
+            'new_password' => ['required_if:reset_password,on'],
         ];
     }
 }

@@ -3,9 +3,8 @@ namespace App\Enums\Admin\User;
 
 enum EnumRole: string
 {
-    case ADMIN = "admin";
-    case TAMU = "tamu";
     case ANGGOTA = "anggota";
+    case ADMIN = "admin";
     case KEPALA_INSTITUSI = "kepala_institusi";
     case AKUNTAN = "akuntan";
     case PENGELOLA_DANA = "pengelola_dana";
@@ -20,14 +19,20 @@ enum EnumRole: string
     public static function list_admin_role()
     {
         return collect(self::cases())
-            ->reject(fn($role) => in_array($role, [self::ANGGOTA, self::TAMU]))
+            ->reject(fn($role) => in_array($role, [self::ANGGOTA]))
             ->values()
             ->toArray();
     }
     public static function list_client_role()
     {
         return collect(self::cases())
-            ->reject(fn($role) => !in_array($role, [self::ANGGOTA, self::TAMU]))
+            ->reject(fn($role) => !in_array($role, [self::ANGGOTA]))
+            ->values()
+            ->toArray();
+    }
+    public static function list_all_role()
+    {
+        return collect(self::cases())
             ->values()
             ->toArray();
     }

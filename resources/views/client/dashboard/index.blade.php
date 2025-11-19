@@ -9,10 +9,10 @@
                     </h6>
                     @if ($kelompok)
                         <h3 class="text-primary">
-                            {{ $kelompok->sisa_limit_pinjaman }}
+                            {{ $kelompok->formatted_sisa_limit_pinjaman }}
                         </h3>
                         <small class="text-neutral">
-                            limit pinjaman terpakai : {{ $kelompok->limit_pinjaman_terpakai }}
+                            limit pinjaman terpakai : {{ $kelompok->formatted_limit_pinjaman_terpakai }}
                         </small>
                     @else
                         <h6 class="text-base-content/75">Buat kelompok anda untuk mengajukan pinjaman.</h6>
@@ -21,7 +21,8 @@
                 <div class="flex flex-row gap-4">
                     @if ($kelompok)
                         @if ($kelompok->pinjaman_kelompok_berlangsung)
-                            <button class="btn btn-primary">Lihat cicilan</button>
+                            <a href="{{ route('client.pinjaman-kelompok.index') }}" class="btn btn-primary">Lihat
+                                cicilan</a>
                         @else
                             <a class="btn btn-primary" href="{{ route('client.pengajuan-pinjaman.create') }}">Ajukan
                                 pinjaman</a>

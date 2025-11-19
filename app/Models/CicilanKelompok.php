@@ -25,7 +25,6 @@ class CicilanKelompok extends Model
     protected $fillable = [
         'status',
         'nominal_cicilan',
-        'denda_dibayar',
         'bukti_pembayaran',
         'tanggal_dibayar',
         'tanggal_jatuh_tempo',
@@ -41,15 +40,15 @@ class CicilanKelompok extends Model
         'formatted_tanggal_dibayar',
         'formatted_tanggal_jatuh_tempo',
         'formatted_nominal_cicilan',
-        'formatted_denda_telat_bayar',
-        'formatted_denda_dibayar',
+        'formatted_hari_telat_bayar',
+        'decimal_hari_telat_bayar',
         'cicilan_jatuh_tempo',
         'cicilan_belum_bayar',
+        'cicilan_telat_sudah_bayar',
         'status_belum_bayar',
         'status_sudah_bayar',
         'status_telat_bayar',
         'status_dibatalkan',
-        'denda_telat_bayar',
     ];
     /**
      * The attributes that should be cast to native types.
@@ -81,10 +80,11 @@ class CicilanKelompok extends Model
         }
         return $query->where($column, $keyword);
     }
-    public function scopeFilterCicilanJatuhTempo($query)
+    public function scopeCicilan_jatuh_tempo($query)
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
-        return $query->whereIn('status', [EnumStatusCicilanKelompok::BELUM_BAYAR, EnumStatusCicilanKelompok::TELAT_BAYAR])->where('tanggal_jatuh_tempo', '<=', now()->subDays($toleransi_telat_bayar));
+        return $query->whereIn('status', [EnumStatusCicilanKelompok::BELUM_BAYAR])
+            ->where('tanggal_jatuh_tempo', '<=', now()->subDays($toleransi_telat_bayar));
     }
 
     /**
@@ -105,63 +105,8 @@ class CicilanKelompok extends Model
      * Accessor
      * 
      */
-    public function formattedStatus(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => Str::of($this->status->value)->ucfirst()->replace("_", " ")
-        );
-    }
-    public function formattedTanggalDibayar(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->tanggal_dibayar ? Carbon::parse($this->tanggal_dibayar)->format('d M Y | H:i') : '-'
-        );
-    }
-    public function formattedTanggalJatuhTempo(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->tanggal_jatuh_tempo ? Carbon::parse($this->tanggal_jatuh_tempo)->format('d M Y | H:i') : '-'
-        );
-    }
-    public function formattedNominalCicilan(): Attribute
-    {
-        $nominal = $this->nominal_cicilan ?? 0;
-        return Attribute::make(
-            get: fn() => "Rp. " . number_format($nominal, 0, ",", ".")
-        );
-    }
-    public function dendaTelatBayar(): Attribute
-    {
-        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
-        $denda_cicilan = Settings::getKeySetting(EnumSettingKeys::DENDA_TELAT_BAYAR)->value('value') / 100;
-        $nominal_cicilan = $this->nominal_cicilan;
-        $jatuh_tempo_cicilan = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar);
-        $hari_telat = 0;
-        if (now()->gt($jatuh_tempo_cicilan)) {
-            $hari_telat = round(max(0, $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays(now())));
-        }
-        $denda_telat_perhari = $denda_cicilan * $nominal_cicilan;
-        $nominal_final = $hari_telat * $denda_telat_perhari;
-        return Attribute::make(
-            get: fn() => $nominal_final
-        );
-    }
-    public function formattedDendaTelatBayar(): Attribute
-    {
-        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
-        $denda_cicilan = Settings::getKeySetting(EnumSettingKeys::DENDA_TELAT_BAYAR)->value('value') / 100;
-        $nominal_cicilan = $this->nominal_cicilan;
-        $jatuh_tempo_cicilan = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar);
-        $hari_telat = 0;
-        if (now()->gt($jatuh_tempo_cicilan)) {
-            $hari_telat = round(max(0, $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays(now())));
-        }
-        $denda_telat_perhari = $denda_cicilan * $nominal_cicilan;
-        $nominal_final = $hari_telat * $denda_telat_perhari;
-        return Attribute::make(
-            get: fn() => "Rp " . number_format($nominal_final, 0, ",", ".")
-        );
-    }
+
+    // Non formatted
     public function cicilanJatuhTempo(): Attribute
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
@@ -199,11 +144,55 @@ class CicilanKelompok extends Model
             get: fn() => $this->status === EnumStatusCicilanKelompok::DIBATALKAN
         );
     }
-    public function formattedDendaDibayar(): Attribute
+    public function decimalHariTelatBayar(): Attribute
     {
-        $nominal = $this->denda_dibayar ?? 0;
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        $hari_telat_bayar = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays($this->tanggal_dibayar);
         return Attribute::make(
-            get: fn() => $nominal != 0 ? "Rp " . number_format($nominal, 0, ",", ".") : false
+            get: fn() => round(max(0, $hari_telat_bayar))
+        );
+    }
+    public function cicilanTelatSudahBayar(): Attribute
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        $hari_telat_bayar = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar) <= $this->tanggal_dibayar;
+        return Attribute::make(
+            get: fn() => $hari_telat_bayar === true
+        );
+    }
+
+    // Formatted
+    public function formattedStatus(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => Str::of($this->status->value)->ucfirst()->replace("_", " ")
+        );
+    }
+    public function formattedTanggalDibayar(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->tanggal_dibayar ? Carbon::parse($this->tanggal_dibayar)->format('d M Y | H:i') : '-'
+        );
+    }
+    public function formattedTanggalJatuhTempo(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->tanggal_jatuh_tempo ? Carbon::parse($this->tanggal_jatuh_tempo)->format('d M Y | H:i') : '-'
+        );
+    }
+    public function formattedNominalCicilan(): Attribute
+    {
+        $nominal = $this->nominal_cicilan ?? 0;
+        return Attribute::make(
+            get: fn() => "Rp. " . number_format($nominal, 0, ",", ".")
+        );
+    }
+    public function formattedHariTelatBayar(): Attribute
+    {
+        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        $hari_telat_bayar = $this->tanggal_jatuh_tempo->diffInDays($this->tanggal_dibayar);
+        return Attribute::make(
+            get: fn() => round(max(0, $hari_telat_bayar)) . " hari"
         );
     }
 }

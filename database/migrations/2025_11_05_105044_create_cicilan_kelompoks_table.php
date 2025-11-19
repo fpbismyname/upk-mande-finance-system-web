@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->id();
             $table->string('status')->default(EnumStatusCicilanKelompok::BELUM_BAYAR);
             $table->decimal('nominal_cicilan', 15, 2)->default(0);
-            $table->decimal('denda_dibayar', 15, 2)->default(0);
             $table->string('bukti_pembayaran')->nullable();
             $table->dateTime('tanggal_dibayar')->nullable();
             $table->string('tanggal_jatuh_tempo')->nullable();

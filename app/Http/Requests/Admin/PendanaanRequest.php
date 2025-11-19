@@ -22,7 +22,7 @@ class PendanaanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jumlah_saldo' => 'required|max_digits:15',
+            'nominal_pendanaan' => 'required|max_digits:15',
             'catatan' => 'string',
         ];
     }

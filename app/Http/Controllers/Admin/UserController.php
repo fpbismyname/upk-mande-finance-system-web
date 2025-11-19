@@ -102,7 +102,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, string $id)
+    public function update(UpdateUserRequest $request, string $id, User $user_model)
     {
         // Data form input
         $datas = $request->validated();
@@ -113,10 +113,10 @@ class UserController extends Controller
         $new_user_pass = $datas['new_password'] ?? '';
 
         // Data user
-        $data_user = $request->only(['nik', 'alamat', 'name', 'email', 'role', 'nomor_telepon']);
+        $data_user = $request->only($user_model->getFillable());
 
         // Update data user
-        $update_user = User::findOrFail($id);
+        $update_user = $user_model->findOrFail($id);
 
         // reset jika input mengizinkan reset password
         if ($is_reset_pass) {

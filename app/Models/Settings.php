@@ -41,6 +41,10 @@ class Settings extends Model
     {
         return $query->where('key', $key);
     }
+    public function scopeGetGroupSetting($query, EnumSettingGroup $key)
+    {
+        return $query->where('group', $key);
+    }
 
     /**
      * Accessor

@@ -38,16 +38,19 @@ class AppServiceProvider extends ServiceProvider
         // Set Timezone
         date_default_timezone_set(config('app.timezone'));
 
-        // Give permission action
+        /**
+         * Gate for limiting permission access to some actions
+         */
+        // Admin gate permission
         Gate::define('manage-users', fn($user) => in_array($user->role->value, ['admin']));
         Gate::define('manage-kelompok', fn($user) => in_array($user->role->value, ['admin']));
-        Gate::define('manage-pendanaan', fn($user) => in_array($user->role->value, ['pengelola_dana']));
+        Gate::define('manage-rekening', fn($user) => in_array($user->role->value, ['akuntan', 'pengelola_dana']));
         Gate::define('manage-pengajuan-pinjaman', fn($user) => in_array($user->role->value, ['kepala_institusi']));
         Gate::define('manage-jadwal-pencairan', fn($user) => in_array($user->role->value, ['pengelola_dana']));
         Gate::define('manage-pinjaman-kelompok', fn($user) => in_array($user->role->value, ['akuntan']));
         Gate::define('manage-cicilan-kelompok', fn($user) => in_array($user->role->value, ['akuntan']));
-
-        // Role that can manage financial settings
+        Gate::define('print-data', fn($user) => in_array($user->role->value, ['akuntan']));
         Gate::define('manage-financial-settings', fn($user) => in_array($user->role->value, ['akuntan']));
+        Gate::define('has-bank-account-number', fn($user) => in_array($user->role->value, ['akuntan']));
     }
 }

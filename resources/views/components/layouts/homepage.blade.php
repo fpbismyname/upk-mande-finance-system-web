@@ -4,9 +4,9 @@
     $current_route = collect(explode('.', request()->route()->getName()))->implode('.');
 @endphp
 <x-layouts.app title="{{ $title ?? '' }}">
-    <div class="flex flex-col gap-4 min-h-screen">
+    <div class="flex flex-col min-h-screen">
         {{-- navbar --}}
-        <div class="bg-base-200">
+        <div class="bg-base-200 sticky top-0 z-10 w-full">
             <div class="container mx-auto">
                 <div class="navbar px-8">
                     <a class="flex flex-1" href="/">
@@ -27,27 +27,23 @@
                                 <ul class="dropdown-content menu bg-base-200 min-h-full w-64 shadow gap-2">
                                     <li class="menu-title text-neutral text-xl">Menu</li>
                                     <li>
-                                        <a href="{{ route('client.homepage.index') }}"
-                                            class="{{ $current_route === 'client.homepage.index' ? 'menu-active' : '' }}">
+                                        <a href="#">
                                             Beranda
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('client.homepage.services') }}"
-                                            class="{{ $current_route === 'client.homepage.services' ? 'menu-active' : '' }}">
+                                        <a href="#about">
+                                            Tentang kami
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#services">
                                             Layanan kami
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('client.homepage.profile') }}"
-                                            class="{{ $current_route === 'client.homepage.profile' ? 'menu-active' : '' }}">
-                                            Profil
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('client.homepage.about-us') }}"
-                                            class="{{ $current_route === 'client.homepage.about-us' ? 'menu-active' : '' }}">
-                                            Tentang kami
+                                        <a href="#contact">
+                                            Kontak kami
                                         </a>
                                     </li>
                                     @if (auth()->user()?->role->value === 'tamu' || auth()->user()?->role->value === 'anggota')
@@ -73,27 +69,23 @@
                     <div class="lg:flex hidden flex-none text-base-content">
                         <ul class="menu menu-horizontal items-center gap-4 rounded-box">
                             <li>
-                                <a href="{{ route('client.homepage.index') }}"
-                                    class="{{ $current_route === 'client.homepage.index' ? 'menu-active' : '' }}">
+                                <a href="#">
                                     Beranda
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('client.homepage.services') }}"
-                                    class="{{ $current_route === 'client.homepage.services' ? 'menu-active' : '' }}">
+                                <a href="#about">
+                                    Tentang kami
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#services">
                                     Layanan kami
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('client.homepage.profile') }}"
-                                    class="{{ $current_route === 'client.homepage.profile' ? 'menu-active' : '' }}">
-                                    Profil
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('client.homepage.about-us') }}"
-                                    class="{{ $current_route === 'client.homepage.about-us' ? 'menu-active' : '' }}">
-                                    Tentang kami
+                                <a href="#contact">
+                                    Kontak kami
                                 </a>
                             </li>
                             @if (auth()->user()?->role->value === 'tamu' || auth()->user()?->role->value === 'anggota')
@@ -117,7 +109,7 @@
             </div>
         </div>
         {{-- Content --}}
-        <div class="container mx-auto gap-4">
+        <div class="flex flex-col gap-4">
             {{ $slot }}
         </div>
         {{-- Footer --}}
@@ -134,10 +126,10 @@
             </nav>
             <nav>
                 <h6 class="footer-title">Menu utama</h6>
-                <a class="link link-hover" href="{{ route('client.homepage.index') }}">Beranda</a>
-                <a class="link link-hover" href="{{ route('client.homepage.services') }}">Layanan kami</a>
-                <a class="link link-hover" href="{{ route('client.homepage.profile') }}">Profil</a>
-                <a class="link link-hover" href="{{ route('client.homepage.about-us') }}">Tentang kami</a>
+                <a class="link link-hover" href="#">Beranda</a>
+                <a class="link link-hover" href="#about">Tentang kami</a>
+                <a class="link link-hover" href="#services">Layanan kami</a>
+                <a class="link link-hover" href="#contact">Kontak kami</a>
             </nav>
             <nav>
                 <h6 class="footer-title">Sosial media</h6>

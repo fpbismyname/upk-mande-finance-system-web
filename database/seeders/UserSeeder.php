@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             [
                 'nik' => '',
                 'name' => 'Administrasi',
-                'email' => 'admin@gmail.com',
+                'email' => 'administrasi@gmail.com',
                 'password' => 'admin123',
                 'alamat' => '204 Davsu Junction',
                 'nomor_telepon' => "089542352354",
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'nik' => '',
-                'name' => 'Keuangan UPK',
+                'name' => 'Akuntan UPK',
                 'email' => 'akuntanupkmande@gmail.com',
                 'password' => 'akuntan123',
                 'alamat' => '1816 Puvjaj Glen',

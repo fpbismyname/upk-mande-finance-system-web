@@ -23,19 +23,19 @@
             {{-- limit pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">
-                    Limit pinjaman
+                    Limit pinjaman per anggota
                     <small id="preview-limit-pinjaman">
-                        {{ '(Rp ' . number_format($kelompok->limit_pinjaman, 0, ',', '.') . ')' }}
+                        {{ $kelompok->formatted_limit_per_anggota }}
                     </small>
                 </legend>
-                <input type="number" name="limit_pinjaman" placeholder="Limit pinjaman" pattern="\s[0-9]"
-                    value="{{ old('limit_pinjaman') ?? $kelompok->limit_pinjaman }}" min="1000000" max="9999999999999"
-                    class="input w-full validator"
+                <input type="number" name="limit_per_anggota" placeholder="Limit pinjaman per anggota"
+                    pattern="\s[0-9]" value="{{ old('limit_pinjaman') ?? $kelompok->limit_per_anggota }}" min="1000000"
+                    max="9999999999999" class="input w-full validator"
                     oninput="window.preview_currency_element(this, 'preview-limit-pinjaman')" required />
                 <p class="validator-hint hidden">
-                    Limit pinjaman minimal berisi Rp 1.000.000.
+                    Limit pinjaman per anggota minimal berisi Rp 1.000.000.
                 </p>
-                @error('limit_pinjaman')
+                @error('limit_per_anggota')
                     <small class="text-error">{{ $message }}</small>
                 @enderror
             </fieldset>

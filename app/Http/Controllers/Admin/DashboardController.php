@@ -24,28 +24,37 @@ class DashboardController extends Controller
         CicilanKelompok $cicilan_kelompok
     ) {
         // Data kelompok
-        $jumlah_kelompok = $kelompok_model->filterJumlahSemuaKelompok();
-        $jumlah_kelompok_aktif = $kelompok_model->filterJumlahKelompok(EnumStatusKelompok::AKTIF);
-        $jumlah_kelompok_non_aktif = $kelompok_model->filterJumlahKelompok(EnumStatusKelompok::NON_AKTIF);
-        $jumlah_anggota = $kelompok_model->filterJumlahAnggotaKelompok();
+        $jumlah_kelompok = $kelompok_model
+            ->get()->count();
+        $jumlah_kelompok_aktif = $kelompok_model->search_by_column('status', EnumStatusKelompok::AKTIF)
+            ->get()->count();
+        $jumlah_kelompok_non_aktif = $kelompok_model->search_by_column('status', EnumStatusKelompok::NON_AKTIF)
+            ->get()->count();
+        $jumlah_anggota = $kelompok_model->jumlah_anggota_kelompok()
+            ->get()->count();
+
         // Data pengajuan pinjaman
-        $jumlah_pengajuan_pinjaman = $pengajuan_pinjaman_model->filterJumlahSemuaPengajuan();
-        $jumlah_pengajuan_proses_pengajuan = $pengajuan_pinjaman_model->filterJumlahPengajuanByStatus(EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN);
-        $jumlah_pengajuan_disetujui = $pengajuan_pinjaman_model->filterJumlahPengajuanByStatus(EnumStatusPengajuanPinjaman::DISETUJUI);
-        $jumlah_pengajuan_ditolak = $pengajuan_pinjaman_model->filterJumlahPengajuanByStatus(EnumStatusPengajuanPinjaman::DITOLAK);
+        $jumlah_pengajuan_pinjaman = $pengajuan_pinjaman_model
+            ->get()->count();
+        $jumlah_pengajuan_proses_pengajuan = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
+            ->get()->count();
+        $jumlah_pengajuan_disetujui = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
+            ->get()->count();
+        $jumlah_pengajuan_ditolak = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
+            ->get()->count();
+
         // Data pinjaman
-        $jumlah_pinjaman = $pinjaman_kelompok_model->filterJumlahSemuaPinjaman();
-        $jumlah_pinjaman_berlangsung = $pinjaman_kelompok_model->filterJumlahPinjamanByStatus(EnumStatusPinjaman::BERLANGSUNG);
-        $jumlah_pinjaman_menunggak = $pinjaman_kelompok_model->filterJumlahPinjamanByStatus(EnumStatusPinjaman::MENUNGGAK);
-        $jumlah_pinjaman_selesai = $pinjaman_kelompok_model->filterJumlahPinjamanByStatus(EnumStatusPinjaman::SELESAI);
+        $jumlah_pinjaman = $pinjaman_kelompok_model
+            ->get()->count();
+        $jumlah_pinjaman_berlangsung = $pinjaman_kelompok_model->search_by_column('status', EnumStatusPinjaman::BERLANGSUNG)
+            ->get()->count();
+        $jumlah_pinjaman_menunggak = $pinjaman_kelompok_model->search_by_column('status', EnumStatusPinjaman::MENUNGGAK)
+            ->get()->count();
+        $jumlah_pinjaman_selesai = $pinjaman_kelompok_model->search_by_column('status', EnumStatusPinjaman::SELESAI)
+            ->get()->count();
+
         // Data cicilan
-        $kelompok_pinjaman = $kelompok_model->with(['pinjaman_kelompok'])
-            ->whereHas('pinjaman_kelompok', function ($q) {
-                $q->search_by_column('status', EnumStatusPinjaman::MENUNGGAK)
-                    ->whereHas('cicilan_kelompok', function ($nqr) {
-                        $nqr->search_by_column('status', [EnumStatusCicilanKelompok::BELUM_BAYAR, EnumStatusCicilanKelompok::TELAT_BAYAR]);
-                    });
-            })->paginate(PaginateSize::SMALL->value)->withQueryString();
+        $kelompok_pinjaman = $kelompok_model->cicilan_belum_bayar()->paginate(PaginateSize::SMALL->value)->withQueryString();
 
         $payload = compact(
             // Vars kelompok
@@ -66,6 +75,7 @@ class DashboardController extends Controller
             // Belum bayar cicilan
             'kelompok_pinjaman'
         );
+
         return view('admin.dashboard.index', $payload);
     }
 }

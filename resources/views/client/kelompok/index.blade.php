@@ -1,20 +1,37 @@
 <x-layouts.client-app title="Kelompok saya">
     <div class="flex flex-col gap-4">
         @if (!empty($kelompok))
-            <div class="flex flex-row justify-between items-center">
-                <div class="flex flex-row gap-2">
-                    <h3>{{ $kelompok->name }}</h3>
-                    <button class="btn btn-circle btn-sm btn-primary" onclick="window.open_modal('edit-kelompok')">
-                        <x-lucide-edit class="w-4" />
-                    </button>
+            <div class="flex flex-row justify-between items-center flex-wrap gap-4">
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-row gap-2">
+                        <h3>{{ $kelompok->name }}</h3>
+                        <button class="btn btn-circle btn-sm btn-primary" onclick="window.open_modal('edit-kelompok')">
+                            <x-lucide-edit class="w-4" />
+                        </button>
+                    </div>
+                    @if ($kelompok->decimal_jumlah_anggota_kelompok < $kelompok_settings['minimal_anggota_kelompok'])
+                        <p class="text-warning">Jumlah anggota : {{ $kelompok->jumlah_anggota_kelompok }}</p>
+                        <small class="text-primary">
+                            Lengkapi anggota kelompok dengan minimal
+                            {{ $kelompok_settings['minimal_anggota_kelompok'] }}
+                            anggota untuk
+                            dapat mengajukan
+                            pinjaman.
+                        </small>
+                    @else
+                        <small>Jumlah anggota : {{ $kelompok->jumlah_anggota_kelompok }}</small>
+                    @endif
+                    <small>Limit pinjaman per anggota : {{ $kelompok->formatted_limit_per_anggota }}</small>
                 </div>
-                <div class="flex flex-row gap-2">
-                    <a href="{{ route('client.kelompok.anggota-kelompok.create', [$kelompok->id]) }}"
-                        class="btn btn-primary">
-                        <x-lucide-circle-plus class="w-4" />
-                        Tambah anggota
-                    </a>
-                </div>
+                @if ($kelompok->pinjaman_sedang_berlangsung)
+                    <div class="flex flex-row gap-2">
+                        <a href="{{ route('client.kelompok.anggota-kelompok.create', [$kelompok->id]) }}"
+                            class="btn btn-primary">
+                            <x-lucide-circle-plus class="w-4" />
+                            Tambah anggota
+                        </a>
+                    </div>
+                @endif
             </div>
             <x-ui.table>
                 <thead>

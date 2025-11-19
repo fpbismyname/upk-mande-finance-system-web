@@ -24,15 +24,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $name_user = fake()->name();
         return [
             'nik' => fake()->numerify(str_repeat('#', 16)),
-            'name' => fake()->name(),
+            'name' => $name_user,
             'nomor_telepon' => fake()->unique()->numerify('08##########'),
             'alamat' => fake()->unique()->address(),
             'role' => EnumRole::ANGGOTA,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= 'password',
             'remember_token' => Str::random(10),
         ];
     }

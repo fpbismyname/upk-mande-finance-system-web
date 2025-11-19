@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Enums\Admin\User\EnumRole;
 use App\Enums\Table\PaginateSize;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class PinjamanKelompokController extends Controller
 {
@@ -24,14 +26,15 @@ class PinjamanKelompokController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, User $user_model)
     {
         $pinjaman_kelompok = auth()->user()
             ->kelompok
             ->pinjaman_kelompok()
             ->with(['cicilan_kelompok'])
             ->findOrFail($id);
-        $payload = compact('pinjaman_kelompok');
+        $user_akuntan = $user_model->search_by_column('role', EnumRole::AKUNTAN)->first();
+        $payload = compact('pinjaman_kelompok', 'user_akuntan');
         return view('client.pinjaman-kelompok.show', $payload);
     }
 }

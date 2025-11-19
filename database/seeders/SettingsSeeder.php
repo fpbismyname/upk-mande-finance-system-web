@@ -20,20 +20,14 @@ class SettingsSeeder extends Seeder
                 'group' => 'pinjaman'
             ],
             [
-                'key' => 'toleransi_telat_bayar',
-                'value' => '7',
-                'type' => 'integer',
-                'group' => 'cicilan'
-            ],
-            [
-                'key' => 'denda_telat_bayar',
-                'value' => '1',
-                'type' => 'decimal',
-                'group' => 'cicilan'
-            ],
-            [
-                'key' => 'limit_pinjaman_maksimal',
+                'key' => 'maksimal_limit_pinjaman',
                 'value' => '50000000',
+                'type' => 'decimal',
+                'group' => 'pinjaman'
+            ],
+            [
+                'key' => 'minimal_limit_pinjaman',
+                'value' => '10000000',
                 'type' => 'decimal',
                 'group' => 'pinjaman'
             ],
@@ -42,6 +36,24 @@ class SettingsSeeder extends Seeder
                 'value' => '2',
                 'type' => 'decimal',
                 'group' => 'pinjaman'
+            ],
+            [
+                'key' => 'toleransi_telat_bayar',
+                'value' => '7',
+                'type' => 'integer',
+                'group' => 'pinjaman'
+            ],
+            [
+                'key' => 'minimal_anggota_kelompok',
+                'value' => '4',
+                'type' => 'integer',
+                'group' => 'kelompok'
+            ],
+            [
+                'key' => 'maksimal_anggota_kelompok',
+                'value' => '50',
+                'type' => 'integer',
+                'group' => 'kelompok'
             ],
         ];
 

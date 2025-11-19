@@ -40,7 +40,9 @@
                     <th>Nama lengkap</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th class="text-end">Aksi</th>
+                    @can('manage-users')
+                        <th class="text-end">Aksi</th>
+                    @endcan
                 </thead>
                 <tbody>
                     @if (count($datas) > 0)
@@ -58,7 +60,7 @@
                                     @if ($current_account)
                                         <div class="flex w-full justify-end">
                                             <div class="badge badge-primary">
-                                                <a href="{{ route('admin.settings.view') }}"
+                                                <a href="{{ route('admin.settings.index') }}"
                                                     class="link-hover whitespace-nowrap">Akun anda</a>
                                             </div>
                                         </div>

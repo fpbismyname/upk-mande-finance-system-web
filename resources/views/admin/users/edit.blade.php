@@ -1,26 +1,3 @@
-@push('scripts')
-    <script>
-        let is_reset_password = false;
-
-        function changed_reset_pass() {
-            // Get reset password checkbox element
-            const reset_password_element = document.getElementById('reset_password')
-            // Get fieldset new password
-            const fieldset_new_password = document.getElementById('new_password_fieldset')
-            // Get field input new password
-            const field_new_password = document.getElementById('field-password')
-            // bind is_reset_password var to reset password checkbox element value
-            is_reset_password = reset_password_element.checked
-            // toggle hide if reset password is not true
-            fieldset_new_password.hidden = !is_reset_password
-            // set to empty every change is reset password value
-            field_new_password.value = ""
-            // if is reset password checked, set field input new password to required to input
-            field_new_password.required = is_reset_password
-        }
-    </script>
-@endpush
-
 <x-layouts.admin-app title="Edit Akun">
     <div class="flex flex-col gap-4">
         {{-- Edit form --}}
@@ -79,19 +56,32 @@
                 @enderror
             </fieldset>
 
+            {{-- Nomor rekening --}}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Nomor Rekening</legend>
+                <input type="text" name="nomor_rekening" placeholder="Nomor Rekening" class="input w-full validator"
+                    value="{{ $user->nomor_rekening ?? '' }}" pattern="[0-9]{10,16}" minlength="10" maxlength="16"
+                    required />
+                <p class="validator-hint hidden">
+                    Nomor rekening wajib diisi
+                    <br>Nomor rekening minimal terdiri dari 10-12 digit
+                </p>
+                @error('nomor_rekening')
+                    <p class="fieldset-label">{{ $message }}</p>
+                @enderror
+            </fieldset>
+
             {{-- role --}}
-            <div class="grid md:col-span-2">
-                <fieldset class="fieldset">
-                    <legend class="fieldset-legend">Role</legend>
-                    <select name="role" class="select w-full">
-                        @foreach ($list_role as $value => $key)
-                            <option value="{{ $value }}" @if ($value === $user->role->value) selected @endif>
-                                {{ $key }}
-                            </option>
-                        @endforeach
-                    </select>
-                </fieldset>
-            </div>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Role</legend>
+                <select name="role" class="select w-full">
+                    @foreach ($list_role as $value => $key)
+                        <option value="{{ $value }}" @if ($value === $user->role->value) selected @endif>
+                            {{ $key }}
+                        </option>
+                    @endforeach
+                </select>
+            </fieldset>
 
             {{-- Alamat --}}
             <div class="grid md:col-span-2">
@@ -107,23 +97,29 @@
                 </fieldset>
             </div>
 
-            {{-- reset password --}}
-            <div class="grid md:col-span-2">
-                <fieldset class="fieldset">
-                    <label class="label">
-                        <input type="checkbox" onchange="changed_reset_pass()" class="checkbox" id="reset_password"
-                            name="reset_password" />
-                        Reset password
-                    </label>
-                </fieldset>
+            {{-- Reset password --}}
+            <div class="grid md:col-span-2 grid-cols-2 w-fit">
+                <label class="label">
+                    <input type="checkbox" class="checkbox" name="reset_password"
+                        onchange="window.toggle_hidden_element(this, 'fieldset_new_password', false)" />
+                    Reset password
+                </label>
+                @error('reset_password')
+                    <small class="text-error">{{ $message }}</small>
+                @enderror
             </div>
-
-            {{-- new password --}}
-            <div class="grid md:col-span-2">
-                <fieldset id="new_password_fieldset" class="fieldset" hidden>
+            {{-- New password --}}
+            <div class="grid md:col-span-2" id="fieldset_new_password" hidden>
+                <fieldset class="fieldset">
                     <legend class="fieldset-legend">Password baru</legend>
-                    <x-ui.input-password name="new_password" placeholder="Password baru" class="validator"
-                        pattern="[\w\s]{6,250}" />
+                    <input type="text" class="input w-full validator" name="new_password" value=""
+                        minlength="6">
+                    <p class="validator-hint hidden">
+                        Password baru minimal terdiri dari 6 karakter.
+                    </p>
+                    @error('new_password')
+                        <small class="text-error">{{ $message }}</small>
+                    @enderror
                 </fieldset>
             </div>
 

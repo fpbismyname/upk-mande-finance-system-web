@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Enums\Admin\Settings\EnumSettingKeys;
 use App\Enums\Admin\Status\EnumStatusKelompok;
 use App\Enums\Table\PaginateSize;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\KelompokRequest;
 use App\Models\Kelompok;
+use App\Models\Settings;
 use App\Services\UI\Toast;
 
 class KelompokController extends Controller
@@ -21,7 +23,10 @@ class KelompokController extends Controller
             ->with(['anggota_kelompok'])
             ->first();
         $list_anggota_kelompok = $kelompok?->anggota_kelompok ? $kelompok->anggota_kelompok()->paginate(PaginateSize::SMALL->value)->withQueryString() : [];
-        $payload = compact('kelompok', 'list_anggota_kelompok');
+        $kelompok_settings = [
+            EnumSettingKeys::MINIMAL_ANGGOTA_KELOMPOK->value => Settings::getKeySetting(EnumSettingKeys::MINIMAL_ANGGOTA_KELOMPOK)->value('value')
+        ];
+        $payload = compact('kelompok', 'list_anggota_kelompok', 'kelompok_settings');
         return view('client.kelompok.index', $payload);
     }
 

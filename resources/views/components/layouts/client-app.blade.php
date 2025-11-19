@@ -9,7 +9,16 @@
     $navbar_menu = config('client_navbar');
 @endphp
 <x-layouts.app title="{{ $title ?? '' }}">
-    <div class="flex flex-col gap-4 min-h-screen">
+    <div class="flex flex-col min-h-screen">
+        {{-- Alert data user --}}
+        @if (!auth()->user()->is_data_user_lengkap)
+            <div class="flex flex-row p-2 bg-primary text-white gap-2 items-center transition-all">
+                <x-lucide-circle-alert class="min-w-4 max-w-4" />
+                <small>Jangan lupa untuk melengkapi data anda agar pengajuan pinjaman dapat
+                    disetujui.</small>
+                <x-lucide-x class="min-w-4 max-w-4 cursor-pointer ms-auto" onclick="this.parentElement.hidden = true" />
+            </div>
+        @endif
         {{-- navbar --}}
         <div class="bg-base-200">
             <div class="container mx-auto">
@@ -47,19 +56,20 @@
                                         @endswitch
                                     @endforeach
                                     <li>
-                                        <a href="">
+                                        <a href="{{ route('client.settings.index') }}"
+                                            class="{{ Str::contains('client.settings.index', $current_route) ? 'menu-active' : '' }}">
                                             <x-lucide-settings class="w-4" />
                                             Pengaturan
                                         </a>
                                     </li>
                                     <li>
                                         <button class="btn btn-soft btn-error justify-start"
-                                            onclick="window.submit_form('logout-user')">
+                                            onclick="window.submit_form('logout-user-mobile')">
                                             <x-lucide-log-out class="w-4" />
                                             <span>Logout</span>
                                         </button>
-                                        <form id="logout-user" action="{{ route('client.logout') }}" method="post"
-                                            class="w-full hidden">
+                                        <form id="logout-user-mobile" action="{{ route('client.logout') }}"
+                                            method="post" class="w-full hidden">
                                             @csrf
                                             @method('post')
                                         </form>
@@ -91,7 +101,8 @@
                                 <ul class="dropdown-content menu w-64 bg-base-100 shadow rounded-box">
                                     <li class="menu-title">{{ auth()->user()->name }}</li>
                                     <li>
-                                        <a href="">
+                                        <a href="{{ route('client.settings.index') }}"
+                                            class="{{ Str::contains('client.settings.index', $current_route) ? 'menu-active' : '' }}">
                                             <x-lucide-settings class="w-4" />
                                             Pengaturan
                                         </a>

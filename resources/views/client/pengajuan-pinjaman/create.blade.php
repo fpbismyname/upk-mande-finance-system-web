@@ -16,12 +16,12 @@
                     Nominal pengajuan
                     <small id="preview-nominal">Rp 0</small>
                 </legend>
-                <input type="number" min="1000000" max="{{ $kelompok->limit_pinjaman }}" name="nominal_pinjaman"
-                    class="input w-full validator" oninput="window.preview_currency_element(this, 'preview-nominal')"
+                <input type="number" min="1000000" max="{{ $kelompok->decimal_limit_pinjaman_kelompok }}"
+                    name="nominal_pinjaman" class="input w-full validator"
+                    oninput="window.preview_currency_element(this, 'preview-nominal')"
                     value="{{ old('nominal_pinjaman') }}" required />
                 <p class="validator-hint hidden">
-                    Nominal pinjaman tidak boleh melebihi limit pinjaman : {{ $kelompok->formatted_limit_pinjaman }}
-                    <br> Nominal pinjaman minimal Rp 1.000.000
+                    Nominal pinjaman minimal Rp 1.000.000 - {{ $kelompok->formatted_limit_pinjaman_kelompok }}
                 </p>
                 @error('nominal_pinjaman')
                     <small class="text-error">{{ $message }}</small>

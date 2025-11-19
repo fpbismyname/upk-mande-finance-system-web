@@ -7,71 +7,68 @@ use App\Enums\Admin\Status\EnumStatusPinjaman;
 use App\Models\CicilanKelompok;
 use App\Models\PinjamanKelompok;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
 
 class CheckPinjamanKelompok extends Command
 {
     /**
-     * The name and signature of the console command.
+     * Nama dan tanda tangan perintah konsol.
      *
      * @var string
      */
     protected $signature = 'pinjaman-kelompok:check';
 
     /**
-     * The console command description.
+     * Deskripsi perintah konsol.
      *
      * @var string
      */
     protected $description = 'Cek jatuh tempo pinjaman kelompok';
 
     /**
-     * Execute the console command.
+     * Jalankan perintah konsol.
      */
     public function handle(PinjamanKelompok $pinjaman_kelompok_model)
     {
         $this->info('Memulai cek pinjaman kelompok.');
         $this->newLine();
 
-        $pinjaman_kelompok = $pinjaman_kelompok_model
-            ->with('cicilan_kelompok')
-            ->get();
+        // Memuat cicilan_kelompok
+        $pinjaman_kelompok = $pinjaman_kelompok_model->with('cicilan_kelompok')->get();
 
+        // Cek pinjaman kelompok
+        $this->info('Cek pinjaman yang jatuh tempo.');
         $this->withProgressBar($pinjaman_kelompok, function (PinjamanKelompok $pinjaman) {
-            // Kondisi pinjaman
-            $cicilan_lunas = false;
-            $pinjaman_lunas = false;
-            $pinjaman_cicilan_sudah_lunas = $pinjaman->filterCicilanSudahBayarCount()->get()->filter(fn($pinjaman) => $pinjaman->cicilan_sudah_bayar_count == $pinjaman->tenor->value);
-            // Cek cicilan pinjaman jatuh tempo
-            $cicilan_jatuh_tempo = $pinjaman->cicilan_kelompok()->filterCicilanJatuhTempo()->latest('tanggal_jatuh_tempo')->get();
-            foreach ($cicilan_jatuh_tempo as $cicilan) {
-                if ($cicilan->status === EnumStatusCicilanKelompok::BELUM_BAYAR) {
+            // Cek cicilan pinjaman
+            $status_cicilan_pinjaman_lunas = $pinjaman->cicilan_kelompok()->get()->every(function ($cicilan) {
+                return $cicilan->status === EnumStatusCicilanKelompok::SUDAH_BAYAR;
+            });
+
+            // Cek pinjaman dan cicilan
+            $pinjaman_jatuh_tempo = $pinjaman->pinjaman_jatuh_tempo()->get();
+            $cicilan_pinjaman_jatuh_tempo = $pinjaman->cicilan_kelompok()->cicilan_jatuh_tempo()->get();
+
+            // Ubah status semua cicilan yang jatuh tempo
+            if ($cicilan_pinjaman_jatuh_tempo->isNotEmpty()) {
+                foreach ($cicilan_pinjaman_jatuh_tempo as $cicilan) {
                     $cicilan->status = EnumStatusCicilanKelompok::TELAT_BAYAR;
                     $cicilan->save();
-                    $cicilan_lunas = false;
-                } else {
-                    $cicilan_lunas = true;
                 }
             }
-            // Check pinjaman jatuh tempo
-            $pinjaman_jatuh_tempo = $pinjaman->filterPinjamanJatuhTempo()->latest('tanggal_jatuh_tempo')->get();
-            foreach ($pinjaman_jatuh_tempo as $pinjaman) {
-                if ($pinjaman->status === EnumStatusPinjaman::BERLANGSUNG) {
+
+            // Ubah status pinjaman yang jatuh tempo
+            if ($pinjaman_jatuh_tempo->isNotEmpty()) {
+                foreach ($pinjaman_jatuh_tempo as $pinjaman) {
                     $pinjaman->status = EnumStatusPinjaman::MENUNGGAK;
                     $pinjaman->save();
-                    $pinjaman_lunas = false;
-                } else {
-                    $pinjaman_lunas = true;
                 }
             }
-            // Check semua cicilan pinjaman
-            foreach ($pinjaman_cicilan_sudah_lunas as $pinjaman_lunas) {
-                $pinjaman_lunas->status = EnumStatusPinjaman::SELESAI;
-                $pinjaman_lunas->save();
-            }
-            // Set status
-            if ($cicilan_lunas && $pinjaman_lunas) {
+
+            // Ubah status pinjaman yang sudah menyelesaikan cicilan
+            if ($status_cicilan_pinjaman_lunas) {
                 $pinjaman->status = EnumStatusPinjaman::SELESAI;
+                $pinjaman->save();
+            } else {
+                $pinjaman->status = EnumStatusPinjaman::BERLANGSUNG;
                 $pinjaman->save();
             }
         });

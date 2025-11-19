@@ -59,29 +59,42 @@
                 @enderror
             </fieldset>
 
+            {{-- Nomor Rekening --}}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Nomor Rekening</legend>
+                <input type="text" name="nomor_rekening" placeholder="Nomor Rekening" class="input w-full validator"
+                    value="{{ old('nomor_rekening') }}" pattern="[0-9]{10,16}" minlength="10" maxlength="16" required />
+                <p class="validator-hint hidden">
+                    Nomor rekening wajib diisi
+                    <br>Nomor rekening minimal terdiri dari 10-12 digit
+                </p>
+                @error('nomor_rekening')
+                    <p class="fieldset-label">{{ $message }}</p>
+                @enderror
+            </fieldset>
+
+
             {{-- role --}}
-            <div class="grid md:col-span-2">
-                <fieldset class="fieldset">
-                    <legend class="fieldset-legend">Role</legend>
-                    <select name="role" class="select w-full validator" required>
-                        @if (!empty($list_role))
-                            @foreach ($list_role as $value => $key)
-                                <option value="{{ $value }}">
-                                    {{ $key }}
-                                </option>
-                            @endforeach
-                        @else
-                            <option value="" selected>{{ __('crud.no_data') }}</option>
-                        @endif
-                    </select>
-                    <p class="validator-hint hidden">
-                        Role wajib dipilih
-                    </p>
-                    @error('role_id')
-                        <p class="fieldset-label">{{ $message }}</p>
-                    @enderror
-                </fieldset>
-            </div>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Role</legend>
+                <select name="role" class="select w-full validator" required>
+                    @if (!empty($list_role))
+                        @foreach ($list_role as $value => $key)
+                            <option value="{{ $value }}">
+                                {{ $key }}
+                            </option>
+                        @endforeach
+                    @else
+                        <option value="" selected>{{ __('crud.no_data') }}</option>
+                    @endif
+                </select>
+                <p class="validator-hint hidden">
+                    Role wajib dipilih
+                </p>
+                @error('role_id')
+                    <p class="fieldset-label">{{ $message }}</p>
+                @enderror
+            </fieldset>
 
             {{-- Alamat --}}
             <div class="grid md:col-span-2">

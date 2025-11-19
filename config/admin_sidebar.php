@@ -14,16 +14,23 @@ $sidebar_menu = [
         'roles' => ['admin', 'kepala_institusi', 'akuntan', 'pengelola_dana']
     ],
     [
-        'title' => 'Manajemen Pendanaan',
+        'title' => 'Manajemen Rekening',
         'type' => 'menu-title',
-        'roles' => ['admin', 'kepala_institusi', 'pengelola_dana']
+        'roles' => ['kepala_institusi', 'pengelola_dana', 'akuntan']
     ],
     [
-        'title' => 'Saldo Pendanaan',
+        'title' => 'Rekening Pendanaan',
         'icon' => 'wallet',
         'type' => 'menu',
-        'route_name' => 'admin.pendanaan.index',
-        'roles' => ['admin', 'kepala_institusi', 'akuntan', 'pengelola_dana']
+        'route_name' => 'admin.rekening-pendanaan.index',
+        'roles' => ['kepala_institusi', 'pengelola_dana']
+    ],
+    [
+        'title' => 'Rekening Akuntan',
+        'icon' => 'wallet',
+        'type' => 'menu',
+        'route_name' => 'admin.rekening-akuntan.index',
+        'roles' => ['kepala_institusi', 'akuntan']
     ],
     [
         'title' => 'Manajemen Akun',
@@ -47,28 +54,28 @@ $sidebar_menu = [
     [
         'title' => 'Manajemen Pinjaman',
         'type' => 'menu-title',
-        'roles' => ['admin', 'kepala_institusi', 'akuntan']
+        'roles' => ['kepala_institusi', 'akuntan', 'pengelola_dana']
     ],
     [
         'title' => 'Pengajuan Pinjaman',
         'icon' => 'file-input',
         'type' => 'menu',
         'route_name' => 'admin.pengajuan-pinjaman.index',
-        'roles' => ['admin', 'kepala_institusi']
+        'roles' => ['kepala_institusi', 'akuntan']
     ],
     [
         'title' => 'Jadwal Pencairan',
         'icon' => 'calendar-clock',
         'type' => 'menu',
         'route_name' => 'admin.jadwal-pencairan.index',
-        'roles' => ['admin', 'kepala_institusi', 'pengelola_dana']
+        'roles' => ['kepala_institusi', 'pengelola_dana', 'akuntan']
     ],
     [
         'title' => 'Pinjaman Kelompok',
         'icon' => 'circle-dollar-sign',
         'type' => 'menu',
         'route_name' => 'admin.pinjaman-kelompok.index',
-        'roles' => ['admin', 'kepala_institusi', 'akuntan']
+        'roles' => ['kepala_institusi', 'akuntan']
     ]
 ];
 

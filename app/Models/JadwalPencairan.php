@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Admin\Settings\EnumSettingKeys;
 use App\Enums\Admin\Status\EnumStatusJadwalPencairan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -88,6 +89,24 @@ class JadwalPencairan extends Model
         }
         return $query->where($column, $keyword);
     }
+    public function scopeFilterTenorPengajuan($query, $keyword)
+    {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        return $query->whereHas('pengajuan_pinjaman', function ($qr) use ($keyword) {
+            $qr->where('tenor', $keyword);
+        });
+    }
+    public function scopeFilterStatusPengajuan($query, $keyword)
+    {
+        if (is_null($keyword) || $keyword === '') {
+            return $query;
+        }
+        return $query->whereHas('pengajuan_pinjaman', function ($qr) use ($keyword) {
+            $qr->where('status', $keyword);
+        });
+    }
     public function scopeFilterStatusJadwal($query, $keyword)
     {
         if (is_null($keyword) || $keyword === '') {
@@ -95,14 +114,14 @@ class JadwalPencairan extends Model
         }
         return $query->where('status', $keyword);
     }
-    public function scopeFilterTenorPengajuan($query, $keyword)
+
+    public function scopeJadwal_pencairan_jatuh_tempo($query)
     {
-        if (is_null($keyword) || $keyword === '') {
-            return $query;
-        }
-        return $query->whereHas('pengajuan_pinjaman', fn($qr) =>
-            $qr->where('tenor', $keyword));
+        return $query->with(['pengajuan_pinjaman.kelompok'])
+            ->where('tanggal_pencairan', '<=', now())
+            ->where('status', EnumStatusJadwalPencairan::TERJADWAL);
     }
+
     /**
      * Accessor
      */

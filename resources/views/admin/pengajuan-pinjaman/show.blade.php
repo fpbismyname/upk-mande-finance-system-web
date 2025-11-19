@@ -1,4 +1,4 @@
-<x-layouts.admin-app title="Review pengajuan pinjaman">
+<x-layouts.admin-app title="Detail pengajuan pinjaman">
     <div class="flex flex-col gap-4">
         {{-- Data pengajuan --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -17,49 +17,44 @@
             {{-- Nama kelompok --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nama kelompok</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->kelompok_name }}" readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->kelompok_name }}</p>
             </fieldset>
 
             {{-- Ketua kelompok --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Ketua kelompok</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->ketua_name }}" readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->ketua_name }}</p>
             </fieldset>
 
             {{-- Status --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Status</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_status }}"
-                    readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->formatted_status }}</p>
             </fieldset>
 
             {{-- Nominal pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nominal Pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_nominal_pinjaman }}"
-                    readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->formatted_nominal_pinjaman }}</p>
             </fieldset>
 
             {{-- Tenor --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tenor</legend>
-                <input type="text" class="input w-full" value="{{ $pengajuan_pinjaman->formatted_tenor }}"
-                    readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->formatted_tenor }}</p>
             </fieldset>
 
             {{-- Tanggal pengajuan --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Pengajuan Pada</legend>
-                <input type="text" class="input w-full"
-                    value="{{ $pengajuan_pinjaman->formatted_tanggal_pengajuan }}" readonly />
+                <p class="w-full">{{ $pengajuan_pinjaman->formatted_tanggal_pengajuan }}</p>
             </fieldset>
 
             {{-- Tanggal disetujui --}}
             @if ($pengajuan_pinjaman->status_disetujui)
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Disetujui Pada</legend>
-                    <input type="text" class="input w-full"
-                        value="{{ $pengajuan_pinjaman->formatted_tanggal_disetujui }}" readonly />
+                    <p class="w-full">{{ $pengajuan_pinjaman->formatted_tanggal_disetujui }}</p>
                 </fieldset>
             @endif
 
@@ -67,8 +62,7 @@
             @if ($pengajuan_pinjaman->status_ditolak)
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Tanggal ditolak</legend>
-                    <input type="text" class="input w-full"
-                        value="{{ $pengajuan_pinjaman->formatted_tanggal_ditolak }}" readonly />
+                    <p class="w-full">{{ $pengajuan_pinjaman->formatted_tanggal_ditolak }}</p>
                 </fieldset>
             @endif
 
@@ -77,7 +71,7 @@
                 <div class="grid md:col-span-2">
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">Catatan</legend>
-                        <textarea class="textarea w-full" readonly>{{ $pengajuan_pinjaman->catatan }}</textarea>
+                        <p class="w-full">{{ $pengajuan_pinjaman->catatan }}</p>
                     </fieldset>
                 </div>
             @endif
@@ -86,66 +80,9 @@
         {{-- Approval action --}}
         <div
             class="grid {{ $pengajuan_pinjaman->status_dalam_proses_pengajuan ? 'md:grid-cols-2' : 'md:grid-cols-1 place-items-center' }} gap-4 my-8">
-            @if ($pengajuan_pinjaman->status_dalam_proses_pengajuan)
-                <button href="{{ route('admin.users.index') }}" class="btn btn-primary"
-                    onclick="window.open_modal('modal-review')">
-                    Review
-                </button>
-            @endif
             <a href="{{ route('admin.pengajuan-pinjaman.index') }}" class="btn btn-neutral">
                 Kembali
             </a>
         </div>
-
-        {{-- Modal review --}}
-        <dialog id="modal-review" class="modal">
-            <div class="modal-box">
-                <h4 class="modal-title">Review pengajuan pinjaman.</h4>
-                <form action="{{ route('admin.pengajuan-pinjaman.update', [$pengajuan_pinjaman->id]) }}" method="post"
-                    class="grid grid-cols-1 gap-4">
-                    @csrf
-                    @method('put')
-                    {{-- Status pengajuan pinjaman --}}
-                    <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Status pengajuan</legend>
-                        <select name="status" class="select w-full validator" required>
-                            <option value="" selected disabled>Pilih status pengajuan</option>
-                            @foreach ($list_status as $value => $key)
-                                <option value="{{ $value }}">{{ $key }}</option>
-                            @endforeach
-                        </select>
-                        <p class="validator-hint hidden">
-                            Status pengajuan pinjaman wajib diisi
-                        </p>
-                        @error('status')
-                            <small class="text-error">{{ $message }}</small>
-                        @enderror
-                    </fieldset>
-
-                    {{-- Catatan pengajuan pinjaman --}}
-                    <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Catatan</legend>
-                        <textarea name="catatan" placeholder="Opsional" class="textarea validator w-full"></textarea>
-                        @error('catatan')
-                            <small class="text-error">{{ $message }}</small>
-                        @enderror
-                    </fieldset>
-
-                    {{-- Action form button --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button type="submit" class="btn btn-success"
-                            onclick="return confirm('Apakah anda yakin dengan review anda ?')">
-                            Review
-                        </button>
-                        <button type="reset" class="btn btn-neutral" onclick="window.close_modal('modal-review')">
-                            Kembali
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <form method="dialog" class="modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
     </div>
 </x-layouts.admin-app>

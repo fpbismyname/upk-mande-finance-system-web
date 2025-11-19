@@ -1,10 +1,10 @@
 <x-layouts.client-app title="Detail pengajuan pinjaman">
-    <div class="flex flex-row justify-between">
+    <div class="flex flex-row justify-between items-center">
         <div class="flex flex-col">
             <h3>Detail pengajuan pinjaman</h3>
         </div>
         <div class="flex flex-col">
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-2 flex-wrap">
                 @if (!$pengajuan_pinjaman->status_dibatalkan && !$pengajuan_pinjaman->status_disetujui)
                     <a href="{{ route('client.pengajuan-pinjaman.edit', [$pengajuan_pinjaman->id]) }}"
                         class="btn btn-primary">
@@ -21,6 +21,9 @@
                         </button>
                     </form>
                 @endif
+                <a href="{{ route('client.pengajuan-pinjaman.index') }}" class="btn btn-neutral">
+                    Kembali
+                </a>
             </div>
         </div>
     </div>

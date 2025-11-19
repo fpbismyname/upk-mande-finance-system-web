@@ -36,6 +36,20 @@
                     </div>
                 </form>
             </div>
+            {{-- Print button --}}
+            @can('print-data')
+                <div class="flex flex-row">
+                    <a class="btn btn-outline btn-primary"
+                        href="{{ route('admin.pengajuan-pinjaman.export', [
+                            'search' => request()->get('search'),
+                            'status' => request()->get('status'),
+                            'tenor' => request()->get('tenor'),
+                        ]) }}">
+                        <x-lucide-printer class="w-4" />
+                        Export Data
+                    </a>
+                </div>
+            @endcan
         </div>
         <div class="flex flex-col">
             <x-ui.table>
@@ -46,7 +60,9 @@
                     <th>Nominal pinjaman</th>
                     <th>Tenor pinjaman (bulan)</th>
                     <th>Status pengajuan</th>
-                    <th class="text-end">Aksi</th>
+                    @can('manage-pengajuan-pinjaman')
+                        <th class="text-end">Aksi</th>
+                    @endcan
                 </thead>
                 <tbody>
                     @if (count($datas) > 0)
@@ -60,20 +76,22 @@
                                 <td>{{ $item->formatted_tenor }}</td>
                                 <td>{{ $item->formatted_status }}</td>
                                 <td>
-                                    @can('manage-pengajuan-pinjaman')
-                                        <div class="flex flex-row gap-2">
+                                    <div class="flex flex-row gap-2">
+                                        @if ($item->status_dalam_proses_pengajuan)
+                                            <a class="btn btn-sm btn-link link-hover"
+                                                href="{{ route('admin.pengajuan-pinjaman.edit', [$item->id]) }}">
+                                                <x-lucide-file-search class="w-4" />
+                                                Review
+                                            </a>
+                                        @else
                                             <a class="btn btn-sm btn-link link-hover"
                                                 href="{{ route('admin.pengajuan-pinjaman.show', [$item->id]) }}">
-                                                @if ($item->status_dalam_proses_pengajuan)
-                                                    <x-lucide-file-search class="w-4" />
-                                                    Review
-                                                @else
-                                                    <x-lucide-eye class="w-4" />
-                                                    Detail
-                                                @endif
+                                                <x-lucide-eye class="w-4" />
+                                                Detail
                                             </a>
-                                        </div>
-                                    @endcan
+                                        @endif
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

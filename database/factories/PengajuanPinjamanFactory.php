@@ -18,7 +18,7 @@ class PengajuanPinjamanFactory extends Factory
     public function definition(): array
     {
         return [
-            'file_proposal' => "https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf",
+            'file_proposal' => 'default/base_pengajuan.pdf',
             'nominal_pinjaman' => floor($this->faker->numberBetween(1000000, 10000000) / 500000) * 500000,
             'tenor' => $this->faker->randomElement([3, 6, 9, 12]),
             'tanggal_pengajuan' => now(),

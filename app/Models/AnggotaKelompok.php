@@ -2,36 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class AnggotaKelompok extends Model
 {
     use HasFactory;
+
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['nik', 'name', 'alamat', 'nomor_telepon', 'kelompok_id'];
-    /**
-     * The table associated with the model.
-     *
-     * @var string
+     * Table name
      */
     protected $table = 'anggota_kelompok';
+
     /**
-     * Relationships : kelompok
+     * Fillable table
+     */
+    protected $fillable = ['nik', 'name', 'alamat', 'nomor_telepon', 'kelompok_id'];
+
+    /**
+     * Relationships
      */
     public function kelompok()
     {
         return $this->belongsTo(Kelompok::class, 'kelompok_id');
     }
+
     /**
-     * Scope a query anggota kelompok
-     *
+     * Scope
      */
     public function scopeSearch($query, $keyword)
     {
@@ -52,5 +49,17 @@ class AnggotaKelompok extends Model
             return $query->whereIn($column, $keyword);
         }
         return $query->where($column, $keyword);
+    }
+
+    /**
+     * Event eloquent hook
+     */
+    public static function booted()
+    {
+        static::creating(function () {
+            if (self::get()->count() === 100) {
+                return false;
+            }
+        });
     }
 }

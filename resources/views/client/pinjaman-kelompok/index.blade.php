@@ -7,7 +7,7 @@
                     <h3>Pinjaman kelompok</h3>
                 </div>
                 @if ($kelompok->layak_mengajukan_pinjaman)
-                    <a href="{{ route('client.pengajuan-pinjaman.create') }}" class="btn btn-primary">
+                    <a href="{{ route('client.pengajuan-pinjaman.index') }}" class="btn btn-primary">
                         <x-lucide-file-input class="w-4" />
                         Ajukan pinjaman sekarang
                     </a>

@@ -31,8 +31,7 @@
                     </form>
                     <div class="flex flex-col text-center">
                         <p>Belum punya akun ? <a class="link-primary link-hover"
-                                href="{{ route('client.login') }}">Daftar
-                                sekarang</a></p>
+                                href="{{ route('client.register') }}">Daftar sekarang</a></p>
                     </div>
                 </div>
             </div>

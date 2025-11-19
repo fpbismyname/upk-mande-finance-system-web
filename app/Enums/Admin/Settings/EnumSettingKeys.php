@@ -1,18 +1,15 @@
 <?php
 namespace App\Enums\Admin\Settings;
 
+use Illuminate\Support\Str;
+
 enum EnumSettingKeys: string
 {
     case TOLERANSI_TELAT_BAYAR = 'toleransi_telat_bayar';
-    case DENDA_TELAT_BAYAR = 'denda_telat_bayar';
     case BUNGA_PINJAMAN = 'bunga_pinjaman';
-    case LIMIT_PINJAMAN_MAKSIMAL = 'limit_pinjaman_maksimal';
+    case MAKSIMAL_LIMIT_PINJAMAN = 'maksimal_limit_pinjaman';
+    case MINIMAL_LIMIT_PINJAMAN = 'minimal_limit_pinjaman';
     case KENAIKAN_LIMIT_PER_JUMLAH_PINJAMAN = 'kenaikan_limit_per_jumlah_pinjaman';
-    public static function options(): array
-    {
-        return array_reduce(self::cases(), function ($carry, $case) {
-            $carry[$case->value] = str_replace("_", " ", ucfirst($case->value));
-            return $carry;
-        }, []);
-    }
+    case MAKSIMAL_ANGGOTA_KELOMPOK = 'maksimal_anggota_kelompok';
+    case MINIMAL_ANGGOTA_KELOMPOK = 'minimal_anggota_kelompok';
 }

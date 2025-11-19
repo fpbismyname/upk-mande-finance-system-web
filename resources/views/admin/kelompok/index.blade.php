@@ -39,9 +39,11 @@
                     <th>#</th>
                     <th>Nama kelompok</th>
                     <th>Ketua kelompok</th>
-                    <th>Limit pinjaman</th>
+                    <th>Limit pinjaman per anggota</th>
                     <th>Status kelompok</th>
-                    <th class="text-end">Aksi</th>
+                    @can('manage-kelompok')
+                        <th class="text-end">Aksi</th>
+                    @endcan
                 </thead>
                 <tbody>
                     @if (count($datas) > 0)
@@ -54,7 +56,7 @@
                                 </td>
                                 <td>{{ $item->formatted_name }}</td>
                                 <td>{{ $item->ketua_name }}</td>
-                                <td>{{ $item->formatted_limit_pinjaman }}</td>
+                                <td>{{ $item->formatted_limit_per_anggota }}</td>
                                 <td>{{ $item->formatted_status }}</td>
                                 <td>
                                     @if ($current_account)
@@ -68,13 +70,13 @@
                                             <a class="btn btn-sm btn-link link-hover"
                                                 href="{{ route('admin.kelompok.show', [$item->id]) }}">
                                                 <x-lucide-eye class="w-4" />
-                                                {{ __('crud.action.detail', ['']) }}
+                                                Detail
                                             </a>
                                             @can('manage-kelompok')
                                                 <a class="btn btn-sm btn-link link-hover"
                                                     href="{{ route('admin.kelompok.edit', [$item->id]) }}">
                                                     <x-lucide-pencil class="w-4" />
-                                                    {{ __('crud.action.edit') }}
+                                                    Edit
                                                 </a>
                                                 <form method="post"
                                                     action="{{ route('admin.kelompok.destroy', [$item->id]) }}">
@@ -83,7 +85,7 @@
                                                     <button class="btn btn-sm btn-link link-hover" type="submit"
                                                         onclick="return confirm('Apakah yakin ingin menghapus data {{ $item->name }}')">
                                                         <x-lucide-trash class="w-4" />
-                                                        {{ __('crud.action.delete') }}
+                                                        Hapus
                                                     </button>
                                                 </form>
                                             @endcan
@@ -96,7 +98,7 @@
                         <tr>
                             <td colspan="6">
                                 <div class="p-4 text-center">
-                                    {{ __('crud.no_data', ['item' => 'kelompok']) }}
+                                    Tidak ada data kelompok yang tersedia.
                                 </div>
                             </td>
                         </tr>
@@ -104,7 +106,7 @@
                 </tbody>
             </x-ui.table>
             <div class="p-4">
-                {{ $datas->links() }}
+                {!! $datas->links() !!}
             </div>
         </div>
     </div>

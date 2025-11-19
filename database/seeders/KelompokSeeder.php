@@ -32,7 +32,7 @@ class KelompokSeeder extends Seeder
 
                 // Tambahkan data pengajuan di setiap kelompok
                 PengajuanPinjaman::factory()->count(1)->create([
-                    'kelompok_id' => $kelompok->id
+                    'kelompok_id' => $kelompok->id,
                 ]);
             });
         }

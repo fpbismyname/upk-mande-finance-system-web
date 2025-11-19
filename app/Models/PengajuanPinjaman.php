@@ -64,7 +64,8 @@ class PengajuanPinjaman extends Model
         'status_ditolak',
         'status_disetujui',
         'status_dibatalkan',
-        'has_pengajuan_dalam_proses'
+        'has_pengajuan_dalam_proses',
+        'formatted_link_file_proposal'
     ];
 
     /**
@@ -139,6 +140,40 @@ class PengajuanPinjaman extends Model
             get: fn() => Str::of($ketua)
         );
     }
+    // get dalam_proses_pengajuan
+    public function statusDalamProsesPengajuan(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN
+        );
+    }
+    // get ditolak
+    public function statusDitolak(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DITOLAK
+        );
+    }
+    // get disetujui
+    public function statusDisetujui(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DISETUJUI
+        );
+    }
+    // get dibatalkan
+    public function statusDibatalkan(): Attribute
+    {
+        $status = $this->status;
+        return Attribute::make(
+            get: fn() => $status === EnumStatusPengajuanPinjaman::DIBATALKAN
+        );
+    }
+
+    // Formatted
     // get status_name
     public function formattedStatus(): Attribute
     {
@@ -187,39 +222,13 @@ class PengajuanPinjaman extends Model
             get: fn() => $value ? Carbon::parse($value)->format(' d M Y | H:i') : "-"
         );
     }
-    // get dalam_proses_pengajuan
-    public function statusDalamProsesPengajuan(): Attribute
+    public function formattedLinkFileProposal(): Attribute
     {
-        $status = $this->status;
+        $url = route('storage.get-file', ['path' => $this->file_proposal]);
         return Attribute::make(
-            get: fn() => $status === EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN
+            get: fn() => $url
         );
     }
-    // get ditolak
-    public function statusDitolak(): Attribute
-    {
-        $status = $this->status;
-        return Attribute::make(
-            get: fn() => $status === EnumStatusPengajuanPinjaman::DITOLAK
-        );
-    }
-    // get disetujui
-    public function statusDisetujui(): Attribute
-    {
-        $status = $this->status;
-        return Attribute::make(
-            get: fn() => $status === EnumStatusPengajuanPinjaman::DISETUJUI
-        );
-    }
-    // get dibatalkan
-    public function statusDibatalkan(): Attribute
-    {
-        $status = $this->status;
-        return Attribute::make(
-            get: fn() => $status === EnumStatusPengajuanPinjaman::DIBATALKAN
-        );
-    }
-
     // Event eloquent hook
     public static function booted()
     {

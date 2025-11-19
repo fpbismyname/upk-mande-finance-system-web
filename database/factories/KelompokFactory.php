@@ -20,7 +20,7 @@ class KelompokFactory extends Factory
     {
         return [
             'name' => "Kelompok {$this->faker->words(2, true)}",
-            'limit_pinjaman' => 10000000.0,
+            'limit_per_anggota' => 2000000.00,
             'status' => EnumStatusKelompok::AKTIF,
             'users_id' => User::factory(),
         ];

@@ -23,7 +23,7 @@ class KelompokRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'limit_pinjaman' => 'required|numeric|min:1000000',
+            'limit_per_anggota' => 'required|numeric|min:1000000',
             'users_id' => 'required',
             'status' => 'required'
         ];

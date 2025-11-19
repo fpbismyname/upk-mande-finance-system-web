@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Client;
 
 use App\Enums\Admin\CatatanPendanaan\EnumCatatanPendanaan;
+use App\Enums\Admin\Rekening\EnumTipeTransaksi;
 use App\Enums\Admin\Status\EnumStatusCicilanKelompok;
 use App\Http\Controllers\Controller;
+use App\Enums\Admin\Rekening\EnumRekening;
 use App\Http\Requests\Client\BayarCicilanKelompokRequest;
-use App\Models\CatatanPendanaan;
-use App\Models\Pendanaan;
+use App\Models\Rekening;
+use App\Models\TransaksiRekening;
 use App\Services\UI\Toast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -37,8 +39,7 @@ class CicilanKelompokController extends Controller
         BayarCicilanKelompokRequest $request,
         string $id_pinjaman,
         string $id_cicilan,
-        Pendanaan $pendanaan_model,
-        CatatanPendanaan $catatan_pendanaan_model
+        Rekening $rekening_model,
     ) {
         $datas = $request->validated();
         $kelompok = auth()->user()->kelompok;
@@ -59,34 +60,30 @@ class CicilanKelompokController extends Controller
 
         $datas['bukti_pembayaran'] = $path;
 
-        $denda_cicilan = $cicilan_kelompok->denda_telat_bayar;
-
         $cicilan_kelompok->update([
             ...$datas,
             'status' => EnumStatusCicilanKelompok::SUDAH_BAYAR,
-            'tanggal_dibayar' => now(),
-            'denda_dibayar' => floatval($denda_cicilan)
+            'tanggal_dibayar' => now()
         ]);
 
         // bayar pendanaan
-        $total_nominal_bayar_cicilan = $cicilan_kelompok->nominal_cicilan + $denda_cicilan;
-        $pendanaan = $pendanaan_model->first();
-        $pendanaan->increment('saldo', $total_nominal_bayar_cicilan);
-
-        if ($pendanaan->wasChanged()) {
-            $catatan_telat_bayar = $denda_cicilan != 0 ? "Dengan denda telat bayar {$cicilan_kelompok->formatted_denda_telat_bayar}." : '';
-            $data_catatan = [
-                'jumlah_saldo' => $total_nominal_bayar_cicilan,
-                'catatan' => "Bayar cicilan kelompok {$kelompok->formatted_name}. {$catatan_telat_bayar}",
-                'tipe_catatan' => EnumCatatanPendanaan::INFLOW,
+        $rekening_akuntan = $rekening_model->get_rekening_akuntan()->first();
+        $total_nominal_bayar_cicilan = $cicilan_kelompok->nominal_cicilan;
+        $rekening_akuntan->increment('saldo', $total_nominal_bayar_cicilan);
+        if ($rekening_akuntan->wasChanged()) {
+            $data_transaksi = [
+                'nominal' => $total_nominal_bayar_cicilan,
+                'catatan' => "Bayar cicilan kelompok {$kelompok->formatted_name}.",
+                'keterangan' => "Pembayaran cicilan pinjaman kelompok {$kelompok->formatted_name} ke rekening akuntan.",
+                'tipe_transaksi' => EnumTipeTransaksi::MASUK,
             ];
-            $catatan_pendanaan_model->create($data_catatan);
+            $rekening_akuntan->transaksi_rekening()->create($data_transaksi);
         }
 
         if ($cicilan_kelompok->wasChanged()) {
-            Toast::success('Cicilan berhasil dibayar.');
+            Toast::success('Bukti pembayaran berhasil dikirim.');
         } else {
-            Toast::success('Cicilan gagal dibayar. Silahkan cobalagi di lain waktu.');
+            Toast::success('Bukti pembayaran gagal dikirim. Silahkan cobalagi di lain waktu.');
         }
         return redirect()->route('client.pinjaman-kelompok.show', [$id_pinjaman]);
     }

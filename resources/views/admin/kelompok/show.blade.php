@@ -9,61 +9,48 @@
     @endcan
 
     {{-- Kelompok --}}
-    <div class="flex flex-col gap-4">
-        {{-- View form --}}
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2" method="POST">
-            {{-- Nama kelompok --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nama kelompok</legend>
-                <input type="text" name="name" readonly
-                    placeholder="Nama kelompok (contoh: kelompok mawar, kelompok anggrek, dsb.)" class="input w-full"
-                    minlength="4" value="{{ $kelompok->name }}" />
-            </fieldset>
+    <div class="card bg-base-200">
+        <div class="card-body">
+            {{-- View form --}}
+            <div class="grid grid-cols-1 gap-2 md:grid-cols-2" method="POST">
+                {{-- Nama kelompok --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Nama kelompok</legend>
+                    <p>{{ $kelompok->name }}</p>
+                </fieldset>
 
-            {{-- limit pinjaman --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                    Limit pinjaman
-                </legend>
-                <input type="text" name="limit_pinjaman" placeholder="Limit pinjaman"
-                    value="{{ $kelompok->formatted_limit_pinjaman }}" class="input w-full" readonly />
-            </fieldset>
+                {{-- limit pinjaman --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Limit pinjaman per anggota
+                    </legend>
+                    <p>{{ $kelompok->formatted_limit_per_anggota }}</p>
+                </fieldset>
 
-            {{-- Ketua kelompok --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                    Ketua kelompok
-                </legend>
-                <input type="text" name="ketua_id" placeholder="Ketua kelompok" value="{{ $kelompok->ketua_name }}"
-                    class="input w-full" readonly />
-            </fieldset>
+                {{-- Ketua kelompok --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Ketua kelompok
+                    </legend>
+                    <p>{{ $kelompok->ketua_name }}</p>
+                </fieldset>
 
-            {{-- Status kelompok --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                    Status kelompok
-                </legend>
-                <input type="text" name="ketua_id" placeholder="Ketua kelompok"
-                    value="{{ $kelompok->formatted_status }}" class="input w-full" readonly />
-            </fieldset>
+                {{-- Status kelompok --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Status kelompok
+                    </legend>
+                    <p>{{ $kelompok->formatted_status }}</p>
+                </fieldset>
 
-            {{-- Created at --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                    Dibuat pada
-                </legend>
-                <input type="text" name="created_at" placeholder="Dibuat pada"
-                    value="{{ $kelompok->created_at->format('d M Y | H:i') }}" class="input w-full" readonly />
-            </fieldset>
-
-            {{-- Updated at --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                    Terakhir diperbarui
-                </legend>
-                <input type="text" name="updated_at" placeholder="Terakhir diperbarui"
-                    value="{{ $kelompok->updated_at->format('d M Y | H:i') }}" class="input w-full" readonly />
-            </fieldset>
+                {{-- Created at --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Dibuat pada
+                    </legend>
+                    <p>{{ $kelompok->created_at->format('d M Y | H:i') }}</p>
+                </fieldset>
+            </div>
         </div>
     </div>
 
@@ -139,7 +126,7 @@
                         <tr>
                             <td colspan="8">
                                 <div class="p-4 text-center">
-                                    {{ __('crud.not_found', ['item' => 'Akun pengguna']) }}
+                                    Tidak ada anggota kelompok yang tersedia.
                                 </div>
                             </td>
                         </tr>

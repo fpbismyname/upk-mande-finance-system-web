@@ -1,58 +1,60 @@
 <x-layouts.admin-app title="Detail pinjaman">
-
     {{-- Kelompok --}}
     <div class="flex flex-col gap-4">
         {{-- View form --}}
         <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             {{-- Nama kelompok --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Nama kelompok</legend>
-                <input type="text" readonly class="input w-full" value="{{ $pinjaman_kelompok->kelompok_name }}" />
+                <p>{{ $pinjaman_kelompok->kelompok_name }}</p>
             </fieldset>
 
             {{-- Ketua kelompok --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Ketua kelompok</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->ketua_name }}" class="input w-full" readonly />
+                <p>{{ $pinjaman_kelompok->ketua_name }}</p>
             </fieldset>
 
             {{-- Nominal Pinjaman --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Nominal pinjaman</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}" class="input w-full"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}</p>
             </fieldset>
 
+
             {{-- Bunga Pinjaman --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Bunga pinjaman</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_bunga }}" class="input w-full" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_bunga }}</p>
+            </fieldset>
+
+            {{-- Total nominal pinjaman --}}
+            <fieldset class="fieldset flex flex-col">
+                <legend class="fieldset-legend">Total nominal pinjaman</legend>
+                <p>{{ $pinjaman_kelompok->formatted_total_nominal_pinjaman }}</p>
             </fieldset>
 
             {{-- Tenor Pinjaman --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Tenor pinjaman</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_tenor }}" class="input w-full" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tenor }}</p>
             </fieldset>
 
             {{-- Status pinjaman --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Status pinjaman</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_status }}" class="input w-full"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_status }}</p>
             </fieldset>
 
-            {{-- Tangal mulai --}}
-            <fieldset class="fieldset">
+            {{-- Tanggal mulai --}}
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Tanggal mulai</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_tanggal_mulai }}" class="input w-full"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tanggal_mulai }}</p>
             </fieldset>
             {{-- Tanggal jatuh tempo --}}
-            <fieldset class="fieldset">
+            <fieldset class="fieldset flex flex-col">
                 <legend class="fieldset-legend">Tanggal jatuh tempo</legend>
-                <input type="text" value="{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}"
-                    class="input w-full" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}</p>
             </fieldset>
         </div>
     </div>
@@ -95,11 +97,15 @@
                 <tbody>
                     @if ($data_cicilan->count() > 0)
                         @foreach ($data_cicilan as $item)
-                            <tr>
+                            <tr class="@if ($item->cicilan_telat_sudah_bayar) bg-warning/50 @endif">
                                 <td>{{ $loop->iteration + ($data_cicilan->currentPage() - 1) * $data_cicilan->perPage() }}
                                 </td>
                                 <td>{{ $item->formatted_nominal_cicilan }}</td>
-                                <td>{{ $item->formatted_status }}</td>
+                                <td>{{ $item->formatted_status }}
+                                    @if ($item->cicilan_telat_sudah_bayar)
+                                        | Telat {{ $item->formatted_hari_telat_bayar }}
+                                    @endif
+                                </td>
                                 <td>{{ $item->formatted_tanggal_dibayar }}</td>
                                 <td>{{ $item->formatted_tanggal_jatuh_tempo }}</td>
                                 <td>

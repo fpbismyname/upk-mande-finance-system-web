@@ -6,13 +6,16 @@ use App\Enums\Admin\PengajuanPinjaman\EnumTenor;
 use App\Enums\Admin\Status\EnumStatusJadwalPencairan;
 use App\Enums\Admin\Status\EnumStatusPengajuanPinjaman;
 use App\Enums\Table\PaginateSize;
+use App\Exports\Admin\PengajuanPinjamanExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PengajuanPinjamanRequest;
 use App\Models\JadwalPencairan;
 use App\Models\Pendanaan;
 use App\Models\PengajuanPinjaman;
+use App\Models\Rekening;
 use App\Services\UI\Toast;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel;
 
 class PengajuanPinjamanController extends Controller
 {
@@ -50,15 +53,20 @@ class PengajuanPinjamanController extends Controller
         return view('admin.pengajuan-pinjaman.index', $payload);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function show(string $id, PengajuanPinjaman $pengajuan_pinjaman_model)
     {
         $pengajuan_pinjaman = $pengajuan_pinjaman_model::findOrFail($id);
         $list_status = collect(EnumStatusPengajuanPinjaman::options())->except(['proses_pengajuan', 'dibatalkan']);
         $payload = compact('pengajuan_pinjaman', 'list_status');
         return view('admin.pengajuan-pinjaman.show', $payload);
+    }
+
+    public function edit(string $id, PengajuanPinjaman $pengajuan_pinjaman_model)
+    {
+        $pengajuan_pinjaman = $pengajuan_pinjaman_model::findOrFail($id);
+        $list_status = collect(EnumStatusPengajuanPinjaman::options())->except(['proses_pengajuan', 'dibatalkan']);
+        $payload = compact('pengajuan_pinjaman', 'list_status');
+        return view('admin.pengajuan-pinjaman.edit', $payload);
     }
 
     /**
@@ -69,27 +77,12 @@ class PengajuanPinjamanController extends Controller
         string $id_pengajuan,
         PengajuanPinjaman $pengajuan_pinjaman_model,
         JadwalPencairan $jadwal_pencairan_model,
-        Pendanaan $pendanaan_model
     ) {
         // Data review
         $data_review = $request->validated();
 
         // Data pengajuan
         $data_pengajuan = $pengajuan_pinjaman_model->findOrFail($id_pengajuan);
-
-        // Pendanaan yang terjadwalkan
-        $jumlah_pendanaan_terjadwal = $pengajuan_pinjaman_model
-            ->whereHas('jadwal_pencairan', fn($q) => $q->where('status', EnumStatusJadwalPencairan::TERJADWAL))
-            ->get()
-            ->sum('nominal_pinjaman');
-
-
-        // Cek saldo pendanaan
-        $pendanaan = $pendanaan_model->first();
-        if ($pendanaan->saldo == 0 || $pendanaan->saldo <= $jumlah_pendanaan_terjadwal) {
-            Toast::info('Saldo pendanaan tidak cukup untuk menyetujui pengajuan pinjaman.');
-            return redirect()->back();
-        }
 
         // Check status disetujui
         $is_approved = EnumStatusPengajuanPinjaman::DISETUJUI->value === $data_review['status'];
@@ -129,5 +122,30 @@ class PengajuanPinjamanController extends Controller
             Toast::error('Pengajuan pinjaman gagal direview.');
         }
         return redirect()->back();
+    }
+
+    public function export(Request $request, PengajuanPinjaman $pengajuan_pinjaman_model, Excel $excel)
+    {
+        // Get search query
+        $filters = $request->only('search', 'status', 'tenor');
+
+        // Query model
+        $query = $pengajuan_pinjaman_model->with($this->relations);
+
+        // Search data if any search input
+        if (!empty($filters)) {
+            foreach ($filters as $key => $value) {
+                match ($key) {
+                    'search' => $query->search($value),
+                    default => $query->search_by_column($key, $value),
+                };
+            }
+        }
+        $data_pengajuan = $query->get();
+
+        $today = now()->format('d_M_Y-H_i_s');
+        $file_name = "data_pengajuan_pinjaman_{$today}.xlsx";
+
+        return $excel->download(new PengajuanPinjamanExport($data_pengajuan), $file_name);
     }
 }

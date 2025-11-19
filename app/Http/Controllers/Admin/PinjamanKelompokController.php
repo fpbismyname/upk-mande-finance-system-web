@@ -6,9 +6,11 @@ use App\Enums\Admin\PengajuanPinjaman\EnumTenor;
 use App\Enums\Admin\Status\EnumStatusCicilanKelompok;
 use App\Enums\Admin\Status\EnumStatusPinjaman;
 use App\Enums\Table\PaginateSize;
+use App\Exports\Admin\PinjamanKelompokExport;
 use App\Http\Controllers\Controller;
 use App\Models\PinjamanKelompok;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel;
 
 class PinjamanKelompokController extends Controller
 {
@@ -71,5 +73,30 @@ class PinjamanKelompokController extends Controller
 
         $payload = compact('pinjaman_kelompok', 'data_cicilan', 'list_status_cicilan');
         return view('admin.pinjaman-kelompok.show', $payload);
+    }
+    public function export(Request $request, PinjamanKelompok $pinjaman_kelompok_model, Excel $excel)
+    {
+        // Get search query
+        $filters = $request->only(['search', 'status', 'tenor']);
+
+        // Query model
+        $query = $pinjaman_kelompok_model->with($this->relations);
+
+        // Search data if any search input
+        if (!empty($filters)) {
+            foreach ($filters as $key => $value) {
+                match ($key) {
+                    'search' => $query->search($value),
+                    default => $query->search_by_column($key, $value),
+                };
+
+            }
+        }
+        $data_pengajuan = $query->get();
+
+        $today = now()->format('d_M_Y-H_i_s');
+        $file_name = "data_pinjaman_kelompok_{$today}.xlsx";
+
+        return $excel->download(new PinjamanKelompokExport($data_pengajuan), $file_name);
     }
 }

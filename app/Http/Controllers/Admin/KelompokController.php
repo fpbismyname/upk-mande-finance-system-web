@@ -119,7 +119,7 @@ class KelompokController extends Controller
 
         $datas = $request->validated();
 
-        $updated_kelompok = $kelompok->update($datas);
+        $kelompok->update($datas);
 
         // Validasi update kelompok
         if ($kelompok->wasChanged()) {
@@ -134,9 +134,9 @@ class KelompokController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Kelompok $kelompok)
     {
-        $kelompok = Kelompok::findOrFail($id);
+        $kelompok = $kelompok->findOrFail($id);
         $deleted_kelompok = $kelompok->delete();
 
         // Validasi update kelompok

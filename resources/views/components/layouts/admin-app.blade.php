@@ -15,6 +15,16 @@
 
         <!-- Contents -->
         <div class="drawer-content flex flex-col">
+            {{-- Alert content --}}
+            @can('has-bank-account-number')
+                @empty(auth()->user()->nomor_rekening)
+                    <div class="flex flex-row gap-2 text-white items-center p-2 bg-primary">
+                        <x-lucide-circle-alert class="min-w-4 max-w-4" />
+                        <small>Jangan lupa untuk melengkapi nomor rekening untuk keperluan pembayaran pinjaman kelompok.</small>
+                        <x-lucide-x class="min-w-4 max-w-4 cursor-pointer ms-auto" onclick="this.parentElement.hidden = true" />
+                    </div>
+                @endempty
+            @endcan
             <div class="navbar bg-base-200 gap-4 md:hidden">
                 <label for="admin-sidebar" class="btn drawer-button md:hidden">
                     <x-lucide-menu class="w-4" />
@@ -87,7 +97,7 @@
                         </div>
                         <ul class="dropdown-content menu w-full bg-base-100 rounded-box">
                             <li>
-                                <a href="{{ route('admin.settings.view') }}">
+                                <a href="{{ route('admin.settings.index') }}">
                                     <x-lucide-settings class="w-4" />
                                     <span>Pengaturan</span>
                                 </a>

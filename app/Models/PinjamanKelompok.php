@@ -29,7 +29,6 @@ class PinjamanKelompok extends Model
         'tenor',
         'bunga',
         'nominal_pinjaman',
-        'nominal_pinjaman_final',
         'tanggal_mulai',
         'tanggal_jatuh_tempo',
         'kelompok_id',
@@ -42,20 +41,21 @@ class PinjamanKelompok extends Model
      * @var array
      */
     protected $appends = [
-        'ketua_name',
-        'kelompok_name',
-        'progres_cicilan',
         'formatted_status',
         'formatted_tenor',
         'formatted_bunga',
         'formatted_nominal_pinjaman',
-        'formatted_nominal_pinjaman_final',
         'formatted_tanggal_mulai',
         'formatted_tanggal_jatuh_tempo',
+        'formatted_total_nominal_pinjaman',
         'status_pinjaman_selesai',
         'status_pinjaman_menunggak',
         'status_pinjaman_berlangsung',
-        'status_pinjaman_dibatalkan',
+        'ketua_name',
+        'kelompok_name',
+        'progres_cicilan',
+        'decimal_bunga',
+        'total_nominal_pinjaman',
     ];
 
     /**
@@ -116,7 +116,7 @@ class PinjamanKelompok extends Model
         }
         return $query->where($column, $keyword);
     }
-    public function scopeFilterCicilanSudahBayarCount($query)
+    public function scopeCicilan_sudah_bayar_count($query)
     {
         return $query->withCount([
             'cicilan_kelompok as cicilan_sudah_bayar_count' => function ($q) {
@@ -124,7 +124,7 @@ class PinjamanKelompok extends Model
             }
         ]);
     }
-    public function scopeFilterPinjamanJatuhTempo($query)
+    public function scopePinjaman_jatuh_tempo($query)
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
         return $query->where('tanggal_jatuh_tempo', '<=', now()->subDays($toleransi_telat_bayar));
@@ -143,9 +143,9 @@ class PinjamanKelompok extends Model
     }
 
     /**
-     * Get the formatted data
+     * Accessor
      */
-    // get kelompok name
+    // Non formatted
     public function kelompokName(): Attribute
     {
         $name = $this->kelompok->name ?? "-";
@@ -161,63 +161,6 @@ class PinjamanKelompok extends Model
             get: fn() => $name
         );
     }
-    // get status
-    public function formattedStatus(): Attribute
-    {
-        $status = $this->status->value ?? "-";
-        return Attribute::make(
-            get: fn() => Str::of($status)->ucfirst()->replace("_", " ")
-        );
-    }
-    // get tenor
-    public function formattedTenor(): Attribute
-    {
-        $tenor = $this->tenor->value ?? 0;
-        return Attribute::make(
-            get: fn() => "{$tenor} Bulan"
-        );
-    }
-    // get bunga
-    public function formattedBunga(): Attribute
-    {
-        $tenor = $this->bunga ?? 0;
-        return Attribute::make(
-            get: fn() => "{$tenor} %"
-        );
-    }
-    // get nominal_pinjaman
-    public function formattedNominalPinjaman(): Attribute
-    {
-        $nominal = number_format($this->nominal_pinjaman ?? 0, 0, ',', '.');
-        return Attribute::make(
-            get: fn() => "Rp {$nominal}"
-        );
-    }
-    // get nominal_pinjaman_final
-    public function formattedNominalPinjamanFinal(): Attribute
-    {
-        $nominal = number_format($this->nominal_pinjaman_final ?? 0, 0, ',', '.');
-        return Attribute::make(
-            get: fn() => "Rp {$nominal}"
-        );
-    }
-    // get tanggal_mulai
-    public function formattedTanggalMulai(): Attribute
-    {
-        $tanggal = $this->tanggal_mulai ? Carbon::parse($this->tanggal_mulai)->format('d M Y | H:i') : "-";
-        return Attribute::make(
-            get: fn() => $tanggal
-        );
-    }
-    // get tanggal_mulai
-    public function formattedTanggalJatuhTempo(): Attribute
-    {
-        $tanggal = $this->tanggal_jatuh_tempo ? Carbon::parse($this->tanggal_jatuh_tempo)->format('d M Y | H:i') : "-";
-        return Attribute::make(
-            get: fn() => $tanggal
-        );
-    }
-    // Get cicilan terbayar
     public function progresCicilan(): Attribute
     {
         $cicilan_kelompok = $this->cicilan_kelompok;
@@ -240,16 +183,79 @@ class PinjamanKelompok extends Model
             get: fn() => $this->status === EnumStatusPinjaman::MENUNGGAK
         );
     }
-    public function statusPinjamanDibatalkan(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->status === EnumStatusPinjaman::DIBATALKAN
-        );
-    }
     public function statusPinjamanBerlangsung(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status === EnumStatusPinjaman::BERLANGSUNG
         );
     }
+    public function totalNominalPinjaman(): Attribute
+    {
+        $nominal = (1 + $this->decimal_bunga ?? 0) * $this->nominal_pinjaman;
+        return Attribute::make(
+            get: fn() => $nominal
+        );
+    }
+    public function decimalBunga(): Attribute
+    {
+        $bunga = ($this->bunga ?? 0) / 100;
+        return Attribute::make(
+            get: fn() => $bunga
+        );
+    }
+
+
+    // Formatted
+    public function formattedStatus(): Attribute
+    {
+        $status = $this->status->value ?? "-";
+        return Attribute::make(
+            get: fn() => Str::of($status)->ucfirst()->replace("_", " ")
+        );
+    }
+    public function formattedTenor(): Attribute
+    {
+        $tenor = $this->tenor->value ?? 0;
+        return Attribute::make(
+            get: fn() => "{$tenor} Bulan"
+        );
+    }
+    public function formattedBunga(): Attribute
+    {
+        $tenor = $this->bunga ?? 0;
+        return Attribute::make(
+            get: fn() => "{$tenor} %"
+        );
+    }
+    public function formattedNominalPinjaman(): Attribute
+    {
+        $nominal = number_format($this->nominal_pinjaman ?? 0, 0, ',', '.');
+        return Attribute::make(
+            get: fn() => "Rp {$nominal}"
+        );
+    }
+    public function formattedTotalNominalPinjaman(): Attribute
+    {
+        $nominal = (1 + $this->decimal_bunga) * $this->nominal_pinjaman;
+        return Attribute::make(
+            get: fn() => "Rp " . number_format($nominal, 0, ',', '.')
+        );
+    }
+    // get tanggal_mulai
+    public function formattedTanggalMulai(): Attribute
+    {
+        $tanggal = $this->tanggal_mulai ? Carbon::parse($this->tanggal_mulai)->format('d M Y | H:i') : "-";
+        return Attribute::make(
+            get: fn() => $tanggal
+        );
+    }
+    // get tanggal_mulai
+    public function formattedTanggalJatuhTempo(): Attribute
+    {
+        $tanggal = $this->tanggal_jatuh_tempo ? Carbon::parse($this->tanggal_jatuh_tempo)->format('d M Y | H:i') : "-";
+        return Attribute::make(
+            get: fn() => $tanggal
+        );
+    }
+
 }

@@ -1,43 +1,77 @@
 <x-layouts.client-app title="Detail pinjaman">
     {{-- Detail pinjaman --}}
-    <div class="flex flex-col gap-4">
-        <div class="flex flex-row">
+    <div class="flex flex-col">
+        <div class="flex flex-row justify-between items-center gap-4 flex-wrap">
             <div class="flex flex-col gap-2">
                 <h3>Detail pinjaman</h3>
+                @if ($pinjaman_kelompok->status_pinjaman_selesai)
+                    <div class="badge badge-success">
+                        {{ $pinjaman_kelompok->formatted_status }}
+                    </div>
+                @elseif ($pinjaman_kelompok->status_pinjaman_menunggak)
+                    <div class="badge badge-warning">
+                        {{ $pinjaman_kelompok->formatted_status }}
+                    </div>
+                @elseif ($pinjaman_kelompok->status_pinjaman_berlangsung)
+                    <div class="badge badge-primary">
+                        {{ $pinjaman_kelompok->formatted_status }}
+                    </div>
+                @endif
+            </div>
+            <div class="flex flex-row gap-2">
+                <a href="{{ route('client.pinjaman-kelompok.index') }}" class="btn btn-neutral">
+                    Kembali
+                </a>
             </div>
         </div>
+        <div class="divider"></div>
+        @if ($pinjaman_kelompok->status_berlangsung || $pinjaman_kelompok->status_menunggak)
+            <div class="flex flex-col">
+                <h6>Berikut ini nomor rekening untuk melakukan pembayaran cicilan.</h6>
+                <p>BRI : {{ $user_akuntan->nomor_rekening }}</p>
+            </div>
+            <div class="divider"></div>
+        @endif
         <div class="grid grid-cols-2 gap-4">
             {{-- Nominal pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nominal pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}" />
-            </fieldset>
-            {{-- Nominal pinjaman final --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nominal pinjaman final</legend>
-                <input type="text" class="input w-full"
-                    value="{{ $pinjaman_kelompok->formatted_nominal_pinjaman_final }}" />
-            </fieldset>
-            {{-- Tenor pinjaman --}}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Tenor pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tenor }}" />
+                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}"
+                    readonly />
             </fieldset>
             {{-- Bunga pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Bunga pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_bunga }}" />
+                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_bunga }}" readonly />
+            </fieldset>
+            {{-- Total nominal pinjaman --}}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Total nominal pinjaman</legend>
+                <input type="text" class="input w-full"
+                    value="{{ $pinjaman_kelompok->formatted_total_nominal_pinjaman }}" readonly />
+            </fieldset>
+            {{-- Tenor pinjaman --}}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Tenor pinjaman</legend>
+                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tenor }}" readonly />
+            </fieldset>
+            {{-- Status pinjaman --}}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Status pinjaman</legend>
+                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_status }}"
+                    readonly />
             </fieldset>
             {{-- Tanggal mulai pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tanggal mulai pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tanggal_mulai }}" />
+                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tanggal_mulai }}"
+                    readonly />
             </fieldset>
             {{-- Tanggal jatuh tempo pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tanggal jatuh tempo akhir</legend>
                 <input type="text" class="input w-full"
-                    value="{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}" />
+                    value="{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}" readonly />
             </fieldset>
         </div>
     </div>
@@ -60,14 +94,8 @@
                             @if ($cicilan->status_belum_bayar)
                                 <div class="badge badge-sm badge-primary">{{ $cicilan->formatted_status }}</div>
                             @elseif($cicilan->status_sudah_bayar)
-                                @if ($cicilan->formatted_denda_dibayar)
-                                    <small>Denda dibayar :
-                                        {{ $cicilan->formatted_denda_dibayar }}</small>
-                                @endif
                                 <div class="badge badge-sm badge-success">{{ $cicilan->formatted_status }}</div>
                             @elseif($cicilan->status_telat_bayar)
-                                <small>Denda telat bayar (perhari telat) :
-                                    {{ $cicilan->formatted_denda_telat_bayar }}</small>
                                 <div class="badge badge-sm badge-warning">{{ $cicilan->formatted_status }}</div>
                             @elseif($cicilan->status_dibatalkan)
                                 <div class="badge badge-sm badge-error">{{ $cicilan->formatted_status }}</div>

@@ -11,21 +11,21 @@ use Illuminate\Console\Command;
 class CheckLimitPinjamanKelompok extends Command
 {
     /**
-     * The name and signature of the console command.
+     * Nama dan tanda tangan perintah konsol.
      *
      * @var string
      */
     protected $signature = 'limit-pinjaman-kelompok:check';
 
     /**
-     * The console command description.
+     * Deskripsi perintah konsol.
      *
      * @var string
      */
     protected $description = 'Cek update limit pinjaman kelompok';
 
     /**
-     * Execute the console command.
+     * Jalankan perintah konsol.
      */
     public function handle(Kelompok $kelompok_model)
     {
@@ -33,12 +33,18 @@ class CheckLimitPinjamanKelompok extends Command
         $this->newLine();
 
         $kenaikan_limit_per_jumlah_pinjaman = intval(Settings::getKeySetting(EnumSettingKeys::KENAIKAN_LIMIT_PER_JUMLAH_PINJAMAN)->value('value'));
-        $limit_pinjaman_maksimal = floatval(Settings::getKeySetting(EnumSettingKeys::LIMIT_PINJAMAN_MAKSIMAL)->value('value'));
+        $limit_pinjaman_maksimal = floatval(Settings::getKeySetting(EnumSettingKeys::MAKSIMAL_LIMIT_PINJAMAN)->value('value'));
 
-        $kelompok = $kelompok_model->filterPinjamanKelompokCount()->get()->filter(fn($pinjaman) => $pinjaman->pinjaman_kelompok_count >= $kenaikan_limit_per_jumlah_pinjaman);
-        $this->withProgressBar($kelompok, function ($kelompok) use ($limit_pinjaman_maksimal) {
-            $kelompok->limit_pinjaman = $limit_pinjaman_maksimal;
-            $kelompok->save();
+        // Query yang dioptimalkan untuk langsung mengambil dan memperbarui kelompok yang relevan
+        $kelompok_to_update = $kelompok_model->pinjaman_kelompok_selesai_count()->get()->filter(function ($kelompok) use ($kenaikan_limit_per_jumlah_pinjaman) {
+            return $kelompok->pinjaman_kelompok_selesai_count >= $kenaikan_limit_per_jumlah_pinjaman;
+        });
+
+        $this->withProgressBar($kelompok_to_update, function (Kelompok $kelompok) use ($limit_pinjaman_maksimal) {
+            // Update the limit_per_anggota to the maximum allowed limit
+            $kelompok->update([
+                'limit_per_anggota' => $limit_pinjaman_maksimal
+            ]);
         });
 
         $this->newLine();

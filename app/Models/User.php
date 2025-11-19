@@ -21,7 +21,11 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['formatted_role'];
+    protected $appends = [
+        'is_data_user_lengkap',
+        'formatted_role',
+        'formatted_tanggal_dibuat',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +40,7 @@ class User extends Authenticatable
         'alamat',
         'password',
         'nomor_telepon',
+        'nomor_rekening',
     ];
 
     /**
@@ -113,26 +118,37 @@ class User extends Authenticatable
      * 
      */
 
-    /**
-     * Get user Role
-     */
+    // Non formatted
+    public function password(): Attribute
+    {
+        return Attribute::make(
+            set: fn($value) => Hash::make($value)
+        );
+    }
+    public function resetPassword(string $new_password)
+    {
+        $this->password = $new_password;
+        $this->save();
+    }
+    public function isDataUserLengkap(): Attribute
+    {
+        $data_user_lengkap = $this->nik && $this->alamat && $this->nomor_telepon && $this->nomor_rekening;
+        return Attribute::make(
+            get: fn() => $data_user_lengkap
+        );
+    }
+
+    // Formatted
     protected function formattedRole(): Attribute
     {
         return Attribute::make(
             get: fn() => Str::of($this->role->value)->ucfirst()->replace("_", " "),
         );
     }
-
-    /**
-     * Reset pass
-     */
-    public function setPasswordAttribute(string $new_password)
+    protected function formattedTanggalDibuat(): Attribute
     {
-        $this->attributes['password'] = Hash::make($new_password);
-    }
-    public function resetPassword(string $new_password)
-    {
-        $this->password = $new_password;
-        $this->save();
+        return Attribute::make(
+            get: fn() => $this->created_at->format('d M Y | H:i') ?? "-",
+        );
     }
 }

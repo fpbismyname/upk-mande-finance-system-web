@@ -8,13 +8,19 @@ use App\Http\Controllers\Client\HomepageController;
 use App\Http\Controllers\Client\KelompokController;
 use App\Http\Controllers\Client\PengajuanPinjamanController;
 use App\Http\Controllers\Client\PinjamanKelompokController;
+use App\Http\Controllers\Client\SettingsController;
 use App\Http\Middleware\ClientMiddleware;
 
 Route::prefix("/")->name("client.")->group(function () {
     // Login views
     Route::get('/login', [AuthController::class, 'client_login_page'])->name('login');
-    // Auth Actions
+    // Login Actions
     Route::post('/submit-login', [AuthController::class, 'submit_login'])->name('submit-login');
+    // Register views
+    Route::get('/register', [AuthController::class, 'client_register_page'])->name('register');
+    // Register Actions
+    Route::post('/submit-register', [AuthController::class, 'submit_register_client'])->name('submit-register');
+
     Route::post('/logout', [AuthController::class, 'submit_logout'])->name('logout');
 
     // Homepage Views
@@ -38,6 +44,14 @@ Route::prefix("/")->name("client.")->group(function () {
         // Pengajuan pinjaman actionsn
         Route::prefix('/pengajuan-pinjaman')->name('pengajuan-pinjaman.')->group(function () {
             Route::post('/{id}/cancel-pengajuan', [PengajuanPinjamanController::class, 'cancel_pengajuan'])->name('cancel');
+        });
+
+        // Settings routes
+        Route::prefix("/settings")->name('settings.')->group(function () {
+            // View routes
+            Route::get('/', [SettingsController::class, 'index'])->name('index');
+            // Action routes
+            Route::put('/save-changes', [SettingsController::class, 'save_changes'])->name('save-changes');
         });
     });
 });
