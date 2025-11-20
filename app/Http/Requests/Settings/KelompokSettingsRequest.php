@@ -22,8 +22,8 @@ class KelompokSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'minimal_anggota_kelompok' => 'required|numeric|min:1|max:250|lt:maksimal_anggota_kelompok',
-            'maksimal_anggota_kelompok' => 'required|numeric|min:1|max:250|gt:minimal_anggota_kelompok',
+            'minimal_anggota_kelompok' => 'required|numeric|min:1|max:49|lt:maksimal_anggota_kelompok',
+            'maksimal_anggota_kelompok' => 'required|numeric|min:2|max:50|gt:minimal_anggota_kelompok',
         ];
     }
 }

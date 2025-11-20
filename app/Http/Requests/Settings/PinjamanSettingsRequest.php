@@ -23,8 +23,8 @@ class PinjamanSettingsRequest extends FormRequest
     {
         return [
             'bunga_pinjaman' => 'required|numeric',
-            'minimal_limit_pinjaman' => 'required|numeric|min:1000000|max:10000000|lt:maksimal_limit_pinjaman',
-            'maksimal_limit_pinjaman' => 'required|numeric|min:1000000|max:10000000|gt:minimal_limit_pinjaman',
+            'minimal_limit_pinjaman' => 'required|numeric|min:1000000|max:50000000|lt:maksimal_limit_pinjaman',
+            'maksimal_limit_pinjaman' => 'required|numeric|min:1000000|max:50000000|gt:minimal_limit_pinjaman',
             'kenaikan_limit_per_jumlah_pinjaman' => 'required|numeric',
             'toleransi_telat_bayar' => 'required|numeric|min:1|max:240',
         ];

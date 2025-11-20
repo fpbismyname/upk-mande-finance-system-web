@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="divider"></div>
-        @if ($pinjaman_kelompok->status_berlangsung || $pinjaman_kelompok->status_menunggak)
+        @if (!$pinjaman_kelompok->status_pinjaman_selesai)
             <div class="flex flex-col">
                 <h6>Berikut ini nomor rekening untuk melakukan pembayaran cicilan.</h6>
                 <p>BRI : {{ $user_akuntan->nomor_rekening }}</p>
@@ -36,42 +36,37 @@
             {{-- Nominal pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nominal pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_nominal_pinjaman }}</p>
             </fieldset>
             {{-- Bunga pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Bunga pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_bunga }}" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_bunga }}</p>
             </fieldset>
             {{-- Total nominal pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Total nominal pinjaman</legend>
-                <input type="text" class="input w-full"
-                    value="{{ $pinjaman_kelompok->formatted_total_nominal_pinjaman }}" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_total_nominal_pinjaman }}</p>
             </fieldset>
             {{-- Tenor pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tenor pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tenor }}" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tenor }}</p>
             </fieldset>
             {{-- Status pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Status pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_status }}"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_status }}</p>
             </fieldset>
             {{-- Tanggal mulai pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tanggal mulai pinjaman</legend>
-                <input type="text" class="input w-full" value="{{ $pinjaman_kelompok->formatted_tanggal_mulai }}"
-                    readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tanggal_mulai }}</p>
             </fieldset>
             {{-- Tanggal jatuh tempo pinjaman --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Tanggal jatuh tempo akhir</legend>
-                <input type="text" class="input w-full"
-                    value="{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}" readonly />
+                <p>{{ $pinjaman_kelompok->formatted_tanggal_jatuh_tempo }}</p>
             </fieldset>
         </div>
     </div>

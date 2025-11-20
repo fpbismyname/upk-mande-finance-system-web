@@ -11,17 +11,8 @@ use Illuminate\Support\Str;
 
 class CicilanKelompok extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'cicilan_kelompok';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
     protected $fillable = [
         'status',
         'nominal_cicilan',
@@ -30,11 +21,7 @@ class CicilanKelompok extends Model
         'tanggal_jatuh_tempo',
         'pinjaman_kelompok_id'
     ];
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
+
     protected $appends = [
         'formatted_status',
         'formatted_tanggal_dibayar',
@@ -50,19 +37,13 @@ class CicilanKelompok extends Model
         'status_telat_bayar',
         'status_dibatalkan',
     ];
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+
     protected $casts = [
         'tanggal_dibayar' => 'datetime',
         'tanggal_jatuh_tempo' => 'datetime',
         'status' => EnumStatusCicilanKelompok::class
     ];
-    /**
-     * Scope a query cicilan
-     */
+
     public function scopeSearch($query, $keyword)
     {
         if (is_null($keyword) || $keyword === '') {
@@ -70,6 +51,7 @@ class CicilanKelompok extends Model
         }
         return $query->where('nominal_cicilan', 'like', "%{$keyword}%");
     }
+
     public function scopeSearch_by_column($query, $column, $keyword)
     {
         if (is_null($keyword) || $keyword === '') {
@@ -80,20 +62,23 @@ class CicilanKelompok extends Model
         }
         return $query->where($column, $keyword);
     }
+
     public function scopeCicilan_jatuh_tempo($query)
     {
+        // Mengambil nilai toleransi telat bayar dari pengaturan aplikasi.
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
         return $query->whereIn('status', [EnumStatusCicilanKelompok::BELUM_BAYAR])
             ->where('tanggal_jatuh_tempo', '<=', now()->subDays($toleransi_telat_bayar));
     }
 
-    /**
-     * Relationships
-     */
     public function pinjaman_kelompok()
     {
         return $this->belongsTo(PinjamanKelompok::class, 'pinjaman_kelompok_id', 'id');
     }
+
+    /**
+     * Accessor untuk mendapatkan bukti pembayaran.
+     */
     public function buktiPembayaran(): Attribute
     {
         return Attribute::make(
@@ -102,11 +87,8 @@ class CicilanKelompok extends Model
     }
 
     /**
-     * Accessor
-     * 
+     * Accessor untuk memeriksa apakah cicilan sudah jatuh tempo.
      */
-
-    // Non formatted
     public function cicilanJatuhTempo(): Attribute
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
@@ -114,72 +96,118 @@ class CicilanKelompok extends Model
             get: fn() => $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar) <= now()
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah cicilan belum dibayar.
+     */
     public function cicilanBelumBayar(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status !== EnumStatusCicilanKelompok::DIBATALKAN && $this->status !== EnumStatusCicilanKelompok::SUDAH_BAYAR
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah status cicilan adalah BELUM_BAYAR.
+     */
     public function statusBelumBayar(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status === EnumStatusCicilanKelompok::BELUM_BAYAR
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah status cicilan adalah SUDAH_BAYAR.
+     */
     public function statusSudahBayar(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status === EnumStatusCicilanKelompok::SUDAH_BAYAR
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah status cicilan adalah TELAT_BAYAR.
+     */
     public function statusTelatBayar(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status === EnumStatusCicilanKelompok::TELAT_BAYAR
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah status cicilan adalah DIBATALKAN.
+     */
     public function statusDibatalkan(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->status === EnumStatusCicilanKelompok::DIBATALKAN
         );
     }
+
+    /**
+     * Accessor untuk mendapatkan jumlah hari telat bayar dalam format desimal.
+     */
     public function decimalHariTelatBayar(): Attribute
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        // @note Logika ini menghitung hari telat bayar berdasarkan tanggal dibayar.
+        // Jika tanggal dibayar null, ini akan menyebabkan error atau hasil yang tidak akurat.
+        // Perlu dipastikan tanggal_dibayar tidak null atau ditangani dengan baik.
         $hari_telat_bayar = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar)->diffInDays($this->tanggal_dibayar);
         return Attribute::make(
             get: fn() => round(max(0, $hari_telat_bayar))
         );
     }
+
+    /**
+     * Accessor untuk memeriksa apakah cicilan dibayar setelah melewati batas toleransi telat bayar.
+     */
     public function cicilanTelatSudahBayar(): Attribute
     {
         $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
+        // @note Sama seperti decimalHariTelatBayar, logika ini bergantung pada tanggal_dibayar yang tidak null.
         $hari_telat_bayar = $this->tanggal_jatuh_tempo->addDays($toleransi_telat_bayar) <= $this->tanggal_dibayar;
         return Attribute::make(
             get: fn() => $hari_telat_bayar === true
         );
     }
 
-    // Formatted
+    /**
+     * Accessor untuk mendapatkan status cicilan dalam format yang mudah dibaca.
+     */
     public function formattedStatus(): Attribute
     {
         return Attribute::make(
             get: fn() => Str::of($this->status->value)->ucfirst()->replace("_", " ")
         );
     }
+
+    /**
+     * Accessor untuk mendapatkan tanggal dibayar dalam format 'd M Y | H:i'.
+     */
     public function formattedTanggalDibayar(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->tanggal_dibayar ? Carbon::parse($this->tanggal_dibayar)->format('d M Y | H:i') : '-'
         );
     }
+
+    /**
+     * Accessor untuk mendapatkan tanggal jatuh tempo dalam format 'd M Y | H:i'.
+     */
     public function formattedTanggalJatuhTempo(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->tanggal_jatuh_tempo ? Carbon::parse($this->tanggal_jatuh_tempo)->format('d M Y | H:i') : '-'
         );
     }
+
+    /**
+     * Accessor untuk mendapatkan nominal cicilan dalam format mata uang (Rp.).
+     */
     public function formattedNominalCicilan(): Attribute
     {
         $nominal = $this->nominal_cicilan ?? 0;
@@ -187,9 +215,12 @@ class CicilanKelompok extends Model
             get: fn() => "Rp. " . number_format($nominal, 0, ",", ".")
         );
     }
+
+    /**
+     * Accessor untuk mendapatkan jumlah hari telat bayar dalam format teks (e.g., "5 hari").
+     */
     public function formattedHariTelatBayar(): Attribute
     {
-        $toleransi_telat_bayar = intval(Settings::getKeySetting(EnumSettingKeys::TOLERANSI_TELAT_BAYAR)->value('value'));
         $hari_telat_bayar = $this->tanggal_jatuh_tempo->diffInDays($this->tanggal_dibayar);
         return Attribute::make(
             get: fn() => round(max(0, $hari_telat_bayar)) . " hari"

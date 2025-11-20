@@ -25,7 +25,7 @@ class KelompokSeeder extends Seeder
             $data_kelompok->each(function ($kelompok) {
 
                 // Tambahkan anggota kelompok
-                $jumlah_anggota = rand(5, 8);
+                $jumlah_anggota = round(rand(5, 8));
                 AnggotaKelompok::factory()->count($jumlah_anggota)->create([
                     'kelompok_id' => $kelompok->id,
                 ]);

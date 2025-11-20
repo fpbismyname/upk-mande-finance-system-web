@@ -27,13 +27,13 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'minimal_limit_pinjaman',
-                'value' => '10000000',
+                'value' => '2000000',
                 'type' => 'decimal',
                 'group' => 'pinjaman'
             ],
             [
                 'key' => 'kenaikan_limit_per_jumlah_pinjaman',
-                'value' => '2',
+                'value' => '1',
                 'type' => 'decimal',
                 'group' => 'pinjaman'
             ],

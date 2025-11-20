@@ -9,27 +9,15 @@ class AnggotaKelompok extends Model
 {
     use HasFactory;
 
-    /**
-     * Table name
-     */
     protected $table = 'anggota_kelompok';
 
-    /**
-     * Fillable table
-     */
     protected $fillable = ['nik', 'name', 'alamat', 'nomor_telepon', 'kelompok_id'];
 
-    /**
-     * Relationships
-     */
     public function kelompok()
     {
         return $this->belongsTo(Kelompok::class, 'kelompok_id');
     }
 
-    /**
-     * Scope
-     */
     public function scopeSearch($query, $keyword)
     {
         if (!$keyword) {
@@ -40,6 +28,7 @@ class AnggotaKelompok extends Model
             ->orWhere('alamat', 'like', "%{$keyword}%")
             ->orWhere('nomor_telepon', 'like', "%{$keyword}%");
     }
+
     public function scopeSearch_by_column($query, $column, $keyword)
     {
         if (is_null($keyword) || $keyword === '') {
@@ -51,13 +40,10 @@ class AnggotaKelompok extends Model
         return $query->where($column, $keyword);
     }
 
-    /**
-     * Event eloquent hook
-     */
     public static function booted()
     {
         static::creating(function () {
-            if (self::get()->count() === 100) {
+            if (self::count() === 100) {
                 return false;
             }
         });
