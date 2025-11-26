@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: "Lexend";
+}
+
+@plugin "daisyui" {
+    themes: light_theme --default;
+    root: ":root";
+}
+
+@plugin "daisyui/theme" {
+    name: "light_theme";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+
+    /* Background tetap terang */
+    --color-base-100: oklch(95% 0.01 250);
+    --color-base-200: oklch(90% 0.01 250);
+    --color-base-300: oklch(85% 0.015 250);
+    --color-base-content: oklch(20% 0.03 260);
+    /* teks sedikit gelap tapi nggak hitam pekat */
+
+    /* Primary - ambil dari biru navy logo */
+    --color-primary: oklch(45% 0.12 260);
+    --color-primary-content: oklch(95% 0.01 260);
+
+    /* Accent/Gold dari logo */
+    --color-accent: oklch(80% 0.15 100);
+    --color-accent-content: oklch(20% 0.02 260);
+
+    /* Secondary sedikit lebih soft dari primary */
+    --color-secondary: oklch(55% 0.1 260);
+    --color-secondary-content: oklch(95% 0.01 260);
+
+    /* Neutral - ambil hitam dari logo tapi sedikit di-soft */
+    --color-neutral: oklch(25% 0.01 260);
+    --color-neutral-content: oklch(96% 0.005 260);
+
+    /* Info, success dll tetap selaras tapi lebih deep */
+    --color-info: oklch(65% 0.06 250);
+    --color-info-content: oklch(95% 0.02 250);
+
+    --color-success: oklch(60% 0.08 150);
+    --color-success-content: oklch(96% 0.02 160);
+
+    --color-warning: oklch(80% 0.15 100);
+    /* pakai gold juga biar konsisten */
+    --color-warning-content: oklch(25% 0.03 260);
+
+    --color-error: oklch(55% 0.12 20);
+    --color-error-content: oklch(96% 0.02 20);
+
+    --radius-selector: 0.75rem;
+    --radius-field: 0.75rem;
+    --radius-box: 0.75rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 0.5px;
+    --depth: 0;
+    --noise: 0;
+}
+
+@layer base {
+    h1 {
+        @apply text-4xl font-extrabold;
+    }
+
+    h2 {
+        @apply text-3xl font-bold;
+    }
+
+    h3 {
+        @apply text-2xl font-semibold;
+    }
+
+    h4 {
+        @apply text-xl font-semibold;
+    }
+
+    h5 {
+        @apply text-lg font-medium;
+    }
+
+    h6 {
+        @apply text-base font-medium;
+    }
+
+    p,
+    li,
+    span,
+    div,
+    button,
+    a,
+    label,
+    input,
+    textarea,
+    select,
+    option,
+    summary {
+        @apply text-base font-normal;
+    }
+}
+
+html {
+    @apply scroll-smooth;
+}
