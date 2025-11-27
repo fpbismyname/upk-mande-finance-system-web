@@ -233,10 +233,26 @@ class Kelompok extends Model
     }
     public function dapatMenambahkanAnggotaKelompok(): Attribute
     {
+        // Tidak boleh ada pinjaman kelompok yang sedang berlangsung/menunggak
+        $noOngoingPinjaman = $this->pinjaman_kelompok_berlangsung()->doesntExist();
+
+        // Tidak boleh ada pengajuan yang sudah disetujui
+        $noApprovedPengajuan = !$this->pengajuan_pinjaman()
+            ->whereIn('status', [EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN])
+            ->exists();
+
+        // Tidak boleh ada jadwal pencairan yang terjadwal atau belum terjadwal
+        $noScheduledPencairan = !$this->pengajuan_pinjaman()
+            ->whereHas('jadwal_pencairan', function ($q) {
+                $q->whereIn('status', [
+                    EnumStatusJadwalPencairan::TERJADWAL,
+                    EnumStatusJadwalPencairan::BELUM_TERJADWAL
+                ]);
+            })->exists();
+
+
         return Attribute::make(
-            get: fn() => $this->pinjaman_kelompok_berlangsung == null
-            && $this->pengajuan_pinjaman()->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)->get()->isEmpty()
-            && $this->pengajuan_pinjaman_disetujui->jadwal_pencairan()->search_by_column('status', [EnumStatusJadwalPencairan::BELUM_TERJADWAL, EnumStatusJadwalPencairan::TERJADWAL])->get()->isEmpty()
+            get: fn() => $noOngoingPinjaman && $noApprovedPengajuan && $noScheduledPencairan
         );
     }
 
