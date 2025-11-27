@@ -38,6 +38,7 @@ class UserSeeder extends Seeder
                 'email' => 'akuntanupkmande@gmail.com',
                 'password' => 'akuntan123',
                 'alamat' => '1816 Puvjaj Glen',
+                'nomor_rekening' => '0126349123098263',
                 'nomor_telepon' => "0895235235354",
                 'role' => EnumRole::AKUNTAN
             ],
@@ -46,6 +47,7 @@ class UserSeeder extends Seeder
                 'name' => 'Pengelola Pendanaan UPK',
                 'email' => 'pendanaanupkmande@gmail.com',
                 'password' => 'pendanaan123',
+                'nomor_rekening' => '921630123470124',
                 'alamat' => '598 Taab Street',
                 'nomor_telepon' => "0892352525334",
                 'role' => EnumRole::PENGELOLA_DANA

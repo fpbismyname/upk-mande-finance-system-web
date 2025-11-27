@@ -31,6 +31,7 @@ class UserFactory extends Factory
             'nomor_telepon' => fake()->unique()->numerify('08##########'),
             'alamat' => fake()->unique()->address(),
             'role' => EnumRole::ANGGOTA,
+            'nomor_rekening' => $this->faker->numerify('##############'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',
