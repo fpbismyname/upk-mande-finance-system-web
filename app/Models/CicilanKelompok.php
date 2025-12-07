@@ -7,6 +7,7 @@ use App\Enums\Admin\Status\EnumStatusCicilanKelompok;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CicilanKelompok extends Model
@@ -23,6 +24,7 @@ class CicilanKelompok extends Model
     ];
 
     protected $appends = [
+        'link_bukti_pembayaran',
         'formatted_status',
         'formatted_tanggal_dibayar',
         'formatted_tanggal_jatuh_tempo',
@@ -83,6 +85,13 @@ class CicilanKelompok extends Model
     {
         return Attribute::make(
             get: fn($value) => $value ?? "-"
+        );
+    }
+
+    public function linkBuktiPembayaran(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => url('storage/private?path=') . urlencode($this->bukti_pembayaran)
         );
     }
 

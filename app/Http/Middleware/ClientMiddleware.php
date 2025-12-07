@@ -18,12 +18,17 @@ class ClientMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $auth_check = Auth::check();
-        $role_user = Auth::user()?->role;
-        $is_allowed = in_array($role_user, EnumRole::list_client_role());
-        if (!$auth_check || !$is_allowed) {
+        if (!Auth::check()) {
             return redirect()->route('client.login');
         }
+
+        $user = Auth::user();
+
+        // Cek role
+        if (!in_array($user->role, EnumRole::list_client_role())) {
+            return redirect()->route('client.login');
+        }
+
         return $next($request);
     }
 }

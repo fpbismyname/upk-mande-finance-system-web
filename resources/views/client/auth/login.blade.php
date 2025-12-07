@@ -2,7 +2,7 @@
     <div class="container mx-auto min-h-screen flex items-center justify-center">
         <x-ui.card class="bg-base-200 text-base-content mx-auto p-6 max-w-lg w-full">
             <div class="card-body gap-6 text-center">
-                <x-ui.image :src="asset('nav_icon.ico')" class="w-48 mx-auto" />
+                <x-ui.image :src="asset(config('site.company_icon'))" class="w-48 mx-auto" />
                 <h3>Login ke {{ $app['name'] }}</h3>
                 <div class="flex flex-col gap-4">
                     <form action="{{ route('client.submit-login') }}" method="POST" class="flex flex-col gap-6">

@@ -10,44 +10,87 @@
         @endcan
     </x-slot:right_item>
     <div class="flex flex-col gap-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nomor NIK</legend>
-                <p class="w-full">
-                    {{ $user->nik ?? '-' }}
-                </p>
-            </fieldset>
+        <div class="grid gap-2 md:grid-cols-2">
+            <div class="grid md:col-span-2">
+                <h6>Data akun</h6>
+            </div>
+
+            {{-- username --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nama pengguna</legend>
-                <p class="w-full">{{ $user->name ?? '-' }}</p>
+                <p>{{ $user->name }}</p>
             </fieldset>
+
+            {{-- email --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Email</legend>
-                <p class="w-full">{{ $user->email ?? '-' }}</p>
+                <p>{{ $user->email }}</p>
             </fieldset>
+
+            {{-- role --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Role</legend>
-                <p class="w-full">{{ $user->formatted_role ?? '-' }}</p>
+                <p>{{ $user->role->label() }}</p>
             </fieldset>
+
+            {{-- created at --}}
             <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nomor Whatsapp</legend>
-                <p class="w-full">
-                    {{ $user->nomor_telepon ?? '-' }}
-                </p>
+                <legend class="fieldset-legend">Dibuat pada</legend>
+                <p>{{ $user->formatted_created_at }}</p>
             </fieldset>
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nomor Rekening</legend>
-                <p class="w-full">
-                    {{ $user->nomor_rekening ?? '-' }}
-                </p>
-            </fieldset>
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Akun dibuat pada</legend>
-                <p class="w-full">
-                    {{ $user->created_at->format('d M Y | H:i') ?? null }}
-                </p>
-            </fieldset>
+
         </div>
+
+
+        @if ($pengajuan_keanggotaan)
+            <div class="divider"></div>
+
+            <div class="grid md:grid-cols-2 gap-2">
+
+                <div class="grid md:col-span-2">
+                    <h6>Data profil</h6>
+                </div>
+
+                {{-- nik --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Nomor NIK</legend>
+                    <p>{{ $pengajuan_keanggotaan->nik }}</p>
+                </fieldset>
+
+                {{-- ktp --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Ktp</legend>
+                    <a href="{{ route('storage.private.get', ['path' => $pengajuan_keanggotaan->ktp]) }}"
+                        target="_blank" class="link link-primary link-hover">Lihat selengkapnya</a>
+                </fieldset>
+
+                {{-- nama lengkap --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Nama lengkap</legend>
+                    <p>{{ $pengajuan_keanggotaan->nama_lengkap }}</p>
+                </fieldset>
+
+                {{-- Phone --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Nomor Whatsapp</legend>
+                    <p>{{ $pengajuan_keanggotaan->nomor_telepon }}</p>
+                </fieldset>
+
+                {{-- Nomor Rekening --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Nomor Rekening</legend>
+                    <p>{{ $pengajuan_keanggotaan->nomor_rekening }}</p>
+                </fieldset>
+
+                {{-- Alamat --}}
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Alamat pengguna</legend>
+                    <p>{{ $pengajuan_keanggotaan->alamat }}</p>
+                </fieldset>
+
+            </div>
+        @endif
+
         <div class="flex flex-row gap-4 justify-center items-center">
             <a href="{{ route('admin.users.index') }}" class="btn btn-neutral">
                 <span>

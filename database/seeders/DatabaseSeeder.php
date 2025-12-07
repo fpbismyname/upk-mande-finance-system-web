@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RekeningSeeder::class,
             SettingsSeeder::class,
-            KelompokSeeder::class,
         ]);
     }
 }

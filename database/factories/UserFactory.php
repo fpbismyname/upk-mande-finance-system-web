@@ -2,7 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Enums\Admin\Status\EnumStatusPengajuanKeanggotaan;
 use App\Enums\Admin\User\EnumRole;
+use App\Models\PengajuanKeanggotaan;
+use App\Models\User;
+use Arr;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -26,12 +30,8 @@ class UserFactory extends Factory
     {
         $name_user = fake()->name();
         return [
-            'nik' => fake()->numerify(str_repeat('#', 16)),
             'name' => $name_user,
-            'nomor_telepon' => fake()->unique()->numerify('08##########'),
-            'alamat' => fake()->unique()->address(),
             'role' => EnumRole::ANGGOTA,
-            'nomor_rekening' => $this->faker->numerify('##############'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',

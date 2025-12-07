@@ -30,7 +30,7 @@
                 {{-- Tanggal Bergabung --}}
                 <fieldset class="fieldset flex flex-col gap-2">
                     <legend class="fieldset-legend">Tanggal Bergabung</legend>
-                    <p>{{ $anggota_kelompok->created_at->format('d M Y | h:m ') }}</p>
+                    <p>{{ $anggota_kelompok->tanggal_bergabung }}</p>
                 </fieldset>
 
                 {{-- Action button form --}}

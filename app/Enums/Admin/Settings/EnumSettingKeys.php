@@ -12,4 +12,5 @@ enum EnumSettingKeys: string
     case KENAIKAN_LIMIT_PER_JUMLAH_PINJAMAN = 'kenaikan_limit_per_jumlah_pinjaman';
     case MAKSIMAL_ANGGOTA_KELOMPOK = 'maksimal_anggota_kelompok';
     case MINIMAL_ANGGOTA_KELOMPOK = 'minimal_anggota_kelompok';
+    case SYARAT_DAN_KETENTUAN = 'syarat_dan_ketentuan';
 }

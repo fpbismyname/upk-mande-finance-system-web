@@ -3,5 +3,6 @@
         @include('admin.settings.account')
         @include('admin.settings.pinjaman')
         @include('admin.settings.kelompok')
+        @include('admin.settings.informasi-website')
     </div>
 </x-layouts.admin-app>

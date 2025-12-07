@@ -2,19 +2,105 @@
 
 title ERD Upk Mande Finance Systems
 
+!pragma layout graphviz
 skinparam linetype ortho
 
+
+' ==============
+' Enum          
+' ==============
+
+enum RoleEnum{
+  -ANGGOTA
+  -ADMIN
+  -AKUNTAN
+  -PENGELOLA_PENDANAAN
+  -KEPALA_INSTITUSI
+}
+
+enum EnumStatusPengajuanAnggota{
+  -PROSES_PENGAJUAN
+  -DITERIMA
+  -DITOLAK
+}
+
+enum EnumStatusKelompok{
+  -AKTIF
+  -NONAKTIF
+}
+
+enum EnumStatusPengajuanPinjaman{
+  -DITOLAK
+  -PROSES_PENGAJUAN
+  -DISETUJUI
+  -DIBATALKAN
+}
+
+enum EnumStatusPengajuanPinjaman{
+  -DITOLAK
+  -PROSES_PENGAJUAN
+  -DISETUJUI
+  -DIBATALKAN
+}
+
+enum EnumTipeTransaksi{
+  -MASUK
+  -KELUAR
+  -TRANSFER
+}
+
+enum EnumTenor{
+  -BULAN_3
+  -BULAN_6
+  -BULAN_9
+  -BULAN_12
+}
+
+enum EnumStatusJadwalPencairan{
+  -BELUM_TERJADWAL
+  -TERJADWAL
+  -TELAH_DICAIRKAN
+  -DIBATALKAN
+}
+
+enum EnumStatusPinjamanKelompok{
+  -MENUNGGAK
+  -BERLANGSUNG
+  -SELESAI
+}
+
+enum EnumStatusCicilanKelompok{
+  -SUDAH_BAYAR
+  -BELUM_BAYAR
+  -TELAT_BAYAR
+  -DIBATALKAN
+}
+
+
+' ==============
+' Tables        
+' ==============
 entity "users" {
   + id : BigInt
   --
-  -nik : string [nullable]
-  -alamat : string [nullable]
   -name : string
-  -email : string [unique]
-  -nomor_rekening : string [nullable]
-  -nomor_telepon : text [nullable, unique]
+  -email : string
   -password : string
-  -role : string [default : 'anggota']
+  -role : EnumRole
+}
+
+entity pengajuan_keanggotaan{
+  * id : BigInt
+  - users_id : BigInt
+  --
+  -nik : string
+  -ktp : text
+  -nama_lengkap : string
+  -alamat : string
+  -nomor_rekening : string
+  -nomor_telepon : text
+  -status : EnumStatusPengajuanKeanggotaan
+  -catatan : text
 }
 
 entity "rekening" {
@@ -26,88 +112,90 @@ entity "rekening" {
 
 entity "transaksi_rekening" {
   + id : BigInt
+  + rekening_id : BigInt
   --
-  -rekening_id : foreignId [nullable]
+  -rekening_id : foreignId
   -nominal : decimal(15, 2)
   -keterangan : text
-  -tipe_transaksi : string
+  -tipe_transaksi : EnumTipeTransaksi
 }
 
 entity "kelompok" {
   + id : BigInt
+  + users_id : BigInt
   --
-  -users_id : foreignId
-  -name : string [unique]
-  -limit_per_anggota : decimal(15, 2) [default : 10000000.00]
-  -status : string [default : 'aktif']
+  -name : string
+  -limit_per_anggota : decimal(15, 2)
+  -status : EnumStatusKelompok
 }
 
 entity "anggota_kelompok" {
   + id : BigInt
+  + kelompok_id : BigInt
   --
-  -kelompok_id : foreignId
   -nik : string
   -name : string
   -alamat : longText
-  -nomor_telepon : text [nullable, unique]
+  -nomor_telepon : text
 }
 
 entity "pengajuan_pinjaman" {
   + id : BigInt
+  + kelompok_id : BigInt
   --
-  -kelompok_id : foreignId [nullable]
-  -file_proposal : string [nullable]
+  -file_proposal : string
   -nominal_pinjaman : decimal(15, 2)
   -tenor : integer
-  -catatan : longText [nullable]
-  -tanggal_pengajuan : dateTime [nullable]
-  -tanggal_disetujui : dateTime [nullable]
-  -tanggal_ditolak : dateTime [nullable]
-  -status : string [default : 'proses_pengajuan']
+  -catatan : longText
+  -tanggal_pengajuan : dateTime
+  -tanggal_disetujui : dateTime
+  -tanggal_ditolak : dateTime
+  -status : EnumStatusPengajuanPinjaman
 }
 
 entity "jadwal_pencairan" {
   + id : BigInt
+  + pengajuan_pinjaman_id : BigInt
   --
-  -pengajuan_pinjaman_id : foreignId
-  -status : string [default : 'belum_terjadwal']
-  -tanggal_pencairan : dateTime [nullable]
+  -status : EnumStatusJadwalPencairan
+  -tanggal_pencairan : dateTime
 }
 
 entity "pinjaman_kelompok" {
   + id : BigInt
+  + kelompok_id : BigInt
+  + jadwal_pencairan_id : foreignId
+  + pengajuan_pinjaman_id : foreignId
   --
-  -kelompok_id : foreignId
-  -jadwal_pencairan_id : foreignId
-  -pengajuan_pinjaman_id : foreignId
-  -tenor : integer [default : 0]
-  -bunga : decimal(5, 2) [default : 0]
-  -status : string [default : 'berlangsung']
+  -tenor : integer
+  -bunga : decimal(5, 2)
+  -status : EnumStatusPinjamanKelompok
   -nominal_pinjaman : decimal(15, 2)
   -tanggal_mulai : dateTime
 }
 
 entity "cicilan_kelompok" {
   + id : BigInt
+  + pinjaman_kelompok_id : BigInt
   --
-  -pinjaman_kelompok_id : foreignId
-  -status : string [default : 'belum_bayar']
-  -nominal_cicilan : decimal(15, 2) [default : 0]
-  -bukti_pembayaran : string [nullable]
-  -tanggal_dibayar : dateTime [nullable]
-  -tanggal_jatuh_tempo : string [nullable]
+  -status : EnumStatusCicilanKelompok
+  -nominal_cicilan : decimal(15, 2)
+  -bukti_pembayaran : string
+  -tanggal_dibayar : dateTime
+  -tanggal_jatuh_tempo : string
 }
 
 entity "settings" {
   + id : BigInt
   --
-  -key : string [unique, nullable]
-  -value : string [nullable]
-  -type : string [nullable]
-  -group : string [nullable]
+  -key : string
+  -value : string
+  -type : string
+  -group : string
 }
 
-users ||--|| kelompok
+users ||---|| kelompok
+users ||--o{ pengajuan_keanggotaan
 
 rekening ||--o{ transaksi_rekening
 
@@ -119,6 +207,6 @@ pengajuan_pinjaman ||--o{ jadwal_pencairan
 pengajuan_pinjaman ||--o{ pinjaman_kelompok
 
 jadwal_pencairan ||--o{ pinjaman_kelompok
-
 pinjaman_kelompok ||--o{ cicilan_kelompok
+
 @enduml

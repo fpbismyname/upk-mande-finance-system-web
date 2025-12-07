@@ -5,6 +5,7 @@ enum EnumSettingGroup: string
 {
     case PINJAMAN = 'pinjaman';
     case KELOMPOK = 'kelompok';
+    case INFORMASI_WEBSITE = 'informasi_website';
     public static function options(): array
     {
         return array_reduce(self::cases(), function ($carry, $case) {

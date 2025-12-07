@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('key', 255)->unique()->nullable();
-            $table->string('value', 255)->nullable();
+            $table->longText('value')->nullable();
             $table->string('type', 255)->nullable();
             $table->string('group', 255)->nullable();
             $table->timestamps();

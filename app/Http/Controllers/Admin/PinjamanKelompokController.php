@@ -6,6 +6,7 @@ use App\Enums\Admin\PengajuanPinjaman\EnumTenor;
 use App\Enums\Admin\Status\EnumStatusCicilanKelompok;
 use App\Enums\Admin\Status\EnumStatusPinjaman;
 use App\Enums\Table\PaginateSize;
+use App\Exports\Admin\PinjamanKelompok\PinjamanKelompokOneExport;
 use App\Exports\Admin\PinjamanKelompokExport;
 use App\Http\Controllers\Controller;
 use App\Models\PinjamanKelompok;
@@ -98,5 +99,17 @@ class PinjamanKelompokController extends Controller
         $file_name = "data_pinjaman_kelompok_{$today}.xlsx";
 
         return $excel->download(new PinjamanKelompokExport($data_pengajuan), $file_name);
+    }
+
+    public function export_one(string $id, PinjamanKelompok $pinjaman_kelompok_model, Excel $excel)
+    {
+
+        // Query model
+        $data_pinjaman = $pinjaman_kelompok_model->with($this->relations)->findOrFail($id);
+
+        $today = now()->format('d_M_Y-H_i_s');
+        $file_name = "data_pinjaman_{$data_pinjaman->kelompok_name}_{$today}.xlsx";
+
+        return $excel->download(new PinjamanKelompokOneExport($data_pinjaman, $data_pinjaman->cicilan_kelompok), $file_name);
     }
 }

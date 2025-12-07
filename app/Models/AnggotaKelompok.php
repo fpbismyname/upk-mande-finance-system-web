@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,13 +40,23 @@ class AnggotaKelompok extends Model
         }
         return $query->where($column, $keyword);
     }
-
-    // public static function booted()
-    // {
-    //     static::creating(function () {
-    //         if (self::get()->count() === 100) {
-    //             return false;
-    //         }
-    //     });
-    // }
+    /**
+     * Casts
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+    /**
+     * Appends
+     */
+    protected $appends = ['tanggal_bergabung'];
+    /**
+     * Accessor
+     */
+    public function tanggalBergabung(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->created_at?->translatedFormat('d F Y')
+        );
+    }
 }

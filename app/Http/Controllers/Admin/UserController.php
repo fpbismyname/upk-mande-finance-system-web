@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Admin\Status\EnumStatusPengajuanKeanggotaan;
 use App\Enums\Admin\User\EnumRole;
 use App\Enums\Table\PaginateSize;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\PengajuanKeanggotaan;
 use App\Models\User;
 use App\Services\UI\Toast;
+use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -37,11 +43,9 @@ class UserController extends Controller
 
         // Data user
         $datas = $query->latest()->paginate(PaginateSize::SMALL->value)->withQueryString();
-        // Daftar role user
-        $list_role = EnumRole::options();
 
         // Payload untuk dipassing ke view
-        $payload = compact('datas', 'list_role');
+        $payload = compact('datas');
 
         // kembalikan view list user
         return view('admin.users.index', $payload);
@@ -50,23 +54,52 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create_admin()
     {
-        $list_role = EnumRole::options();
-        $payload = compact('list_role');
-        return view('admin.users.create', $payload);
+        return view('admin.users.create-admin');
+    }
+    public function create_client()
+    {
+        return view('admin.users.create-client');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserRequest $request, User $user_model)
+    public function store(UserRequest $request, User $user_model, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
         // Validasi data form input
-        $datas = $request->validated();
+        $request->validated();
 
-        // Buat akun pengguna
-        $store_user = $user_model->create($datas);
+        $data_users = $request->only($user_model->getFillable());
+        $data_pengajuan_keanggotaan = $request->only($pengajuan_keanggotaan_model->getFillable());
+
+        $store_user = $user_model->create($data_users);
+
+        if (!empty($data_pengajuan_keanggotaan)) {
+            // Upload files
+            $files = $request->only('ktp');
+            $uploaded_file_path = [];
+            $storage_private = Storage::disk('local');
+            foreach ($files as $key => $value) {
+                $file = $value;
+                $ext_file = $file->getClientOriginalExtension();
+                $safe_username = Str::snake($data_pengajuan_keanggotaan['nama_lengkap']);
+                $today = now()->clone()->format('d-m-y');
+                $file_name = "{$key}_{$safe_username}_{$today}.{$ext_file}";
+                if ($storage_private->exists($file_name)) {
+                    $storage_private->delete($file_name);
+                }
+                $uploaded_file_path[$key] = $storage_private->putFileAs('users', $file, $file_name);
+            }
+
+            foreach ($uploaded_file_path as $key => $path) {
+                $data_pengajuan_keanggotaan[$key] = $path;
+            }
+            // Buat akun pengguna
+            $data_pengajuan_keanggotaan['status'] = EnumStatusPengajuanKeanggotaan::DISETUJUI;
+            $store_user->pengajuan_keanggotaan()->create($data_pengajuan_keanggotaan);
+        }
 
         // Validasi akun pengguna yang ditambahkan
         if ($store_user->wasRecentlyCreated) {
@@ -77,14 +110,12 @@ class UserController extends Controller
         return redirect()->route('admin.users.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id, User $user_model)
     {
         // Mencari data user berdasarkan id
         $user = $user_model::findOrFail($id);
-        $payload = compact('user');
+        $pengajuan_keanggotaan = $user->pengajuan_keanggotaan_disetujui->first();
+        $payload = compact('user', 'pengajuan_keanggotaan');
         return view('admin.users.show', $payload);
     }
 
@@ -94,18 +125,19 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $list_role = EnumRole::options();
-        $payload = compact('user', 'list_role');
+        $pengajuan_keanggotaan = $user->pengajuan_keanggotaan_disetujui()->first();
+        $payload = compact('user', 'pengajuan_keanggotaan');
         return view('admin.users.edit', $payload);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, string $id, User $user_model)
+    public function update(UserRequest $request, string $id, User $user_model, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
         // Data form input
         $datas = $request->validated();
+
         // is request reset password
         $is_reset_pass = isset($datas['reset_password']) ? $datas['reset_password'] == 'on' : false;
 
@@ -115,22 +147,49 @@ class UserController extends Controller
         // Data user
         $data_user = $request->only($user_model->getFillable());
 
+        // Data pengajuan keanggotaan
+        $entries_data_pengajuan_keanggotaan = $request->only($pengajuan_keanggotaan_model->getFillable());
+
         // Update data user
-        $update_user = $user_model->findOrFail($id);
+        $user = $update_user = $user_model->findOrFail($id);
+        $data_pengajuan_keanggotaan = $user->pengajuan_keanggotaan_disetujui()->first();
+
 
         // reset jika input mengizinkan reset password
         if ($is_reset_pass) {
-            $update_user->resetPassword($new_user_pass);
+            $update_user->password = Hash::make($new_user_pass);
+        }
+
+        // Update data pengajuan
+        if (!empty($entries_data_pengajuan_keanggotaan)) {
+            // Upload files
+            $files = $request->only('ktp');
+            $uploaded_file_path = [];
+            $storage_private = Storage::disk('local');
+            foreach ($files as $key => $value) {
+                $file = $value;
+                $ext_file = $file->getClientOriginalExtension();
+                $safe_username = Str::snake($entries_data_pengajuan_keanggotaan['nama_lengkap']);
+                $today = now()->clone()->format('d-m-y');
+                $file_name = "{$key}_{$safe_username}_{$today}.{$ext_file}";
+                if ($storage_private->exists($file_name)) {
+                    $storage_private->delete($file_name);
+                }
+                $uploaded_file_path[$key] = $storage_private->putFileAs('users', $file, $file_name);
+            }
+
+            foreach ($uploaded_file_path as $key => $path) {
+                $entries_data_pengajuan_keanggotaan[$key] = $path;
+            }
+            $data_pengajuan_keanggotaan->update(attributes: $entries_data_pengajuan_keanggotaan);
         }
 
         // Update data user
-        $update_user->update($data_user);
+        $update_user = $user->update($data_user);
 
         // Validasi akun pengguna yang ditambahkan
-        if ($update_user->wasChanged()) {
+        if ($update_user) {
             Toast::success('Akun pengguna berhasil diperbarui.');
-        } elseif (empty($update_user->getChanges())) {
-            Toast::info('Tidak ada perubahan pada akun pengguna.');
         } else {
             Toast::error('Akun pengguna gagal diperbarui.');
         }

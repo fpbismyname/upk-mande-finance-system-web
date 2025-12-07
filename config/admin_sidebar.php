@@ -38,6 +38,13 @@ $sidebar_menu = [
         'roles' => ['admin', 'kepala_institusi']
     ],
     [
+        'title' => 'Pengajuan keanggotaan',
+        'icon' => 'file-user',
+        'type' => 'menu',
+        'route_name' => 'admin.pengajuan-keanggotaan.index',
+        'roles' => ['admin', 'kepala_institusi']
+    ],
+    [
         'title' => 'Akun Pengguna',
         'icon' => 'circle-user',
         'type' => 'menu',

@@ -35,13 +35,13 @@
             </fieldset>
             {{-- Nomor telepon --}}
             <fieldset class="fieldset">
-                <legend class="fieldset-legend">Nomor Telepon</legend>
-                <input type="text" class="input w-full validator" name="nomor_telepon" required
-                    value="{{ $data_user->nomor_telepon }}">
+                <legend class="fieldset-legend">Nomor telepon</legend>
+                <input type="text" class="input w-full validator" name="nomor_telepon"
+                    value="{{ $data_user->pengajuan_keanggotaan_disetujui()->first()?->nomor_telepon }}">
                 <p class="validator-hint hidden">
-                    {{ __('validation.required', ['Attribute' => 'Nomor telepon']) }}
+                    {{ __('validation.required', ['Attribute' => 'Nomor Telepon']) }}
                 </p>
-                @error('nomor_telepon')
+                @error('email')
                     <small class="text-error">{{ $message }}</small>
                 @enderror
             </fieldset>
@@ -50,7 +50,8 @@
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Nomor rekening</legend>
                     <input type="text" class="input w-full validator" name="nomor_rekening" required minlength="10"
-                        maxlength="16" value="{{ $data_user->nomor_rekening }}">
+                        maxlength="16"
+                        value="{{ $data_user->pengajuan_keanggotaan_disetujui()->first()->nomor_rekening }}">
                     <p class="validator-hint hidden">
                         Nomor rekening wajib diisi.
                         <br>Nomor rekening minimal terdiri dari 10-16 angka.

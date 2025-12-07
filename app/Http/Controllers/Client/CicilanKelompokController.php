@@ -51,11 +51,12 @@ class CicilanKelompokController extends Controller
         $cicilan_kelompok = $pinjaman_kelompok->cicilan_kelompok()->findOrFail($id_cicilan);
 
         // simpan file bukti pembayaran
+        $storage_private = Storage::disk('local');
         $today = now()->format("d_M_Y-H_i_s");
         $bukti_pembayaran = $request->file('bukti_pembayaran');
         $extension_file = $bukti_pembayaran->getClientOriginalExtension();
         $name_bukti_pembayaran = urlencode("{$kelompok->formatted_name_snake_case}_cicilan_pinjaman_{$today}.{$extension_file}");
-        $path = Storage::disk()->putFileAs("bukti_pembayaran", $bukti_pembayaran, $name_bukti_pembayaran);
+        $path = $storage_private->putFileAs("bukti_pembayaran", $bukti_pembayaran, $name_bukti_pembayaran);
 
 
         $datas['bukti_pembayaran'] = $path;

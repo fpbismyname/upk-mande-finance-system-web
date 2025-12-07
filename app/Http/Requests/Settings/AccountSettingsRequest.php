@@ -22,13 +22,15 @@ class AccountSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nik' => '',
-            'alamat' => '',
             'name' => 'required',
             'email' => 'required',
-            'nomor_rekening' => '',
-            'nomor_telepon' => 'required',
-            'reset_password' => '',
+            'nik' => 'nullable',
+            'ktp' => 'nullable',
+            'alamat' => 'nullable',
+            'nama_lengkap' => 'nullable',
+            'nomor_rekening' => 'nullable',
+            'nomor_telepon' => 'nullable',
+            'reset_password' => 'nullable',
             'new_password' => ['required_if:reset_password,on'],
         ];
     }

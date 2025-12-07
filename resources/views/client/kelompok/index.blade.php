@@ -91,20 +91,36 @@
                 {{ $list_anggota_kelompok->links() }}
             </div>
         @else
-            <div class="flex flex-col items-center">
-                <x-ui.card>
-                    <div class="card-body text-center">
-                        <x-lucide-users class="w-6 self-center" />
-                        <h3>Anda belum memiliki kelompok pinjaman</h3>
-                        <div class="card-actions justify-center">
-                            <button class="btn btn-primary" onclick="window.open_modal('create-kelompok')">
-                                <x-lucide-circle-plus class="w-4" />
-                                Buat kelompok
-                            </button>
+            @if (auth()->user()->pengajuan_keanggotaan_disetujui()->exists())
+                <div class="flex flex-col items-center">
+                    <x-ui.card>
+                        <div class="card-body text-center">
+                            <x-lucide-users class="w-6 self-center" />
+                            <h3>Anda belum memiliki kelompok pinjaman</h3>
+                            <div class="card-actions justify-center">
+                                <button class="btn btn-primary" onclick="window.open_modal('create-kelompok')">
+                                    <x-lucide-circle-plus class="w-4" />
+                                    Buat kelompok
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </x-ui.card>
-            </div>
+                    </x-ui.card>
+                </div>
+            @else
+                <div class="flex flex-col items-center">
+                    <x-ui.card>
+                        <div class="card-body text-center">
+                            <x-lucide-users class="w-6 self-center" />
+                            <h3>Anda belum menjadi anggota {{ config('site.website.title') }}</h3>
+                            <div class="card-actions justify-center">
+                                <a class="btn btn-primary" href="{{ route('client.pengajuan-keanggotaan.index') }}">
+                                    Ajukan keanggotaan
+                                </a>
+                            </div>
+                        </div>
+                    </x-ui.card>
+                </div>
+            @endif
         @endif
     </div>
 

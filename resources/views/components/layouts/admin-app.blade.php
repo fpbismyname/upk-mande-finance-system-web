@@ -17,7 +17,7 @@
         <div class="drawer-content flex flex-col">
             {{-- Alert content --}}
             @can('has-bank-account-number')
-                @empty(auth()->user()->nomor_rekening)
+                @empty(auth()->user()->pengajuan_keanggotaan_disetujui()->first()->nomor_rekening)
                     <div class="flex flex-row gap-2 text-white items-center p-2 bg-primary">
                         <x-lucide-circle-alert class="min-w-4 max-w-4" />
                         <small>Jangan lupa untuk melengkapi nomor rekening untuk keperluan pembayaran pinjaman kelompok.</small>
@@ -60,9 +60,9 @@
 
                 {{-- Header sidebar --}}
                 <div class="flex flex-col gap-4 py-12 px-4 items-center">
-                    <x-ui.image src="{{ asset('nav_icon.ico') }}" class="w-1/2" />
+                    <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-1/2" />
                     <span class="badge badge-secondary">
-                        {{ auth()->user()?->formatted_role }}
+                        {{ auth()->user()?->role->label() }}
                     </span>
                 </div>
 

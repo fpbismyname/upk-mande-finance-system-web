@@ -4,17 +4,14 @@
         <div class="flex flex-row justify-between flex-wrap gap-4">
             {{-- Seach bar & filter --}}
             <form method="get" class="flex flex-row gap-4 flex-wrap">
-                <label class="select w-fit">
-                    <span class="label">Role</span>
-                    <select name="role">
-                        <option value="" selected>Pilih role</option>
-                        @foreach ($list_role as $value => $key)
-                            <option value="{{ $value }}" @if ($value === request()->get('role')) selected @endif>
-                                {{ $key }}
-                            </option>
-                        @endforeach
-                    </select>
-                </label>
+                <select name="role" class="select w-fit">
+                    <option value="" selected>Pilih role</option>
+                    @foreach (App\Enums\Admin\User\EnumRole::cases() as $role)
+                        <option value="{{ $role->value }}" @if ($role->value === request()->get('role')) selected @endif>
+                            {{ $role->label() }}
+                        </option>
+                    @endforeach
+                </select>
                 <div class="flex flex-row gap-2">
                     <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
                         placeholder="Cari kelompok..." />
@@ -26,10 +23,20 @@
             {{-- Add data button --}}
             @can('manage-users')
                 <div class="flex flex-row">
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                        <x-lucide-circle-plus class="w-4" />
-                        Tambah akun pengguna
-                    </a>
+                    <div class="dropdown dropdown-bottom md:dropdown-end">
+                        <div class="btn btn-primary" tabindex="0" role="button">
+                            <x-lucide-circle-plus class="w-4" />
+                            Tambah akun
+                        </div>
+                        <ul class="dropdown-content menu bg-base-200 rounded-box w-42">
+                            <li>
+                                <a href="{{ route('admin.users.create.admin') }}">Akun Admin</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.users.create.client') }}">Akun Client</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             @endcan
         </div>
@@ -55,7 +62,7 @@
                                 </td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
-                                <td>{{ $item->formatted_role }}</td>
+                                <td>{{ $item->role->label() }}</td>
                                 <td>
                                     @if ($current_account)
                                         <div class="flex w-full justify-end">

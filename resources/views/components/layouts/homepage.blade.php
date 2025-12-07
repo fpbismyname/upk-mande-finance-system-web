@@ -2,6 +2,7 @@
 @php
     // Ambil nama route saat ini.
     $current_route = collect(explode('.', request()->route()->getName()))->implode('.');
+    $is_root_page = request()->routeIs('client.homepage.index');
 @endphp
 <x-layouts.app title="{{ $title ?? '' }}">
     <div class="flex flex-col min-h-screen">
@@ -10,7 +11,7 @@
             <div class="container mx-auto">
                 <div class="navbar px-8">
                     <a class="flex flex-1" href="/">
-                        <x-ui.image src="{{ asset('nav_icon.ico') }}" class="w-full max-w-24" />
+                        <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-full max-w-24" />
                     </a>
                     {{-- Mobile dropdown --}}
                     <div class="flex flex-none lg:hidden">
@@ -27,22 +28,25 @@
                                 <ul class="dropdown-content menu bg-base-200 min-h-full w-64 shadow gap-2">
                                     <li class="menu-title text-neutral text-xl">Menu</li>
                                     <li>
-                                        <a href="#">
+                                        <a href="{{ $is_root_page ? '#' : route('client.homepage.index') }}">
                                             Beranda
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#about">
+                                        <a
+                                            href="{{ $is_root_page ? '#about' : route('client.homepage.index') . '#about' }}">
                                             Tentang kami
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#services">
+                                        <a
+                                            href="{{ $is_root_page ? '#services' : route('client.homepage.index') . '#services' }}">
                                             Layanan kami
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#contact">
+                                        <a
+                                            href="{{ $is_root_page ? '#contact' : route('client.homepage.index') . '#contact' }}">
                                             Kontak kami
                                         </a>
                                     </li>
@@ -69,22 +73,24 @@
                     <div class="lg:flex hidden flex-none text-base-content">
                         <ul class="menu menu-horizontal items-center gap-4 rounded-box">
                             <li>
-                                <a href="#">
+                                <a href="{{ $is_root_page ? '#' : route('client.homepage.index') }}">
                                     Beranda
                                 </a>
                             </li>
                             <li>
-                                <a href="#about">
+                                <a href="{{ $is_root_page ? '#about' : route('client.homepage.index') . '#about' }}">
                                     Tentang kami
                                 </a>
                             </li>
                             <li>
-                                <a href="#services">
+                                <a
+                                    href="{{ $is_root_page ? '#services' : route('client.homepage.index') . '#services' }}">
                                     Layanan kami
                                 </a>
                             </li>
                             <li>
-                                <a href="#contact">
+                                <a
+                                    href="{{ $is_root_page ? '#contact' : route('client.homepage.index') . '#contact' }}">
                                     Kontak kami
                                 </a>
                             </li>
@@ -110,12 +116,13 @@
         </div>
         {{-- Content --}}
         <div class="flex flex-col gap-4">
+
             {{ $slot }}
         </div>
         {{-- Footer --}}
         <footer class="footer footer-vertical md:footer-horizontal bg-base-200 text-base-content p-8 mt-auto">
             <aside class="max-w-xs">
-                <x-ui.image src="{{ asset('nav_icon.ico') }}" class="w-full max-w-32" />
+                <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-full max-w-32" />
                 <p class="text-base-content/75">
                     Jl. R. Aria Natamanggala KM 10 Desa Kademangan Kecamatan Mande Kabupaten Cianjur.
                 </p>
@@ -137,6 +144,11 @@
                 <a class="link link-hover" href="{{ route('client.homepage.index') }}">Youtube</a>
                 <a class="link link-hover" href="{{ route('client.homepage.index') }}">Facebook</a>
                 <a class="link link-hover" href="{{ route('client.homepage.index') }}">Tiktok</a>
+            </nav>
+            <nav>
+                <h6 class="footer-title">Lainnya</h6>
+                <a class="link link-hover" href="{{ route('client.homepage.syarat-dan-ketentuan') }}">Syaran &
+                    ketentuan</a>
             </nav>
         </footer>
     </div>

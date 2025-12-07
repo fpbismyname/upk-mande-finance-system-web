@@ -31,7 +31,7 @@
         <div class="grid md:grid-cols-2 gap-4">
             @if ($pengajuan_pinjaman->file_proposal)
                 <div class="grid md:col-span-2 place-items-center gap-4 my-6">
-                    <iframe src="{{ route('storage.get-file', ['path' => $pengajuan_pinjaman->file_proposal]) }}"
+                    <iframe src="{{ route('storage.private.get', ['path' => $pengajuan_pinjaman->file_proposal]) }}"
                         frameborder="0"
                         class="border-0 shadow-xl rounded-box aspect-square md:aspect-video max-w-6xl"></iframe>
                     <h6>Proposal pengajuan pinjaman</h6>

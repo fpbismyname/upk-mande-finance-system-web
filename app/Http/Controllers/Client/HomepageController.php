@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Enums\Admin\Settings\EnumSettingKeys;
 use App\Http\Controllers\Controller;
+use App\Models\Settings;
 use Illuminate\Http\Request;
 
 class HomepageController extends Controller
@@ -16,16 +18,10 @@ class HomepageController extends Controller
         $payload = compact('landing');
         return view('client.homepage.index', $payload);
     }
-    public function services()
+    public function syarat_dan_ketentuan(Settings $settings_model)
     {
-        return view('client.homepage.services');
-    }
-    public function profile()
-    {
-        return view('client.homepage.profile');
-    }
-    public function about_us()
-    {
-        return view('client.homepage.about-us');
+        $syarat_dan_ketentuan = $settings_model->getKeySetting(EnumSettingKeys::SYARAT_DAN_KETENTUAN)->value('value');
+        $payload = compact('syarat_dan_ketentuan');
+        return view('client.homepage.syarat-dan-ketentuan', $payload);
     }
 }

@@ -1,4 +1,11 @@
 <x-layouts.admin-app title="Detail pinjaman">
+    <x-slot:right_item>
+        <a href="{{ route('admin.pinjaman-kelompok.export-one', [$pinjaman_kelompok->id]) }}"
+            class="btn btn-primary btn-outline">
+            <x-lucide-printer class="w-4" />
+            Export laporan pinjaman
+        </a>
+    </x-slot:right_item>
     {{-- Kelompok --}}
     <div class="flex flex-col gap-4">
         {{-- View form --}}
@@ -111,7 +118,7 @@
                                 <td>
                                     @if ($item->status_sudah_bayar)
                                         <a target="_blank"
-                                            href="{{ route('storage.get-file', ['path' => $item->bukti_pembayaran]) }}"
+                                            href="{{ route('storage.private.get', ['path' => $item->bukti_pembayaran]) }}"
                                             class="btn btn-link btn-sm link-hover">
                                             <x-lucide-receipt class="w-4" />
                                             Lihat bukti pembayaran

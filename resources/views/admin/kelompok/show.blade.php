@@ -115,7 +115,7 @@
                                             <a class="btn btn-sm btn-link link-hover"
                                                 href="{{ route('admin.kelompok.anggota-kelompok.show', [$kelompok->id, $item->id]) }}">
                                                 <x-lucide-eye class="w-4" />
-                                                {{ __('crud.action.detail', ['']) }}
+                                                Detail
                                             </a>
                                         </div>
                                     @endif

@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Admin\Settings\EnumSettingGroup;
 use App\Enums\Admin\Settings\EnumSettingKeys;
+use App\Enums\Admin\Status\EnumStatusPengajuanKeanggotaan;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\AccountSettingsRequest;
 use App\Http\Requests\Settings\CicilanSettingsRequest;
+use App\Http\Requests\Settings\InformasiWebsiteRequest;
 use App\Http\Requests\Settings\KelompokSettingsRequest;
 use App\Http\Requests\Settings\PinjamanSettingsRequest;
+use App\Models\PengajuanKeanggotaan;
 use App\Models\Settings;
 use App\Models\User;
 use App\Services\UI\Toast;
@@ -35,16 +38,22 @@ class SettingsController extends Controller
                 $data->key->value => $data->value,
             ];
         });
+        // Data informasi website
+        $data_informasi_website = Settings::getGroupSetting(EnumSettingGroup::INFORMASI_WEBSITE)->get()->flatMap(function ($data) {
+            return [
+                $data->key->value => $data->value,
+            ];
+        });
 
         // dd($data_pinjaman);
-        $payload = compact('data_user', 'data_kelompok', 'data_pinjaman');
+        $payload = compact('data_user', 'data_kelompok', 'data_pinjaman', 'data_informasi_website');
         return view('admin.settings.index', $payload);
     }
 
     /**
      * Actions Setting
      */
-    public function account_save_changes(AccountSettingsRequest $request, User $user_model)
+    public function account_save_changes(AccountSettingsRequest $request, User $user_model, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
         // Validate input data user
         $user_data = $request->validated();
@@ -53,14 +62,19 @@ class SettingsController extends Controller
 
         // Update data user
         $data_user = $request->only($user_model->getFillable());
+        $data_keanggotaan = $request->only($pengajuan_keanggotaan_model->getFillable());
         $update_user = $user_model->findOrFail(auth()->user()->id);
-        $update_user->update($data_user);
+        $updating_user = $update_user->update($data_user);
+        if ($update_user->pengajuan_keanggotaan_disetujui()->exists()) {
+            $update_user->pengajuan_keanggotaan_disetujui()->first()->update($data_keanggotaan);
+        } else {
+            $data_keanggotaan['status'] = EnumStatusPengajuanKeanggotaan::DISETUJUI;
+            $update_user->pengajuan_keanggotaan()->create($data_keanggotaan);
+        }
 
         // Validasi akun pengguna yang ditambahkan
-        if ($update_user->wasChanged() && !$is_reset_pass) {
+        if ($updating_user) {
             Toast::success('Akun anda berhasil diperbarui.');
-        } elseif (empty($update_user->getChanges())) {
-            Toast::info('Tidak ada perubahan pada akun pengguna.');
         } else {
             Toast::error('Akun anda gagal diperbarui.');
         }
@@ -94,6 +108,17 @@ class SettingsController extends Controller
             $item->update(['value' => $value]);
         }
         Toast::success('Pengaturan kelompok berhasil diperbarui.');
+        return redirect()->back();
+    }
+
+    public function informasi_website_save_changes(InformasiWebsiteRequest $request, Settings $settings_model)
+    {
+        $data_settings = $request->validated();
+        foreach ($data_settings as $key => $value) {
+            $item = $settings_model->getKeySetting(EnumSettingKeys::from($key))->first();
+            $item->update(['value' => $value]);
+        }
+        Toast::success('Pengaturan informasi website berhasil diperbarui.');
         return redirect()->back();
     }
 }

@@ -47,11 +47,12 @@ class PengajuanPinjamanController extends Controller
         $pengajuan_pinjaman_model = auth()->user()->kelompok()->first()->pengajuan_pinjaman();
 
         // Simpan file proposal
+        $storage_private = Storage::disk('local');
         $today = now()->format("d_M_Y-H_i_s");
         $file_proposal = $request->file('file_proposal');
         $extension_file = $file_proposal->getClientOriginalExtension();
         $name_file_proposal = "proposal_pengajuan_pinjaman_{$kelompok->formatted_name_snake_case}_{$today}.{$extension_file}";
-        $path_file = Storage::disk()->putFileAs("proposals", $file_proposal, $name_file_proposal);
+        $path_file = $storage_private->putFileAs("proposals", $file_proposal, $name_file_proposal);
 
         // simpan path file
         $data_pengajuan['file_proposal'] = $path_file;

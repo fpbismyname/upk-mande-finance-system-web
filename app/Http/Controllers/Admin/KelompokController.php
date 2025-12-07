@@ -17,7 +17,7 @@ class KelompokController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $relations = ['users', 'anggota_kelompok'];
+    protected $relations = ['anggota_kelompok'];
     public function index(Request $request, Kelompok $kelompok_model)
     {
         // Get search query
@@ -38,10 +38,9 @@ class KelompokController extends Controller
 
         // Datas
         $datas = $query->latest()->paginate(PaginateSize::SMALL->value)->withQueryString();
-        $list_status = EnumStatusKelompok::options();
 
         // Payload untuk dipassing ke view
-        $payload = compact('datas', 'list_status');
+        $payload = compact('datas');
 
         // kembalikan view list user
         return view('admin.kelompok.index', $payload);
@@ -134,9 +133,8 @@ class KelompokController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id, Kelompok $kelompok)
+    public function destroy(Kelompok $kelompok)
     {
-        $kelompok = $kelompok->findOrFail($id);
         $deleted_kelompok = $kelompok->delete();
 
         // Validasi update kelompok
@@ -147,6 +145,5 @@ class KelompokController extends Controller
         }
 
         return redirect()->back();
-
     }
 }

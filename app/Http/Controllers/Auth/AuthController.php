@@ -41,6 +41,10 @@ class AuthController extends Controller
                 Toast::success('Login berhasil.');
                 return redirect()->route('admin.dashboard.index');
             }
+            if ($current_user->role === EnumRole::TAMU) {
+                Toast::success('Login berhasil.');
+                return redirect()->route('admin.pengajuan-keanggotaan.index');
+            }
         }
 
         Toast::info('Email atau password salah.');
@@ -61,7 +65,7 @@ class AuthController extends Controller
 
         $register_user = $user_model->create([
             ...$data_new_user,
-            'role' => EnumRole::ANGGOTA
+            'role' => EnumRole::TAMU
         ]);
 
         if ($register_user->wasRecentlyCreated) {

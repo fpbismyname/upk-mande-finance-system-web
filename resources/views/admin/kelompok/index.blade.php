@@ -7,9 +7,9 @@
                 <span class="label">Status</span>
                 <select name="status">
                     <option value="" selected>Pilih status</option>
-                    @foreach ($list_status as $value => $key)
-                        <option value="{{ $value }}" @if ($value === request()->get('status')) selected @endif>
-                            {{ $key }}
+                    @foreach (App\Enums\Admin\Status\EnumStatusKelompok::cases() as $status)
+                        <option value="{{ $status->value }}" @if ($status->value === request()->get('status')) selected @endif>
+                            {{ $status->label() }}
                         </option>
                     @endforeach
                 </select>
@@ -48,49 +48,37 @@
             <tbody>
                 @if (count($datas) > 0)
                     @foreach ($datas as $item)
-                        @php
-                            $current_account = optional(auth()->user())->is($item);
-                        @endphp
-                        <tr @if ($current_account) class="bg-primary/50" @endif>
+                        <tr>
                             <td>{{ $loop->iteration + ($datas->currentPage() - 1) * $datas->perPage() }}
                             </td>
                             <td>{{ $item->formatted_name }}</td>
                             <td>{{ $item->ketua_name }}</td>
                             <td>{{ $item->formatted_limit_per_anggota }}</td>
-                            <td>{{ $item->formatted_status }}</td>
+                            <td>{{ $item->status->label() }}</td>
                             <td>
-                                @if ($current_account)
-                                    <div class="flex w-full justify-end">
-                                        <div class="badge badge-primary">
-                                            <a href="" class="link-hover">Akun anda</a>
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="flex flex-row gap-2">
+                                <div class="flex flex-row gap-2">
+                                    <a class="btn btn-sm btn-link link-hover"
+                                        href="{{ route('admin.kelompok.show', [$item->id]) }}">
+                                        <x-lucide-eye class="w-4" />
+                                        Detail
+                                    </a>
+                                    @can('manage-kelompok')
                                         <a class="btn btn-sm btn-link link-hover"
-                                            href="{{ route('admin.kelompok.show', [$item->id]) }}">
-                                            <x-lucide-eye class="w-4" />
-                                            Detail
+                                            href="{{ route('admin.kelompok.edit', [$item->id]) }}">
+                                            <x-lucide-pencil class="w-4" />
+                                            Edit
                                         </a>
-                                        @can('manage-kelompok')
-                                            <a class="btn btn-sm btn-link link-hover"
-                                                href="{{ route('admin.kelompok.edit', [$item->id]) }}">
-                                                <x-lucide-pencil class="w-4" />
-                                                Edit
-                                            </a>
-                                            <form method="post"
-                                                action="{{ route('admin.kelompok.destroy', [$item->id]) }}">
-                                                @method('delete')
-                                                @csrf
-                                                <button class="btn btn-sm btn-link link-hover" type="submit"
-                                                    onclick="return confirm('Apakah yakin ingin menghapus data {{ $item->name }}')">
-                                                    <x-lucide-trash class="w-4" />
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        @endcan
-                                    </div>
-                                @endif
+                                        <form method="post" action="{{ route('admin.kelompok.destroy', [$item->id]) }}">
+                                            @csrf
+                                            @method('delete')
+                                            <button class="btn btn-sm btn-link link-hover" type="submit"
+                                                onclick="return confirm('Apakah yakin ingin menghapus data {{ $item->name }}')">
+                                                <x-lucide-trash class="w-4" />
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                     @endforeach

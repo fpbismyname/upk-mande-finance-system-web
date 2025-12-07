@@ -4,14 +4,14 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserRequest extends FormRequest
+class PengajuanKeanggotaanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return true;
     }
 
     /**
@@ -22,14 +22,8 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nik' => 'required',
-            'alamat' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'nomor_rekening' => 'required',
-            'nomor_telepon' => 'required',
-            'reset_password' => '',
-            'new_password' => ['required_if:reset_password,on'],
+            'status' => ['required'],
+            'catatan' => ['nullable']
         ];
     }
 }
