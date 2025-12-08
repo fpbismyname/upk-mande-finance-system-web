@@ -17,17 +17,15 @@
                 <small id="preview-transfer">Rp 0</small>
             </legend>
             <input type="number" placeholder="Masukan nominal transfer" name="nominal_transfer"
-                oninput="window.preview_currency_element(this, 'preview-transfer')" min="1000000"
+                oninput="window.preview_currency_element(this, 'preview-transfer')" min="100000"
                 max="{{ $data_rekening->saldo }}" class="input validator w-full" required>
+            <p class="validator-hint hidden">
+                Nominal transfer wajib diisi.
+                <br>Nominal transfer minimal bernilai Rp 100.000
+            </p>
             @error('nominal_transfer')
                 <label class="fieldset-label text-error">{{ $message }}</label>
             @enderror
-            <p class="validator-hint hidden">
-                Nominal transfer wajib diisi.
-                <br>{{ $data_rekening->formatted_saldo < 0
-                    ? "Nominal transfer minimal bernilai Rp 100.000 - {$data_rekening->formatted_saldo}"
-                    : 'Saldo tidak cukup untuk ditransfer.' }}
-            </p>
         </fieldset>
         {{-- Keterangan transfer --}}
         <fieldset class="fieldset">

@@ -2,6 +2,9 @@
 
 namespace App\Enums\Admin\Rekening;
 
+use Illuminate\Support\Str;
+
+
 enum EnumTipeTransaksi: string
 {
     case MASUK = 'masuk';
@@ -14,5 +17,13 @@ enum EnumTipeTransaksi: string
             $carry[$case->value] = str_replace("_", " ", ucfirst($case->value));
             return $carry;
         }, []);
+    }
+    public function label()
+    {
+        return Str::of($this->value)->ucfirst()->replace("_", " ");
+    }
+    public static function tipe_masuk_keluar()
+    {
+        return [self::MASUK, self::KELUAR];
     }
 }

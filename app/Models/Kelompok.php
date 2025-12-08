@@ -200,7 +200,8 @@ class Kelompok extends Model
 
         $jumlah_anggota_kelompok = $this->anggota_kelompok()->count();
 
-        $anggota_kelompok_memenuhi_syarat = $jumlah_anggota_kelompok >= $minimal_anggota_kelompok && $jumlah_anggota_kelompok <= $maksimal_anggota_kelompok;
+        $anggota_kelompok_memenuhi_syarat = $jumlah_anggota_kelompok >= $minimal_anggota_kelompok && $jumlah_anggota_kelompok < $maksimal_anggota_kelompok;
+
         return Attribute::make(
             get: fn() => $anggota_kelompok_memenuhi_syarat
         );
@@ -218,7 +219,8 @@ class Kelompok extends Model
                 return !in_array($jadwal->status, [EnumStatusJadwalPencairan::TERJADWAL, EnumStatusJadwalPencairan::BELUM_TERJADWAL]);
             });
         }) ?? true;
-        $layak_meminjam = $pinjaman_selesai === true && $pengajuan_selesai === true && $this->anggota_kelompok_lengkap === true && $tidak_ada_jadwal_pencairan == true;
+        $sudah_menjadi_anggota = $this->users->pengajuan_keanggotaan_disetujui()->exists();
+        $layak_meminjam = $pinjaman_selesai === true && $pengajuan_selesai === true && $this->anggota_kelompok_lengkap === true && $tidak_ada_jadwal_pencairan == true && $sudah_menjadi_anggota === true;
         return Attribute::make(
             get: fn() => $layak_meminjam
         );

@@ -33,10 +33,10 @@
                             <span class="label">Tipe transaksi</span>
                             <select name="tipe_transaksi">
                                 <option value="" selected>Pilih tipe transaksi</option>
-                                @foreach ($list_tipe_transaksi as $value => $key)
-                                    <option value="{{ $value }}"
-                                        @if ($value === request()->get('tipe_transaksi')) selected @endif>
-                                        {{ $key }}
+                                @foreach ($list_tipe_transaksi as $tipe)
+                                    <option value="{{ $tipe->value }}"
+                                        @if ($tipe->value === request()->get('tipe_transaksi')) selected @endif>
+                                        {{ $tipe->label() }}
                                     </option>
                                 @endforeach
                             </select>

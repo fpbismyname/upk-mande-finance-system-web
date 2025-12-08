@@ -25,7 +25,7 @@ class AnggotaRequest extends FormRequest
         return [
             'nik' => 'required',
             'name' => 'required',
-            'nomor_telepon' => 'required',
+            'nomor_telepon' => ['required', 'unique:anggota_kelompok,nomor_telepon'],
             'alamat' => 'required'
         ];
     }

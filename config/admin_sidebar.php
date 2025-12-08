@@ -68,14 +68,14 @@ $sidebar_menu = [
         'icon' => 'file-input',
         'type' => 'menu',
         'route_name' => 'admin.pengajuan-pinjaman.index',
-        'roles' => ['kepala_institusi', 'akuntan']
+        'roles' => ['kepala_institusi']
     ],
     [
         'title' => 'Jadwal Pencairan',
         'icon' => 'calendar-clock',
         'type' => 'menu',
         'route_name' => 'admin.jadwal-pencairan.index',
-        'roles' => ['kepala_institusi', 'pengelola_dana', 'akuntan']
+        'roles' => ['kepala_institusi', 'pengelola_dana']
     ],
     [
         'title' => 'Pinjaman Kelompok',

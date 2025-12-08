@@ -12,7 +12,7 @@ class StorageController extends Controller
         $storage_public = Storage::disk('public');
         $filepath = $request->get('path');
 
-        if (!$storage_public->exists($filepath)) {
+        if (!$storage_public->exists($filepath) || $filepath == null) {
             abort(404);
         }
 
@@ -25,7 +25,7 @@ class StorageController extends Controller
         $storage_private = Storage::disk('local');
         $filepath = $request->get('path');
 
-        if (!$storage_private->exists($filepath)) {
+        if (!$storage_private->exists($filepath) || $filepath == null) {
             abort(404);
         }
 

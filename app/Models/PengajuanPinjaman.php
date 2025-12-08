@@ -224,7 +224,7 @@ class PengajuanPinjaman extends Model
     }
     public function formattedLinkFileProposal(): Attribute
     {
-        $url = route('storage.get-file', ['path' => $this->file_proposal]);
+        $url = route('storage.private.get', ['path' => $this->file_proposal]);
         return Attribute::make(
             get: fn() => $url
         );

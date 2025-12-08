@@ -53,7 +53,7 @@ class RekeningPendanaanController extends Controller
         // Datas for passing.
         $data_rekening = $rekening_pendanaan;
         $data_transaksi_rekening = $query_transaksi->latest()->paginate(PaginateSize::SMALL->value)->withQueryString();
-        $list_tipe_transaksi = EnumTipeTransaksi::options();
+        $list_tipe_transaksi = EnumTipeTransaksi::tipe_masuk_keluar();
 
         // Payload untuk dipassing ke view
         $payload = compact('data_rekening', 'data_transaksi_rekening', 'list_tipe_transaksi');

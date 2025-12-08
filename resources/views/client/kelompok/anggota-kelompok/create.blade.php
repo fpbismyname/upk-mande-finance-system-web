@@ -13,7 +13,7 @@
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nomor NIK</legend>
                 <input class="input w-full validator" type="text" pattern="[0-9]{16}" name="nik" minlength="3"
-                    maxlength="16" required />
+                    maxlength="16" required value="{{ old('nik') }}" />
                 <p class="validator-hint hidden">
                     Nomor NIK wajib diisi.
                     <br> Nomor NIK tidak boleh lebih dari 16 digit.
@@ -25,7 +25,8 @@
             {{-- Nama anggota --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nama anggota</legend>
-                <input class="input w-full validator" type="text" name="name" required />
+                <input class="input w-full validator" type="text" name="name" required
+                    value="{{ old('name') }}" />
                 <p class="validator-hint hidden">
                     Nama anggota wajib diisi.
                 </p>
@@ -37,7 +38,7 @@
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Nomor telepon</legend>
                 <input class="input w-full validator" type="text" name="nomor_telepon" pattern="[0-9]{10,16}"
-                    minlength="10" maxlength="16" required />
+                    minlength="10" maxlength="16" required value="{{ old('nomor_telepon') }}" />
                 <p class="validator-hint hidden">
                     Nomor telepon wajib diisi.
                     <br> Nomor telepon harus berupa angka.
@@ -51,7 +52,7 @@
             <div class="grid md:col-span-2">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Alamat</legend>
-                    <textarea class="textarea w-full validator" type="text" name="alamat" required></textarea>
+                    <textarea class="textarea w-full validator" type="text" name="alamat" required>{{ old('alamat') }}</textarea>
                     <p class="validator-hint hidden">
                         Alamat wajib diisi.
                     </p>

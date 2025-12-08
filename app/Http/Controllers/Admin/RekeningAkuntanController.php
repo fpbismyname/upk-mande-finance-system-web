@@ -130,6 +130,11 @@ class RekeningAkuntanController extends Controller
             'keterangan' => $data_transfer['keterangan'],
             'tipe_transaksi' => EnumTipeTransaksi::TRANSFER
         ]);
+        $catat_transaksi = $rekening_pendanaan->transaksi_rekening()->create([
+            'nominal' => $data_transfer['nominal_transfer'],
+            'keterangan' => $data_transfer['keterangan'],
+            'tipe_transaksi' => EnumTipeTransaksi::MASUK
+        ]);
 
         // Validasi transaksi
         if ($catat_transaksi->wasRecentlyCreated) {
