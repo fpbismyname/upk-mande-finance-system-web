@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('nik', 255);
             $table->string('name', 255);
             $table->longText('alamat');
-            $table->text('nomor_telepon')->nullable()->unique();
+            $table->string('nomor_telepon', 255)->nullable()->unique();
             $table->timestamps();
         });
     }
