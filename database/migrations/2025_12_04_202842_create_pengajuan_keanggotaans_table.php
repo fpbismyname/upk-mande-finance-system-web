@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::create('pengajuan_keanggotaan', function (Blueprint $table) {
             $table->id();
-            $table->string('nik')->nullable();
-            $table->string('ktp')->nullable();
-            $table->string('nama_lengkap')->nullable();
-            $table->string('alamat')->nullable();
-            $table->string('nomor_rekening')->nullable();
-            $table->string('nomor_telepon')->nullable();
-            $table->string('status');
+            $table->string('nik', 255)->nullable();
+            $table->string('ktp', 255)->nullable();
+            $table->string('nama_lengkap', 255)->nullable();
+            $table->string('alamat', 255)->nullable();
+            $table->string('nomor_rekening', 255)->nullable();
+            $table->string('nomor_telepon', 255)->nullable();
+            $table->string('status', 255);
             $table->text('catatan')->nullable();
             $table->timestamps();
         });
