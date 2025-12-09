@@ -3,7 +3,7 @@
         <x-ui.card class="flex bg-base-200">
             <div class="card-body flex flex-row justify-between items-center flex-wrap">
                 <div class="flex flex-col gap-2">
-                    @if ($kelompok->anggota_kelompok_lengkap)
+                    @if ($kelompok?->anggota_kelompok_lengkap)
                         <h6 class="card-title">
                             <x-lucide-banknote class="w-6" />
                             Limit pinjaman kelompok
@@ -20,8 +20,8 @@
                     @endif
                 </div>
                 <div class="flex flex-row gap-4">
-                    @if ($kelompok->anggota_kelompok_lengkap)
-                        @if ($kelompok->pinjaman_kelompok_berlangsung)
+                    @if ($kelompok?->anggota_kelompok_lengkap)
+                        @if ($kelompok?->pinjaman_kelompok_berlangsung)
                             <a href="{{ route('client.pinjaman-kelompok.index') }}" class="btn btn-primary">Lihat
                                 cicilan</a>
                         @else
