@@ -11,7 +11,8 @@
             <div class="container mx-auto">
                 <div class="navbar px-8">
                     <a class="flex flex-1" href="/">
-                        <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-full max-w-24" />
+                        <x-ui.image src="{{ route('storage.public.get', ['path' => config('site.company_icon')]) }}"
+                            class="max-w-24 w-full" />
                     </a>
                     {{-- Mobile dropdown --}}
                     <div class="flex flex-none lg:hidden">
@@ -122,7 +123,8 @@
         {{-- Footer --}}
         <footer class="footer footer-vertical md:footer-horizontal bg-base-200 text-base-content p-8 mt-auto">
             <aside class="max-w-xs">
-                <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-full max-w-32" />
+                <x-ui.image src="{{ route('storage.public.get', ['path' => config('site.company_icon')]) }}"
+                    class="max-w-64 w-full" />
                 <p class="text-base-content/75">
                     Jl. R. Aria Natamanggala KM 10 Desa Kademangan Kecamatan Mande Kabupaten Cianjur.
                 </p>

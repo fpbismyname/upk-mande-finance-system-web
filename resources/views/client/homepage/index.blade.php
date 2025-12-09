@@ -4,7 +4,7 @@
         <div class="hero-content text-center">
             <div class="max-w-5xl">
                 <div class="flex flex-row w-full justify-center py-12">
-                    <x-ui.image :src="asset(config('site.company_icon'))" class="max-w-64 w-full" />
+                    <x-ui.image :src="route('storage.public.get', ['path' => config('site.company_icon')])" class="max-w-64 w-full" />
                 </div>
                 <h1 class="text-5xl font-bold">Selamat datang di UPK MANDE</h1>
                 <p class="py-4 text-lg">

@@ -1,4 +1,4 @@
-@startuml ERD
+@startuml upk_mande_erd.puml
 
 title ERD Upk Mande Finance Systems
 
@@ -18,22 +18,16 @@ enum RoleEnum{
   -KEPALA_INSTITUSI
 }
 
-enum EnumStatusPengajuanAnggota{
+enum EnumStatusPengajuanKeanggotaan{
   -PROSES_PENGAJUAN
   -DITERIMA
   -DITOLAK
+  -DIBATALKAN
 }
 
 enum EnumStatusKelompok{
   -AKTIF
   -NONAKTIF
-}
-
-enum EnumStatusPengajuanPinjaman{
-  -DITOLAK
-  -PROSES_PENGAJUAN
-  -DISETUJUI
-  -DIBATALKAN
 }
 
 enum EnumStatusPengajuanPinjaman{
@@ -81,15 +75,15 @@ enum EnumStatusCicilanKelompok{
 ' Tables        
 ' ==============
 entity "users" {
-  + id : BigInt
+  * id : BigInt
   --
   -name : string
   -email : string
   -password : string
-  -role : EnumRole
+  -role : RoleEnum
 }
 
-entity pengajuan_keanggotaan{
+entity "pengajuan_keanggotaan"{
   * id : BigInt
   - users_id : BigInt
   --
@@ -104,24 +98,23 @@ entity pengajuan_keanggotaan{
 }
 
 entity "rekening" {
-  + id : BigInt
+  * id : BigInt
   --
   -name : string
   -saldo : decimal(15, 2)
 }
 
 entity "transaksi_rekening" {
-  + id : BigInt
+  * id : BigInt
   + rekening_id : BigInt
   --
-  -rekening_id : foreignId
   -nominal : decimal(15, 2)
   -keterangan : text
   -tipe_transaksi : EnumTipeTransaksi
 }
 
 entity "kelompok" {
-  + id : BigInt
+  * id : BigInt
   + users_id : BigInt
   --
   -name : string
@@ -130,7 +123,7 @@ entity "kelompok" {
 }
 
 entity "anggota_kelompok" {
-  + id : BigInt
+  * id : BigInt
   + kelompok_id : BigInt
   --
   -nik : string
@@ -140,7 +133,7 @@ entity "anggota_kelompok" {
 }
 
 entity "pengajuan_pinjaman" {
-  + id : BigInt
+  * id : BigInt
   + kelompok_id : BigInt
   --
   -file_proposal : string
@@ -154,7 +147,7 @@ entity "pengajuan_pinjaman" {
 }
 
 entity "jadwal_pencairan" {
-  + id : BigInt
+  * id : BigInt
   + pengajuan_pinjaman_id : BigInt
   --
   -status : EnumStatusJadwalPencairan
@@ -162,10 +155,10 @@ entity "jadwal_pencairan" {
 }
 
 entity "pinjaman_kelompok" {
-  + id : BigInt
+  * id : BigInt
   + kelompok_id : BigInt
-  + jadwal_pencairan_id : foreignId
-  + pengajuan_pinjaman_id : foreignId
+  + jadwal_pencairan_id : BigInt
+  + pengajuan_pinjaman_id : BigInt
   --
   -tenor : integer
   -bunga : decimal(5, 2)
@@ -175,7 +168,7 @@ entity "pinjaman_kelompok" {
 }
 
 entity "cicilan_kelompok" {
-  + id : BigInt
+  * id : BigInt
   + pinjaman_kelompok_id : BigInt
   --
   -status : EnumStatusCicilanKelompok
@@ -186,7 +179,7 @@ entity "cicilan_kelompok" {
 }
 
 entity "settings" {
-  + id : BigInt
+  * id : BigInt
   --
   -key : string
   -value : string

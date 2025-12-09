@@ -7,5 +7,5 @@ return [
         'title' => $website_name,
         'slogan' => "Ayo tingkatkan kesejahteraan warga Kecamatan Mande melalui program {$website_name}",
     ],
-    'company_icon' => 'storage/default/company_icon.ico',
+    'company_icon' => 'default/company_icon.ico',
 ];

@@ -25,8 +25,8 @@
                 <div class="navbar px-8">
                     <div class="flex flex-1">
                         <a class="flex" href="{{ route('client.dashboard.index') }}">
-                            <x-ui.image src="{{ asset(config('site.company_icon')) }}"
-                                class="w-full min-w-16 max-w-24" />
+                            <x-ui.image src="{{ route('storage.public.get', ['path' => config('site.company_icon')]) }}"
+                                class="max-w-64 w-full" />
                         </a>
                     </div>
                     {{-- Mobile dropdown --}}
