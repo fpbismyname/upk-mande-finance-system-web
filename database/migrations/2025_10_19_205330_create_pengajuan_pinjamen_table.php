@@ -15,11 +15,11 @@ return new class extends Migration {
             $table->id();
             $table->string('file_proposal', 255)->nullable();
             $table->decimal('nominal_pinjaman', 15, 2);
-            $table->integer('tenor', 255);
+            $table->integer('tenor');
             $table->longText('catatan')->nullable();
-            $table->dateTime('tanggal_pengajuan', 255)->nullable();
-            $table->dateTime('tanggal_disetujui', 255)->nullable();
-            $table->dateTime('tanggal_ditolak', 255)->nullable();
+            $table->dateTime('tanggal_pengajuan')->nullable();
+            $table->dateTime('tanggal_disetujui')->nullable();
+            $table->dateTime('tanggal_ditolak')->nullable();
             $table->string('status', 255)->default(EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN->value);
             $table->timestamps();
         });
