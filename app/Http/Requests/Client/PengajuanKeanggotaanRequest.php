@@ -21,13 +21,23 @@ class PengajuanKeanggotaanRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $request_method = $this->getMethod();
+
+        $request_validation = [
             'nik' => ['required', 'numeric'],
-            'ktp' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp'],
             'nama_lengkap' => ['required', 'string'],
             'alamat' => ['required', 'string'],
             'nomor_rekening' => ['required', 'numeric'],
             'nomor_telepon' => ['required', 'numeric'],
         ];
+
+        if ($request_method === 'POST') {
+            $request_validation['ktp'] = ['required', 'file', 'mimes:png,jpg,jpeg,webp'];
+        }
+        if ($request_method === 'PUT') {
+            $request_validation['ktp'] = ['nullable', 'file', 'mimes:png,jpg,jpeg,webp'];
+        }
+
+        return $request_validation;
     }
 }

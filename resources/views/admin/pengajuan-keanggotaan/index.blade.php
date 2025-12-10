@@ -1,4 +1,4 @@
-<x-layouts.admin-app title="Daftar pengajuan pinjaman">
+<x-layouts.admin-app title="Daftar pengajuan keanggotaan">
     {{-- Data table --}}
     <div class="flex flex-col gap-6">
         <div class="flex flex-row justify-between flex-wrap gap-4">
@@ -15,7 +15,7 @@
                     </select>
                     <div class="flex flex-row gap-2">
                         <input type="text" name="search" value="{{ request()->get('search') }}" class="input"
-                            placeholder="Cari pengajuan pinjaman..." />
+                            placeholder="Cari pengajuan keanggotaan..." />
                         <button type="submit" class="btn btn-primary join-item">
                             <x-lucide-search class="w-4" />
                         </button>

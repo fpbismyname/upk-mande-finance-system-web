@@ -111,5 +111,6 @@ class UserSeeder extends Seeder
                 $kelompok->anggota_kelompok()->create($anggota);
             }
         });
+
     }
 }

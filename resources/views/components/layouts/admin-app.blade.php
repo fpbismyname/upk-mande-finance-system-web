@@ -60,7 +60,7 @@
 
                 {{-- Header sidebar --}}
                 <div class="flex flex-col gap-4 py-12 px-4 items-center">
-                    <x-ui.image src="{{ asset(config('site.company_icon')) }}" class="w-1/2" />
+                    <x-ui.image :src="route('storage.public.get', ['path' => config('site.company_icon')])" class="max-w-32 mx-auto" />
                     <span class="badge badge-secondary">
                         {{ auth()->user()?->role->label() }}
                     </span>

@@ -82,9 +82,14 @@
             {{-- ktp --}}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Ktp</legend>
-                <a target="_blank" href="{{ route('storage.private.get', ['path' => $pengajuan_keanggotaan->ktp]) }}"
-                    class="link link-primary link-hover">Lihat
-                    selengkapnya</a>
+                @if ($pengajuan_keanggotaan->ktp)
+                    <a target="_blank"
+                        href="{{ route('storage.private.get', ['path' => $pengajuan_keanggotaan->ktp]) }}"
+                        class="link link-primary link-hover">Lihat
+                        selengkapnya</a>
+                @else
+                    <p>Tidak ada</p>
+                @endif
                 @error('ktp')
                     <p class="fieldset-label">{{ $message }}</p>
                 @enderror

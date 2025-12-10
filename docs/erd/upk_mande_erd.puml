@@ -196,10 +196,10 @@ kelompok ||--o{ anggota_kelompok
 kelompok ||--o{ pengajuan_pinjaman
 kelompok ||--o{ pinjaman_kelompok
 
-pengajuan_pinjaman ||--o{ jadwal_pencairan
-pengajuan_pinjaman ||--o{ pinjaman_kelompok
+pengajuan_pinjaman ||--|| jadwal_pencairan
+pengajuan_pinjaman ||--|| pinjaman_kelompok
 
-jadwal_pencairan ||--o{ pinjaman_kelompok
+jadwal_pencairan ||--|| pinjaman_kelompok
 pinjaman_kelompok ||--o{ cicilan_kelompok
 
 @enduml

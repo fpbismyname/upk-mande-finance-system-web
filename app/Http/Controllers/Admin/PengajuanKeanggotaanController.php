@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\Admin\Status\EnumStatusPengajuanKeanggotaan;
+use App\Enums\Admin\User\EnumRole;
 use App\Enums\Table\PaginateSize;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PengajuanKeanggotaanRequest;
@@ -16,7 +17,7 @@ class PengajuanKeanggotaanController extends Controller
     public function index(Request $request, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
         // Get search query
-        $filters = $request->only('search', 'status', 'tenor');
+        $filters = $request->only('search', 'status');
 
         // Query model
         $query = $pengajuan_keanggotaan_model->with($this->relations);
@@ -40,17 +41,17 @@ class PengajuanKeanggotaanController extends Controller
         // kembalikan view list user
         return view('admin.pengajuan-keanggotaan.index', $payload);
     }
-    public function edit(string $id, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
-    {
-        $pengajuan_keanggotaan = $pengajuan_keanggotaan_model->findOrFail($id);
-        $payload = compact('pengajuan_keanggotaan');
-        return view('admin.pengajuan-keanggotaan.edit', $payload);
-    }
     public function show(string $id, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
         $pengajuan_keanggotaan = $pengajuan_keanggotaan_model->findOrFail($id);
         $payload = compact('pengajuan_keanggotaan');
         return view('admin.pengajuan-keanggotaan.show', $payload);
+    }
+    public function edit(string $id, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
+    {
+        $pengajuan_keanggotaan = $pengajuan_keanggotaan_model->findOrFail($id);
+        $payload = compact('pengajuan_keanggotaan');
+        return view('admin.pengajuan-keanggotaan.edit', $payload);
     }
     public function update(PengajuanKeanggotaanRequest $request, string $id, PengajuanKeanggotaan $pengajuan_keanggotaan_model)
     {
@@ -60,6 +61,9 @@ class PengajuanKeanggotaanController extends Controller
         $data_pengajuan = $pengajuan_keanggotaan_model->findOrFail($id);
 
         $data_pengajuan->update($data_review);
+
+        // ubah role
+        $data_pengajuan->users->update(['role' => EnumRole::ANGGOTA]);
 
         if ($data_pengajuan->wasChanged()) {
             Toast::success('Pengajuan pinjaman berhasil direview.');

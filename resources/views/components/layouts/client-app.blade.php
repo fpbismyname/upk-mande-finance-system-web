@@ -26,7 +26,7 @@
                     <div class="flex flex-1">
                         <a class="flex" href="{{ route('client.dashboard.index') }}">
                             <x-ui.image src="{{ route('storage.public.get', ['path' => config('site.company_icon')]) }}"
-                                class="max-w-64 w-full" />
+                                class="max-w-16 w-full" />
                         </a>
                     </div>
                     {{-- Mobile dropdown --}}

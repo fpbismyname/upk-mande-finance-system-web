@@ -43,7 +43,7 @@ class AuthController extends Controller
             }
             if ($current_user->role === EnumRole::TAMU) {
                 Toast::success('Login berhasil.');
-                return redirect()->route('admin.pengajuan-keanggotaan.index');
+                return redirect()->route('client.pengajuan-keanggotaan.index');
             }
         }
 
