@@ -60,34 +60,21 @@ class SettingsSeeder extends Seeder
                 'type' => 'string',
                 'group' => 'informasi_website',
                 'value' => <<<TEXT
-                Syarat & Ketentuan Layanan Upk Mande
+                Syarat & Ketentuan Layanan UPK Mande
 
-                1. Pendaftaran dan Akun
-                - Pengguna wajib memberikan data yang benar dan akurat pada saat pendaftaran.
-                - Pengguna bertanggung jawab penuh atas keamanan akun serta aktivitas yang dilakukan melalui akun tersebut.
+                1.	Syarat
+                    - Hanya warga yang berdomisili di Kecamatan Mande yang berhak mengajukan pinjaman.
+                    - Permohonan peminjaman wajib diajukan secara berkelompok, dengan jumlah anggota minimal 5 orang dalam satu kelompok.
+                    - Wajib menyerahkan proposal pinjaman yang berisi nominal pinjaman dan tenor beserta salinan KTP, Kartu Keluarga dan surat ijin dari keluarga atau pihak yang terkait.
+                    - Pengguna wajib mematuhi seluruh prosedur penggunaan sistem serta tujuan yang telah ditetapkan.
 
-                2. Pengajuan Keanggotaan
-                - Seluruh data dan dokumen yang diajukan akan digunakan untuk proses verifikasi dan validasi.
-                - Keputusan pengelola terhadap pengajuan bersifat final.
-
-                3. Akses dan Pengelolaan Sistem
-                - Pengelola sistem berwenang untuk mengakses dan memproses data pengguna dalam rangka verifikasi, validasi, audit, dan operasional layanan.
-                - Pengelola berhak melakukan pembaruan, peninjauan, pembatasan, atau penonaktifan akun apabila diperlukan untuk menjaga keamanan dan kelancaran sistem.
-                - Aktivitas dalam sistem dapat dicatat untuk keperluan audit dan keamanan.
-
-                4. Kewajiban Pengguna
-                - Pengguna wajib menggunakan sistem sesuai dengan prosedur dan tujuan yang ditetapkan.
-                - Pengguna dilarang memberikan informasi palsu atau melakukan tindakan yang dapat mengganggu operasional sistem.
-
-                5. Privasi dan Penggunaan Data
-                - Data pengguna hanya digunakan untuk keperluan operasional layanan dan tidak akan dibagikan kepada pihak ketiga tanpa persetujuan, kecuali diwajibkan oleh hukum.
-                - Pengguna menyetujui bahwa data yang disimpan dalam sistem dapat diolah untuk peningkatan layanan.
-
-                6. Perubahan Ketentuan
-                - Pengelola berhak mengubah Syarat dan Ketentuan ini sewaktu-waktu. Perubahan akan diberitahukan melalui sistem.
-
-                Dengan menggunakan layanan ini, pengguna dianggap telah membaca, memahami, dan menyetujui seluruh Syarat dan Ketentuan di atas.
-
+                2. Ketentuan
+                    - Seluruh data dan dokumen yang diajukan digunakan untuk proses verifikasi dan validasi oleh pihak UPK Mande.
+                    - Keputusan pengelola terhadap diterima atau ditolaknya pengajuan bersifat final.
+                    - Pengelola berwenang mengakses, memproses, serta memverifikasi data untuk keperluan audit, validasi, dan operasional layanan.
+                    - Pengelola berhak melakukan pembaruan, pembatasan, peninjauan, atau penonaktifan akun apabila dianggap perlu demi keamanan sistem.
+                    - Pengguna dilarang memberikan informasi palsu, menyalahgunakan layanan, atau melakukan aktivitas yang mengganggu operasional sistem.
+                    - Data pengguna digunakan semata-mata untuk kebutuhan operasional layanan dan tidak diberikan kepada pihak ketiga tanpa persetujuan, kecuali diwajibkan oleh hukum.
                 TEXT
             ],
         ];
