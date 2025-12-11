@@ -124,7 +124,7 @@
         <footer class="footer footer-vertical md:footer-horizontal bg-base-200 text-base-content p-8 mt-auto">
             <aside class="max-w-xs">
                 <x-ui.image src="{{ route('storage.public.get', ['path' => config('site.company_icon')]) }}"
-                    class="max-w-64 w-full" />
+                    class="max-w-32 w-full" />
                 <p class="text-base-content/75">
                     Jl. R. Aria Natamanggala KM 10 Desa Kademangan Kecamatan Mande Kabupaten Cianjur.
                 </p>
@@ -135,10 +135,17 @@
             </nav>
             <nav>
                 <h6 class="footer-title">Menu utama</h6>
-                <a class="link link-hover" href="#">Beranda</a>
-                <a class="link link-hover" href="#about">Tentang kami</a>
-                <a class="link link-hover" href="#services">Layanan kami</a>
-                <a class="link link-hover" href="#contact">Kontak kami</a>
+                <a class="link link-hover"
+                    href="{{ $is_root_page ? '#' : route('client.homepage.index') . '#' }}">Beranda</a>
+                <a class="link link-hover"
+                    href="{{ $is_root_page ? '#about' : route('client.homepage.index') . '#about' }}">Tentang
+                    kami</a>
+                <a class="link link-hover"
+                    href="{{ $is_root_page ? '#services' : route('client.homepage.index') . '#services' }}">Layanan
+                    kami</a>
+                <a class="link link-hover"
+                    href="{{ $is_root_page ? '#contact' : route('client.homepage.index') . '#contact' }}">Kontak
+                    kami</a>
             </nav>
             <nav>
                 <h6 class="footer-title">Sosial media</h6>
@@ -149,7 +156,7 @@
             </nav>
             <nav>
                 <h6 class="footer-title">Lainnya</h6>
-                <a class="link link-hover" href="{{ route('client.homepage.syarat-dan-ketentuan') }}">Syaran &
+                <a class="link link-hover" href="{{ route('client.homepage.syarat-dan-ketentuan') }}">Syarat &
                     ketentuan</a>
             </nav>
         </footer>

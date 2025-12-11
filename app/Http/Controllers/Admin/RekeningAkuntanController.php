@@ -102,7 +102,7 @@ class RekeningAkuntanController extends Controller
             Toast::error("Deposit sebesar {$catat_transaksi->formatted_nominal} gagal");
         }
 
-        return redirect()->route('admin.rekening.akuntan.index');
+        return redirect()->route('admin.rekening-akuntan.index');
 
     }
     // View transfer
@@ -128,7 +128,7 @@ class RekeningAkuntanController extends Controller
         $catat_transaksi = $rekening_akuntan->transaksi_rekening()->create([
             'nominal' => $data_transfer['nominal_transfer'],
             'keterangan' => $data_transfer['keterangan'],
-            'tipe_transaksi' => EnumTipeTransaksi::TRANSFER
+            'tipe_transaksi' => EnumTipeTransaksi::KELUAR
         ]);
         $catat_transaksi = $rekening_pendanaan->transaksi_rekening()->create([
             'nominal' => $data_transfer['nominal_transfer'],

@@ -21,7 +21,12 @@ class TransaksiRekening extends Model
      *
      * @var array
      */
-    protected $fillable = ['rekening_id', 'nominal', 'keterangan', 'tipe_transaksi', 'referensi'];
+    protected $fillable = [
+        'rekening_id',
+        'nominal',
+        'keterangan',
+        'tipe_transaksi',
+    ];
     /**
      * The attributes that should be cast to native types.
      *

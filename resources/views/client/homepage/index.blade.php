@@ -6,17 +6,17 @@
                 <div class="flex flex-row w-full justify-center py-12">
                     <x-ui.image :src="route('storage.public.get', ['path' => config('site.company_icon')])" class="max-w-64 w-full" />
                 </div>
-                <h1 class="text-5xl font-bold">Selamat datang di UPK MANDE</h1>
+                <h1 class="text-5xl font-bold">Selamat datang di {{ config('site.website.title') }}</h1>
                 <p class="py-4 text-lg">
-                    UPK MANDE adalah Unit Pengelola Kegiatan pemberdayaan masyarakat desa yang membantu pengembangan
-                    usaha mikro dan kecil melalui layanan pembiayaan serta pendampingan.
+                    {{ config('site.website.slogan') }}
                 </p>
                 <p class="mb-6 text-sm opacity-75">
-                    Nikmati layanan pinjaman dengan bunga 18% (flat) dan limit hingga Rp10.000.000.
+                    {{ config('site.website.subtitle') }}
                 </p>
                 <div class="flex justify-center gap-3">
                     <a href="{{ route('client.register') }}" class="btn btn-primary">Gabung Sekarang</a>
-                    <a href="#services" class="btn btn-outline">Lihat Layanan</a>
+                    <a href="{{ route('client.homepage.syarat-dan-ketentuan') }}" class="btn btn-outline">Syarat &
+                        ketentuan</a>
                 </div>
             </div>
         </div>

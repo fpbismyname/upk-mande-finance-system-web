@@ -11,12 +11,12 @@
             <!-- Pemasukan -->
             <div class="stat bg-base-200">
                 <div class="stat-title">Pemasukan</div>
-                <div class="stat-value text-success">{{ $data_rekening->formatted_inflow_data }}</div>
+                <div class="stat-value text-success">{{ $data_rekening->formatted_inflow_data_akuntan }}</div>
             </div>
             <!-- Pengeluaran -->
             <div class="stat bg-base-200">
                 <div class="stat-title">Pengeluaran</div>
-                <div class="stat-value text-error">{{ $data_rekening->formatted_outflow_data }}</div>
+                <div class="stat-value text-error">{{ $data_rekening->formatted_outflow_data_akuntan }}</div>
             </div>
         </div>
         {{-- Action rekening --}}

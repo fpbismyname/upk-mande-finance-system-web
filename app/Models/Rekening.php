@@ -7,6 +7,7 @@ use App\Enums\Admin\Rekening\EnumRekening;
 use App\Enums\Admin\Rekening\EnumTipeTransaksi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Rekening extends Model
@@ -23,18 +24,6 @@ class Rekening extends Model
      * @var array<string>
      */
     protected $fillable = ["name", "saldo"];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [
-        'formatted_name',
-        'formattted_inflow_data',
-        'formatted_outflow_data',
-        'formatted_transfer_data'
-    ];
 
     /**
      * Scope a query rekening
@@ -56,6 +45,17 @@ class Rekening extends Model
     }
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'formatted_name',
+        'formattted_inflow_data_akuntan',
+        'formatted_outflow_data_akuntan',
+    ];
+
+    /**
      * Accessor
      * 
      */
@@ -68,29 +68,30 @@ class Rekening extends Model
         );
     }
     // Formatted
-    protected function formattedInflowData(): Attribute
+    protected function formattedInflowDataAkuntan(): Attribute
     {
-        $today_start = now()->startOfDay();
-        $today_end = now()->endOfDay();
-        $inflow = TransaksiRekening::query()->search_by_column('tipe_transaksi', EnumTipeTransaksi::MASUK)
+        $rekening_akuntan = $this->get_rekening_akuntan()->first();
+        $filtered_date = request()->get('created_at');
+        $today_start = Carbon::parse($filtered_date ?? now())->startOfDay();
+        $today_end = Carbon::parse($filtered_date ?? now())->endOfDay();
+        $inflow = TransaksiRekening::query()->search_by_column('tipe_transaksi', EnumTipeTransaksi::MASUK)->where('rekening_id', $rekening_akuntan->id)
             ->whereBetween('created_at', [$today_start, $today_end])
             ->sum('nominal');
         return Attribute::make(
             get: fn() => "Rp " . number_format($inflow, 0, ',', '.') ?? 0
         );
     }
-    protected function formattedOutflowData(): Attribute
+    protected function formattedOutflowDataAkuntan(): Attribute
     {
-        $outflow = TransaksiRekening::query()->search_by_column('tipe_transaksi', EnumTipeTransaksi::KELUAR)->sum('nominal');
+        $rekening_akuntan = $this->get_rekening_akuntan()->first();
+        $filtered_date = request()->get('created_at');
+        $today_start = Carbon::parse($filtered_date ?? now())->startOfDay();
+        $today_end = Carbon::parse($filtered_date ?? now())->endOfDay();
+        $outflow = TransaksiRekening::query()->search_by_column('tipe_transaksi', EnumTipeTransaksi::KELUAR)->where('rekening_id', $rekening_akuntan->id)
+            ->whereBetween('created_at', [$today_start, $today_end])
+            ->sum('nominal');
         return Attribute::make(
             get: fn() => "Rp " . number_format($outflow, 0, ',', '.') ?? 0
-        );
-    }
-    protected function formattedTransferData(): Attribute
-    {
-        $transfer = TransaksiRekening::query()->search_by_column('tipe_transaksi', EnumTipeTransaksi::TRANSFER)->sum('nominal');
-        return Attribute::make(
-            get: fn() => "Rp " . number_format($transfer, 0, ',', '.') ?? 0
         );
     }
     protected function formattedSaldo(): Attribute
