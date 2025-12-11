@@ -9,4 +9,5 @@ return [
         'subtitle' => 'Nikmati layanan pinjaman dengan bunga 18% (flat) dan limit hingga Rp10.000.000.'
     ],
     'company_icon' => 'default/company_icon.ico',
+    'company_bg' => 'default/bg_hero.jpeg',
 ];

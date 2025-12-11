@@ -1,7 +1,9 @@
 <x-layouts.homepage title="Beranda">
     {{-- Hero section --}}
-    <section class="hero min-h-screen bg-base-200 scroll-mt-12">
-        <div class="hero-content text-center">
+    <section class="hero min-h-screen bg-base-200 scroll-mt-12"
+        style="background-image: url({{ route('storage.public.get', ['path' => config('site.company_bg')]) }}); ">
+        <div class="hero-overlay bg-black/75"></div>
+        <div class="hero-content text-center text-white">
             <div class="max-w-5xl">
                 <div class="flex flex-row w-full justify-center py-12">
                     <x-ui.image :src="route('storage.public.get', ['path' => config('site.company_icon')])" class="max-w-64 w-full" />

@@ -32,7 +32,7 @@ class UserFactory extends Factory
         return [
             'name' => $name_user,
             'role' => EnumRole::ANGGOTA,
-            'email' => fake()->unique()->safeEmail(),
+            'email' => Str::snake($name_user) . "@gmail.com",
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',
             'remember_token' => Str::random(10),
