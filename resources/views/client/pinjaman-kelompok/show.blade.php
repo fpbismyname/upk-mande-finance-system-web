@@ -28,7 +28,7 @@
         @if (!$pinjaman_kelompok->status_pinjaman_selesai)
             <div class="flex flex-col">
                 <h6>Berikut ini nomor rekening untuk melakukan pembayaran cicilan.</h6>
-                <p>BRI : {{ $user_akuntan->nomor_rekening }}</p>
+                <p>BRI : {{ $user_akuntan->pengajuan_keanggotaan_disetujui()->first()->nomor_rekening }}</p>
             </div>
             <div class="divider"></div>
         @endif
