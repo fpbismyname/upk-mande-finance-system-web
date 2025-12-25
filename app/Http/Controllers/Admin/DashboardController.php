@@ -38,9 +38,9 @@ class DashboardController extends Controller
             ->get()->count();
         $jumlah_pengajuan_proses_pengajuan = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
             ->get()->count();
-        $jumlah_pengajuan_disetujui = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
+        $jumlah_pengajuan_disetujui = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::DISETUJUI)
             ->get()->count();
-        $jumlah_pengajuan_ditolak = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::PROSES_PENGAJUAN)
+        $jumlah_pengajuan_ditolak = $pengajuan_pinjaman_model->search_by_column('status', EnumStatusPengajuanPinjaman::DITOLAK)
             ->get()->count();
 
         // Data pinjaman

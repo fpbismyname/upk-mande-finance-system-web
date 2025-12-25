@@ -29,7 +29,7 @@ class CicilanSheet implements FromCollection, WithTitle, WithHeadings, ShouldAut
             $row->pinjaman_kelompok_id,
             number_format($row->nominal_cicilan),
             $row->link_bukti_pembayaran,
-            $row->tanggal_dibayar->format('Y-m-d'),
+            $row->formatted_tanggal_dibayar,
             $row->status->label(),
         ];
     }

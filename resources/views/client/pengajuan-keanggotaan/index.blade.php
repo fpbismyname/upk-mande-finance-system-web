@@ -32,13 +32,11 @@
                                     <div class="badge badge-error badge-sm">{{ $pengajuan->status->label() }}</div>
                                 @endif
                             </div>
-                            <div class="sm:list-col-wrap">
-                                <a href="{{ route('client.pengajuan-keanggotaan.show', [$pengajuan->id]) }}"
-                                    class="btn btn-primary">
-                                    <x-lucide-eye class="w-4" />
-                                    Lihat
-                                </a>
-                            </div>
+                            <a href="{{ route('client.pengajuan-keanggotaan.show', [$pengajuan->id]) }}"
+                                class="btn btn-primary">
+                                <x-lucide-eye class="w-4" />
+                                Lihat
+                            </a>
                         </li>
                     @endforeach
                 @else

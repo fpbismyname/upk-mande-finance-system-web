@@ -33,7 +33,7 @@ class PinjamanSheet implements FromCollection, WithTitle, WithHeadings, ShouldAu
             $row->id,
             $row->kelompok_name,
             number_format($row->nominal_pinjaman),
-            $row->created_at->format('Y-m-d'),
+            $row->formatted_tanggal_mulai,
         ];
     }
 

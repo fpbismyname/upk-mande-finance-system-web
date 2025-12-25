@@ -45,7 +45,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'minimal_anggota_kelompok',
-                'value' => '4',
+                'value' => '5',
                 'type' => 'integer',
                 'group' => 'kelompok'
             ],

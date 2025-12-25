@@ -1,7 +1,7 @@
-<x-layouts.client-app title="Detail pengajuan pinjaman">
+<x-layouts.client-app title="Detail pengajuan keanggotaan">
     <div class="flex flex-row justify-between items-center">
         <div class="flex flex-col">
-            <h3>Detail pengajuan pinjaman</h3>
+            <h3>Detail pengajuan keanggotaan</h3>
         </div>
         <div class="flex flex-col">
             <div class="flex flex-row gap-2 flex-wrap">

@@ -17,7 +17,7 @@ class PengajuanKeanggotaanController extends Controller
 {
     public function index()
     {
-        $datas = auth()->user()->pengajuan_keanggotaan()->paginate(PaginateSize::SMALL->value);
+        $datas = auth()->user()->pengajuan_keanggotaan()->latest()->paginate(PaginateSize::SMALL->value);
         $payload = compact('datas');
         return view('client.pengajuan-keanggotaan.index', $payload);
     }
